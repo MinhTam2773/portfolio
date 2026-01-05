@@ -149,7 +149,9 @@ const ProjectCard = ({
         {/* Links */}
         <div className="flex items-center justify-between pt-4 border-t border-border/30">
           <div className="flex items-center gap-4">
-            {links.github && (
+            {title === "AllBarber" ? (
+              <span className="text-sm">Protected Code</span>
+            ) : (
               <a
                 href={links.github}
                 target="_blank"
@@ -234,7 +236,7 @@ export default function Projects() {
       ],
       links: {
         github: "https://github.com/MinhTam2773/Ecommerce",
-        demo: "https://expo.dev/@minhtam/ecommerce",
+        demo: "https://ecommerce-solution-fall-2025--ecommerce.expo.app/",
       },
       imageUrl: "/projects/ecommerce.png",
     },
@@ -252,8 +254,8 @@ export default function Projects() {
         "Authentication",
       ],
       links: {
-        github: "https://github.com/MinhTam2773/SoundWave",
-        demo: "https://soundwave-demo.vercel.app",
+        github: "https://github.com/MinhTam2773/Sound-Wave",
+        demo: "https://sound-wave-opal.vercel.app",
       },
       imageUrl: "/projects/sound-wave.png",
     },

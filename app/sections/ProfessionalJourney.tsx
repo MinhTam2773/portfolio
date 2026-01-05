@@ -8,15 +8,15 @@ export default function ProfessionalJourney() {
   const experiences = [
     {
       id: "capstone",
-      title: "AllBarber SaaS - Capstone Project",
+      title: "Capstone Project",
       subtitle: "Tech Lead",
       icon: <GitPullRequest className="w-5 h-5" />,
       bullets: [
+        "Led a team of 6 developers in building a production-ready SaaS platform using Agile methodologies",
         "Reviewed code submissions and resolved technical blockers to maintain project quality",
-        "Collaborated with fellow open-source developers on project planning and implementation",
         "Designed and implemented UI/UX solutions according to client's satisfaction",
         "Managed API integrations and ensured smooth communication across the development team",
-        "Mentored contributors and facilitated knowledge sharing within the community",
+        "Mentored 3 teammates through code reviews, pair programming, and technical guidance",
         "Coordinated pull request reviews and maintained high code quality standards",
         "Implemented CI/CD pipelines for automated testing and deployment",
         "Documented technical specifications and architectural decisions",
@@ -24,13 +24,13 @@ export default function ProfessionalJourney() {
     },
     {
       id: "codeblazers",
-      title: "CODEBLAZERS IT Club",
-      subtitle: "Backend Developer • Django Business App",
+      title: "CodeBlazors",
+      subtitle: "Club Member • Backend Developer",
       icon: <Users className="w-5 h-5" />,
       bullets: [
         "Learned and applied system design principles in real-world applications",
-        "Contributed to backend development using Django and Django REST Framework",
-        "Collaborated with 4+ developers in an Agile environment using Jira for task management",
+        "Contributed to backend development using MERN stack technologies",
+        "Collaborated with 4+ developers in an Agile environment using ClickUp for task management",
         "Participated in code reviews and pair programming sessions",
         "Attended technical workshops on containerization and microservices",
         "Networked with industry professionals and senior developers",
