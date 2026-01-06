@@ -199,7 +199,7 @@ export default function Projects() {
       ],
       links: {
         github: "https://github.com/MinhTam2773/AllBarber",
-        demo: "https://allbarber-demo.vercel.app",
+        demo: "https://allbarber.vercel.app/",
       },
       imageUrl: "/projects/allbarber.png",
     },
