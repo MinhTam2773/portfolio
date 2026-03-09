@@ -36,7 +36,7 @@ export const projects: Project[] = [
     ],
     role: "Full Stack Developer",
     timeline: "Aug 2025 - Present",
-    liveDemoUrl: "https://allbarber.vercel.app/",
+    liveDemoUrl: "https://allbarber-nine.vercel.app/",
     githubUrl: "https://github.com/MinhTam2773/AllBarber",
     isProtected: true,
   },
@@ -76,6 +76,41 @@ export const projects: Project[] = [
     timeline: "Feb 2026 - Present",
     liveDemoUrl: "",
     githubUrl: "https://github.com/edwinolaez/apas-pathway-tool",
+  },
+  {
+    slug: "vibemap",
+    title: "VibeMap",
+    shortDescription:
+      "An empathetic mapping experiment that captures how spaces feel—using emoji-based reporting and aggregated heatmaps to reveal community energy patterns.",
+    problemStatement: [
+      "Traditional maps show where things are, but never how spaces feel. People rely on word-of-mouth or personal experience to find places that match their energy, whether it's a quiet study spot or a vibrant social corner.",
+      "Existing reporting tools focus on incidents or problems, which can unfairly label neighborhoods or businesses. This negative framing discourages participation and can stigmatize areas based on isolated events.",
+      "Communities and urban planners lack tools to understand the emotional dynamics of public spaces in a way that is ethical, aggregated, and privacy-preserving.",
+    ],
+    solution: [
+      'VibeMap reimagines community mapping through a human-centered lens. Users simply tap a location on the map, select an emoji that represents its "vibe," and optionally add a short note—capturing subjective feelings in an intuitive, low-friction way.',
+      "Submissions are aggregated in real time using Firebase Firestore, then rendered as soft, pastel-colored heatmaps and emoji markers. A thresholding algorithm prevents single reports from dominating, ensuring patterns reflect collective sentiment rather than outliers.",
+      'The design deliberately avoids harsh colors or judgmental labels—instead using a gentle spectrum from "off-vibe" to "bright"—to frame data as emotional impressions rather than definitive statements. No individual submissions are exposed, preserving user privacy.',
+      "Built during a hackathon, the lightweight interface combines Next.js with Leaflet and OpenStreetMap for seamless map interaction, demonstrating how technology can help communities understand shared experiences without amplifying harm.",
+    ],
+    coverImage: "/projects/vibemap.png",
+    galleryImages: [
+      "/projects/vibemap.png",
+      "/projects/vibemap/image.png",
+    ],
+    techStack: [
+      "Next.js",
+      "TypeScript",
+      "Firebase Firestore",
+      "Leaflet.js",
+      "OpenStreetMap",
+      "Tailwind CSS",
+      "React",
+    ],
+    role: "Backend Developer",
+    timeline: "24 hour hackathon",
+    liveDemoUrl: "https://vibemap-app.vercel.app",
+    githubUrl: "https://github.com/HanxxFeli/VibeMap",
   },
   {
     slug: "b2b-ecommerce",
@@ -130,9 +165,7 @@ export const projects: Project[] = [
       "Engineered the backend with Express and MongoDB, including robust data models for users, audio posts, playlists, messages, and notifications. Used middleware for authentication and error handling.",
     ],
     coverImage: "/projects/sharie.png",
-    galleryImages: [
-      "/projects/sharie.png",
-    ],
+    galleryImages: ["/projects/sharie.png"],
     techStack: [
       "MongoDB",
       "Express.js",
