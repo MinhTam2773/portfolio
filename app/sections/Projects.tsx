@@ -16,6 +16,14 @@ import {
   Bell,
   CreditCard,
   Users,
+  Mail,
+  Workflow,
+  BrainCircuit,
+  Blocks,
+  ShieldCheck,
+  Navigation,
+  HardDrive,
+  AudioWaveform,
 } from "lucide-react";
 import {
   SiPostgresql,
@@ -33,8 +41,14 @@ import {
   SiSocketdotio,
   SiRedux,
   SiSupabase,
+  SiTwilio,
+  SiOpenai,
+  SiAxios,
+  SiReactrouter,
 } from "react-icons/si";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { projects } from "@/lib/projectsData";
 
 // Tech Stack Icons Mapping - UPDATED
 const techIcons: Record<string, React.ReactNode> = {
@@ -52,6 +66,9 @@ const techIcons: Record<string, React.ReactNode> = {
   JWT: <Shield className="w-5 h-5" />,
   Stripe: <CreditCard className="w-5 h-5" />,
   bcrypt: <Cpu className="w-5 h-5" />,
+  Postmark: <Mail className="w-5 h-5" />,
+  Twilio: <SiTwilio className="w-5 h-5" />,
+  Inngest: <Workflow className="w-5 h-5" />,
 
   // Frontend
   React: <SiReact className="w-5 h-5" />,
@@ -60,11 +77,21 @@ const techIcons: Record<string, React.ReactNode> = {
   "Tailwind CSS": <SiTailwindcss className="w-5 h-5" />,
   Redux: <SiRedux className="w-5 h-5" />,
   "Context API": <Server className="w-5 h-5" />,
+  Convex: <Database className="w-5 h-5" />,
+  OpenAI: <SiOpenai className="w-5 h-5" />,
+  RAG: <BrainCircuit className="w-5 h-5" />,
+  "shadcn/ui": <Blocks className="w-5 h-5" />,
+  Clerk: <ShieldCheck className="w-5 h-5" />,
 
   // Mobile
   "React Native": <SiReact className="w-5 h-5" />,
   Expo: <SiExpo className="w-5 h-5" />,
   Smartphone: <Smartphone className="w-5 h-5" />,
+  "React Navigation": <Navigation className="w-5 h-5" />,
+  Axios: <SiAxios className="w-5 h-5" />,
+  AsyncStorage: <HardDrive className="w-5 h-5" />,
+  "React Router": <SiReactrouter className="w-5 h-5" />,
+  "Wavesurfer.js": <AudioWaveform className="w-5 h-5" />,
 
   // Real-time (keeping for reference but not using for these projects)
   WebSockets: <Wifi className="w-5 h-5" />,
@@ -73,6 +100,7 @@ const techIcons: Record<string, React.ReactNode> = {
   // Features
   RLS: <Shield className="w-5 h-5" />,
   "REST API": <Globe className="w-5 h-5" />,
+  "REST API Integration": <Globe className="w-5 h-5" />,
   "Framer Motion": <SiFramer className="w-5 h-5" />,
   Vercel: <SiVercel className="w-5 h-5" />,
   "SMS Notifications": <Bell className="w-5 h-5" />,
@@ -98,20 +126,35 @@ const TechIcon = ({ tech }: { tech: string }) => {
 
 // Project Card Component
 const ProjectCard = ({
+  slug,
   title,
   description,
   tags,
-  links,
   imageUrl,
+  liveDemoUrl,
+  githubUrl,
+  isProtected,
 }: {
+  slug: string;
   title: string;
   description: string;
   tags: string[];
-  links: { github?: string; demo?: string };
   imageUrl: string;
+  liveDemoUrl?: string;
+  githubUrl?: string;
+  isProtected?: boolean;
 }) => {
+  const router = useRouter();
+
+  const handleCardClick = () => {
+    router.push(`/${slug}`);
+  };
+
   return (
-    <div className="group overflow-hidden rounded-xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 bg-background/50 backdrop-blur-sm">
+    <article
+      onClick={handleCardClick}
+      className="group h-full flex flex-col overflow-hidden rounded-xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:scale-[1.02] bg-background/50 backdrop-blur-sm cursor-pointer"
+    >
       {/* Project Image */}
       <div className="relative h-48 overflow-hidden bg-linear-to-br from-secondary to-background">
         {imageUrl ? (
@@ -126,141 +169,58 @@ const ProjectCard = ({
             <Code className="w-16 h-16 text-primary/30" />
           </div>
         )}
-        {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-linear-to-t from-background/80 via-background/20 to-transparent" />
       </div>
 
-      <div className="p-6">
-        {/* Title */}
+      <div className="p-6 flex-1 flex flex-col">
         <h3 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors mb-4">
           {title}
         </h3>
 
-        {/* Tech Stack Icons */}
         <div className="flex flex-wrap gap-2 mb-4">
           {tags.map((tag) => (
             <TechIcon key={tag} tech={tag} />
           ))}
         </div>
 
-        {/* Description */}
         <p className="text-muted-foreground mb-6 line-clamp-3">{description}</p>
 
-        {/* Links */}
-        <div className="flex items-center justify-between pt-4 border-t border-border/30">
-          <div className="flex items-center gap-4">
-            {title === "AllBarber" ? (
-              <span className="text-sm">Protected Code</span>
-            ) : (
+        <div className="mt-auto flex items-center justify-between pt-4 border-t border-border/30 text-sm text-muted-foreground">
+          <span className="flex items-center gap-3">
+            {liveDemoUrl && (
               <a
-                href={links.github}
+                href={liveDemoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group/link"
-              >
-                <Github className="w-4 h-4" />
-                <span className="font-medium">Code</span>
-              </a>
-            )}
-            {links.demo && (
-              <a
-                href={links.demo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group/link"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 text-white hover:text-primary transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />
-                <span className="font-medium">Live Demo</span>
+                Live Demo
               </a>
             )}
-          </div>
+            {!isProtected && githubUrl && (
+              <a
+                href={githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 text-white hover:text-primary transition-colors"
+              >
+                <Github className="w-4 h-4" />
+                GitHub
+              </a>
+            )}
+            {isProtected && <span>Protected Code</span>}
+          </span>
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 
 // Main Projects Component
 export default function Projects() {
-  const projects = [
-    {
-      title: "AllBarber",
-      description:
-        "A multi-tenant SaaS platform for barbershop management featuring Supabase for real-time data sync and PostgreSQL Row-Level Security (RLS) for data isolation. Implements role-based access control (RBAC) with Auth.js authentication, Stripe payments, and SMS notifications. Reduced customer wait times by 25% through optimized queue management.",
-      tags: [
-        "Supabase",
-        "PostgreSQL",
-        "RLS",
-        "Auth.js",
-        "Stripe",
-        "Next.js",
-        "TypeScript",
-        "SMS Notifications",
-      ],
-      links: {
-        github: "https://github.com/MinhTam2773/AllBarber",
-        demo: "https://allbarber.vercel.app/",
-      },
-      imageUrl: "/projects/allbarber.png",
-    },
-    {
-      title: "Sharie",
-      description:
-        "Audio-sharing social platform with secure JWT authentication, token rotation, and bcrypt password hashing. Built with a modern REST API architecture using Express.js middleware for protected endpoints. Features user profiles, audio uploads, and social interactions with a clean, responsive interface.",
-      tags: [
-        "Express.js",
-        "JWT",
-        "bcrypt",
-        "React",
-        "Node.js",
-        "Authentication",
-        "REST API",
-      ],
-      links: {
-        github: "https://github.com/MinhTam2773/Sharie",
-        demo: "https://sharie-audio.vercel.app",
-      },
-      imageUrl: "/projects/sharie.png",
-    },
-    {
-      title: "Ecommerce Mobile App",
-      description:
-        "React Native mobile e-commerce application with gesture-based navigation and REST API integration for real-time inventory and pricing. Manages complex global state across 15+ screens using Context API. Features product browsing, cart management, secure checkout flow, and smooth animations.",
-      tags: [
-        "React Native",
-        "Context API",
-        "REST API",
-        "Expo",
-        "TypeScript",
-        "Smartphone",
-      ],
-      links: {
-        github: "https://github.com/MinhTam2773/Ecommerce",
-        demo: "https://ecommerce-solution-fall-2025--ecommerce.expo.app/",
-      },
-      imageUrl: "/projects/ecommerce.png",
-    },
-    {
-      title: "Sound Wave",
-      description:
-        "Music streaming platform built with Supabase for real-time data synchronization and PostgreSQL for scalable data storage. Features user authentication, playlist management, audio streaming, and a responsive UI with smooth animations. Leverages Supabase's real-time capabilities for collaborative playlist updates.",
-      tags: [
-        "Supabase",
-        "PostgreSQL",
-        "Next.js",
-        "TypeScript",
-        "Tailwind CSS",
-        "Framer Motion",
-        "Authentication",
-      ],
-      links: {
-        github: "https://github.com/MinhTam2773/Sound-Wave",
-        demo: "https://sound-wave-opal.vercel.app",
-      },
-      imageUrl: "/projects/sound-wave.png",
-    },
-  ];
-
   return (
     <PageTransition>
       <div id="projects">
@@ -282,7 +242,17 @@ export default function Projects() {
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {projects.map((project) => (
-            <ProjectCard key={project.title} {...project} />
+            <ProjectCard
+              key={project.slug}
+              slug={project.slug}
+              title={project.title}
+              description={project.shortDescription}
+              tags={project.techStack}
+              imageUrl={project.coverImage}
+              liveDemoUrl={project.liveDemoUrl}
+              githubUrl={project.githubUrl}
+              isProtected={project.isProtected}
+            />
           ))}
         </div>
 

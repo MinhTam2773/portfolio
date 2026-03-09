@@ -5,7 +5,7 @@ export default function Education() {
   return (
     <PageTransition>
       <div id="education">
-        <header className="mb-12">
+        <header className="mb-6">
           <div className="flex items-center gap-3 mb-6">
             <Book className="text-primary w-8 h-8" />
             <h1 className="bg-linear-to-r from-white to-primary text-transparent bg-clip-text text-3xl md:text-4xl font-bold">
@@ -22,7 +22,7 @@ export default function Education() {
 
         <div className="gap-12">
           <div className="md:col-span-1">
-            <div className="glass-card p-6 rounded-xl border border-border/50 mb-8">
+            <div className="rounded-xl mb-8">
               <div className="space-y-6">
                 <div className="pb-6 border-b border-border/30">
                   <h3 className="font-bold text-lg">

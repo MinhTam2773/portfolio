@@ -6,12 +6,12 @@ import {
   SiReact, SiNextdotjs, SiTailwindcss, SiNodedotjs, SiExpress,
   SiDotnet, SiPostgresql, SiMongodb, SiMysql, SiGit,
   SiFigma, SiPrisma, SiSanity, SiSupabase,
-  SiVercel
+  SiVercel, SiTwilio, SiOpenai, SiAxios, SiReactrouter, SiStripe
 } from "react-icons/si";
 import { IoLogoFirebase } from "react-icons/io5";
 import { TbBrandCSharp } from "react-icons/tb";
 import { FaJava } from "react-icons/fa";
-import { Database, Server, Key, Cpu } from "lucide-react";
+import { Database, Server, Key, Cpu, Mail, Workflow, BrainCircuit, Blocks, ShieldCheck, Navigation, HardDrive, AudioWaveform } from "lucide-react";
 
 export default function TechArsenal() {
   const techIcons = [
@@ -30,6 +30,11 @@ export default function TechArsenal() {
     { Icon: SiNodedotjs, name: "Node.js", color: "#339933", shortName: "Node.js" },
     { Icon: SiExpress, name: "Express", color: "white", shortName: "Express" },
     { Icon: SiDotnet, name: ".NET", color: "#512BD4", shortName: ".NET" },
+    { Icon: SiOpenai, name: "OpenAI", color: "#10A37F", shortName: "OpenAI" },
+    { Icon: BrainCircuit, name: "RAG", color: "#22C55E", shortName: "RAG" },
+    { Icon: Database, name: "Convex", color: "#F59E0B", shortName: "Convex" },
+    { Icon: Blocks, name: "shadcn/ui", color: "white", shortName: "shadcn/ui" },
+    { Icon: ShieldCheck, name: "Clerk", color: "#6C47FF", shortName: "Clerk" },
     
     // Row 3: Databases & Tools
     { Icon: SiPostgresql, name: "PostgreSQL", color: "#336791", shortName: "PostgreSQL" },
@@ -39,6 +44,15 @@ export default function TechArsenal() {
     { Icon: SiSanity, name: "Sanity", color: "#F03E2F", shortName: "Sanity" },
     { Icon: SiSupabase, name: "Supabase", color: "#3ECF8E", shortName: "Supabase" },
     { Icon: IoLogoFirebase, name: "Firebase", color: "#FFCA28", shortName: "Firebase" },
+    { Icon: SiStripe, name: "Stripe", color: "#635BFF", shortName: "Stripe" },
+    { Icon: SiTwilio, name: "Twilio", color: "#F22F46", shortName: "Twilio" },
+    { Icon: Mail, name: "Postmark", color: "#2C6ECB", shortName: "Postmark" },
+    { Icon: Workflow, name: "Inngest", color: "#6366F1", shortName: "Inngest" },
+    { Icon: Navigation, name: "React Navigation", color: "#6B52AE", shortName: "React Nav" },
+    { Icon: SiReactrouter, name: "React Router", color: "#CA4245", shortName: "React Router" },
+    { Icon: SiAxios, name: "Axios", color: "#5A29E4", shortName: "Axios" },
+    { Icon: HardDrive, name: "AsyncStorage", color: "#9CA3AF", shortName: "AsyncStorage" },
+    { Icon: AudioWaveform, name: "Wavesurfer.js", color: "#38BDF8", shortName: "Wavesurfer" },
     { Icon: Key, name: "JWT", color: "white", shortName: "JWT" },
     { Icon: Server, name: "Auth.js", color: "white", shortName: "Auth.js" },
     { Icon: SiGit, name: "Git", color: "#F05032", shortName: "Git" },

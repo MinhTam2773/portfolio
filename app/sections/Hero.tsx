@@ -1,12 +1,32 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Mail, Phone } from "lucide-react";
+import { Eye, Heart, MapPin, Mail, Phone } from "lucide-react";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
 import Image from "next/image";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const Hero = () => {
+  const stats = useQuery(api.stats.get);
+  const incrementView = useMutation(api.stats.incrementView);
+  const incrementLike = useMutation(api.stats.incrementLike);
+
+  useEffect(() => {
+    const viewSessionKey = "portfolio:view-counted";
+
+    if (sessionStorage.getItem(viewSessionKey)) {
+      return;
+    }
+
+    sessionStorage.setItem(viewSessionKey, "1");
+    void incrementView();
+  }, [incrementView]);
+
+  const views = stats?.views ?? 0;
+  const likes = stats?.likes ?? 0;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-8 items-center mt-12">
       {/* Left Column - Text Content */}
@@ -30,7 +50,10 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          I&apos;m a Software Development student at SAIT and Tech Lead on a production-scale SaaS capstone. Experienced in building secure, scalable full-stack applications with modern web and mobile technologies.
+          I&apos;m a Software Development student at SAIT with{" "}
+          <span className="text-white font-bold">4.0 GPA</span> and Tech Lead on
+          a production-scale SaaS capstone. Experienced in building secure,
+          scalable full-stack applications with modern web and AI integration.
         </motion.p>
 
         {/* Contact Info */}
@@ -122,17 +145,24 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
+          <button
+            type="button"
+            onClick={() => void incrementLike()}
+            className="text-center px-4 py-2 rounded-lg bg-secondary/40 hover:bg-red-500/25 transition-colors"
+            aria-label="Like this portfolio"
+          >
+            <p className="font-mono text-2xl font-bold text-red-500 inline-flex items-center gap-1">
+              <Heart className="w-5 h-5 fill-current" />
+              {likes}
+            </p>
+            <p className="text-xs text-red-300">Likes</p>
+          </button>
           <div className="text-center px-4 py-2 rounded-lg bg-secondary/40 backdrop-blur-sm">
-            <p className="font-mono text-2xl font-bold text-primary">4.0</p>
-            <p className="text-xs text-muted-foreground">GPA</p>
-          </div>
-          <div className="text-center px-4 py-2 rounded-lg bg-secondary/40 backdrop-blur-sm">
-            <p className="font-mono text-2xl font-bold text-primary">3+</p>
-            <p className="text-xs text-muted-foreground">Projects</p>
-          </div>
-          <div className="text-center px-4 py-2 rounded-lg bg-secondary/40 backdrop-blur-sm">
-            <p className="font-mono text-2xl font-bold text-primary">100%</p>
-            <p className="text-xs text-muted-foreground">Success</p>
+            <p className="font-mono text-2xl font-bold text-primary inline-flex items-center gap-1">
+              <Eye className="w-5 h-5" />
+              {views}
+            </p>
+            <p className="text-xs text-muted-foreground">Views</p>
           </div>
         </motion.div>
       </motion.div>

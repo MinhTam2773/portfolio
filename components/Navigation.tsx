@@ -28,7 +28,7 @@ export function Navigation() {
             <Terminal className="w-6 h-6 text-primary" />
           </div>
           <span className="font-display font-bold text-xl tracking-tight">
-            minhtam<span className="text-primary">.dev</span>
+            minhtam
           </span>
         </Link>
 
@@ -44,7 +44,7 @@ export function Navigation() {
             </Link>
           ))}
           <a 
-            href="/resume.pdf" 
+            href="/Resume_Minh_Tam_Nguyen.pdf" 
             target="_blank" 
             rel="noopener noreferrer"
             className="px-4 py-2 rounded border border-primary text-primary font-mono text-sm hover:bg-primary/10 transition-colors"

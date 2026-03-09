@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import ConvexClientProvider from "@/components/ConvexClientProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 const outfit = Outfit({ subsets: ["latin"] });
@@ -22,9 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navigation/>
-        {children}
-        <Footer />
+        <ConvexClientProvider>
+          <Navigation />
+          {children}
+          <Footer />
+        </ConvexClientProvider>
       </body>
     </html>
   );
