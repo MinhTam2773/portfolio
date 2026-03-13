@@ -174,7 +174,7 @@ const ProjectCard = ({
 
       <div className="p-6 flex-1 flex flex-col">
         <h3 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors mb-4">
-          {title}
+          {title} {title === "VibeMap" && <span className="text-sm font-mono text-primary/80">2nd place Hackthon</span>}
         </h3>
 
         <div className="flex flex-wrap gap-2 mb-4">
