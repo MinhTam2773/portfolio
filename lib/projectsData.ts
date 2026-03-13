@@ -34,7 +34,7 @@ export const projects: Project[] = [
       "Twilio",
       "Inngest",
     ],
-    role: "Full Stack Developer",
+    role: "Tech Lead",
     timeline: "Aug 2025 - Present",
     liveDemoUrl: "https://allbarber-nine.vercel.app/",
     githubUrl: "https://github.com/MinhTam2773/AllBarber",
