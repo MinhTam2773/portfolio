@@ -62,24 +62,6 @@ export default function Education() {
                     ))}
                   </div>
                 </div>
-
-                <div>
-                  <h4 className="font-bold mb-2">Certifications</h4>
-                  <ul className="space-y-2 text-sm">
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      Google Cloud Fundamentals (In Progress)
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      AWS Certified Cloud Practitioner
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      Microsoft Azure Fundamentals
-                    </li>
-                  </ul>
-                </div>
               </div>
             </div>
           </div>
