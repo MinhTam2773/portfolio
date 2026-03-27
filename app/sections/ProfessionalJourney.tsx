@@ -9,17 +9,27 @@ export default function ProfessionalJourney() {
     {
       id: "capstone",
       title: "Capstone Project",
-      subtitle: "Tech Lead",
+      subtitle: "Fullstack Developer",
       icon: <GitPullRequest className="w-5 h-5" />,
       bullets: [
-        "Led a team of 6 developers in building a production-ready SaaS platform using Agile methodologies",
-        "Reviewed code submissions and resolved technical blockers to maintain project quality",
-        "Designed and implemented UI/UX solutions according to client's satisfaction",
-        "Managed API integrations and ensured smooth communication across the development team",
-        "Mentored 3 teammates through code reviews, pair programming, and technical guidance",
-        "Coordinated pull request reviews and maintained high code quality standards",
-        "Implemented CI/CD pipelines for automated testing and deployment",
-        "Documented technical specifications and architectural decisions",
+        "Directed a team of 6 developers to design and build a production-ready multi-tenant SaaS platform from scratch, translating business needs into functional implementations using Agile methodologies.",
+        "Mentored 3 team members through code reviews, pair programming, and technical guidance, improving team delivery speed by 30%.",
+        "Designed a multi-layer testing strategy with Vitest and Playwright, reducing critical system bugs by 40% while sustaining 99.8% uptime during high-load simulations of 1,000+ users.",
+        "Architected a 34-table PostgreSQL database with Row Level Security (RLS) and role-based access control (Owner, Manager, Barber, Front Desk), enabling secure multi-tenancy for 500+ simulated barbershops.",
+        "Built automated CI/CD pipelines with OpenTelemetry for system monitoring and Inngest for robust retry logic, reducing manual intervention significantly.",
+        "Engineered a real-time queue engine with ETA predictions and SMS notifications via Twilio, reducing customer wait times by 20–25%.",
+      ],
+    },
+    {
+      id: "codeblazer",
+      title: "SAIT Codeblazer",
+      subtitle: "Backend Developer / Club Member",
+      icon: <GitPullRequest className="w-5 h-5" />,
+      bullets: [
+        "Contributed to the backend development of a full-stack inventory management web application for a real client (Allenty) alongside a team of 4 developers during bi-weekly Agile sprints.",
+        "Strengthened system robustness by implementing strict input validation, data sanitization, and comprehensive try/except error handling.",
+        "Improved depreciation calculation accuracy by introducing consistent date handling and refactoring core functions to accept optional historical/future date parameters.",
+        "Participated in system design discussions, architectural planning, and workshops on microservices and containerization.",
       ],
     },
   ];
@@ -71,6 +81,16 @@ export default function ProfessionalJourney() {
 
                     <span className="text-right flex-1 py-1 text-muted-foreground text-xs font-bold rounded-full">
                       2025 - Present
+                    </span>
+                  </div>
+                ) : exp.id === "codeblazer" ? (
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
+                      Club Member
+                    </span>
+
+                    <span className="text-right flex-1 py-1 text-muted-foreground text-xs font-bold rounded-full">
+                      Feb 2025 - July 2025
                     </span>
                   </div>
                 ) : (
