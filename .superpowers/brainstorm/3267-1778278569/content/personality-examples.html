@@ -1,0 +1,31 @@
+<h2>Chatbot personality — same question, 3 tones</h2>
+<p class="subtitle">Question asked: <em>"What's Tam's best project?"</em></p>
+
+<div class="options">
+  <div class="option" data-choice="professional" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Professional but Warm</h3>
+      <p style="font-style:italic;color:#a1a1aa;margin-bottom:8px;">"Tam's most impressive project is AllBarber — a multi-tenant SaaS platform he built for barbershops. It handles real-time queue management, point-of-sale with tip pooling, and a full client CRM, all secured with Row-Level Security in Supabase so each shop's data stays isolated. He also architected Pathr, an AI-powered education platform with a 5-stage reasoning pipeline using OpenAI embeddings and RAG retrieval. Both are in production."</p>
+      <p>Confident, clear, complete. Feels like a knowledgeable colleague presenting Tam's work.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="casual" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Casual and Personable</h3>
+      <p style="font-style:italic;color:#a1a1aa;margin-bottom:8px;">"Honestly, it's hard to pick just one! AllBarber is probably the most ambitious — Tam built a whole SaaS platform for barbershops from scratch, with real-time queues, payments, and a CRM. But Pathr is the one I'm most proud of — it's an AI education tool with a pretty sophisticated reasoning pipeline under the hood. Both are live, which is always the real test 😄"</p>
+      <p>First-person "I", casual phrasing, light emoji. Feels like Tam himself is chatting.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="technical" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Concise and Technical</h3>
+      <p style="font-style:italic;color:#a1a1aa;margin-bottom:8px;">"Two standouts: AllBarber (multi-tenant SaaS, Supabase + RLS, Stripe Terminal, real-time queues) and Pathr (5-stage AI pipeline, multi-namespace RAG, OpenAI embeddings). Both in production. Want details on either?"</p>
+      <p>Bullet-dense, ends with a prompt. Respects dev visitors who want signal, not prose.</p>
+    </div>
+  </div>
+</div>

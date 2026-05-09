@@ -1,0 +1,85 @@
+<h2>How should the chat widget look?</h2>
+<p class="subtitle">Pick the visual style that fits your portfolio best</p>
+
+<div class="cards">
+  <div class="card" data-choice="minimal" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f0f0f;padding:16px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;min-height:200px;position:relative;">
+      <!-- Closed state: just icon -->
+      <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(99,102,241,0.4);cursor:pointer;">
+        <span style="color:white;font-size:22px;">✦</span>
+      </div>
+      <!-- Open state mockup -->
+      <div style="position:absolute;bottom:70px;right:0;width:260px;background:#18181b;border:1px solid #27272a;border-radius:16px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+        <div style="padding:14px 16px;border-bottom:1px solid #27272a;display:flex;align-items:center;gap:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#6366f1;"></div>
+          <span style="color:#e4e4e7;font-size:13px;font-weight:600;">Ask Tam anything</span>
+        </div>
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px;">
+          <div style="align-self:flex-start;background:#27272a;border-radius:12px 12px 12px 4px;padding:8px 12px;color:#a1a1aa;font-size:12px;max-width:80%;">Hey! What are you working on lately?</div>
+          <div style="align-self:flex-end;background:#6366f1;border-radius:12px 12px 4px 12px;padding:8px 12px;color:white;font-size:12px;max-width:80%;">Right now I'm building AI products at SAIT...</div>
+        </div>
+        <div style="padding:10px 12px;border-top:1px solid #27272a;display:flex;gap:8px;">
+          <div style="flex:1;background:#27272a;border-radius:8px;padding:8px 12px;color:#71717a;font-size:12px;">Type a message...</div>
+          <div style="width:32px;height:32px;border-radius:8px;background:#6366f1;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;">↑</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Minimal Dark</h3>
+      <p>Small glowing icon, dark glassmorphism panel, purple accent. Matches your existing dark portfolio theme perfectly.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="terminal" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f0f0f;padding:16px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;min-height:200px;position:relative;">
+      <div style="width:52px;height:52px;border-radius:12px;background:#18181b;border:1px solid #27272a;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,0.4);cursor:pointer;">
+        <span style="color:#22c55e;font-family:monospace;font-size:16px;font-weight:bold;">&gt;_</span>
+      </div>
+      <div style="position:absolute;bottom:70px;right:0;width:270px;background:#0d0d0d;border:1px solid #22c55e30;border-radius:8px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.7);">
+        <div style="padding:8px 14px;background:#111;border-bottom:1px solid #22c55e20;display:flex;align-items:center;gap:6px;">
+          <div style="display:flex;gap:4px;"><div style="width:8px;height:8px;border-radius:50%;background:#ff5f57;"></div><div style="width:8px;height:8px;border-radius:50%;background:#febc2e;"></div><div style="width:8px;height:8px;border-radius:50%;background:#28c840;"></div></div>
+          <span style="color:#4ade80;font-family:monospace;font-size:11px;margin-left:4px;">tam@portfolio ~ chat</span>
+        </div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:6px;font-family:monospace;">
+          <div style="color:#4ade80;font-size:11px;"><span style="color:#6366f1;">AI:</span> Hello! I'm Tam's assistant. How can I help?</div>
+          <div style="color:#a1a1aa;font-size:11px;"><span style="color:#22c55e;">you:</span> Tell me about your projects</div>
+          <div style="color:#4ade80;font-size:11px;"><span style="color:#6366f1;">AI:</span> Sure! Tam built AllBarber, a multi-tenant SaaS...</div>
+        </div>
+        <div style="padding:8px 12px;border-top:1px solid #22c55e20;display:flex;gap:6px;">
+          <span style="color:#22c55e;font-family:monospace;font-size:12px;">$ </span>
+          <div style="flex:1;color:#a1a1aa;font-family:monospace;font-size:12px;">ask anything...</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Terminal / Dev Theme</h3>
+      <p>Green-on-black terminal aesthetic with macOS window chrome. Leans into your developer identity. JetBrains Mono font.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="card" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#0f0f0f;padding:16px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;min-height:200px;position:relative;">
+      <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#ec4899);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(139,92,246,0.5);cursor:pointer;animation:pulse 2s infinite;">
+        <span style="color:white;font-size:20px;">💬</span>
+      </div>
+      <div style="position:absolute;bottom:70px;right:0;width:260px;background:rgba(15,15,15,0.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;box-shadow:0 24px 48px rgba(0,0,0,0.6);">
+        <div style="padding:16px;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(139,92,246,0.1));border-bottom:1px solid rgba(255,255,255,0.06);">
+          <div style="color:#e4e4e7;font-size:14px;font-weight:700;">Chat with Tam's AI 🤖</div>
+          <div style="color:#71717a;font-size:11px;margin-top:2px;">Powered by Gemini</div>
+        </div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:8px;">
+          <div style="align-self:flex-start;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.2);border-radius:0 12px 12px 12px;padding:8px 12px;color:#a1a1aa;font-size:11px;">Hi there! Ask me anything about Tam 👋</div>
+          <div style="align-self:flex-end;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:12px 0 12px 12px;padding:8px 12px;color:white;font-size:11px;">What's your best project?</div>
+        </div>
+        <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,0.06);display:flex;gap:8px;">
+          <div style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:7px 12px;color:#52525b;font-size:11px;">Message...</div>
+          <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:white;font-size:13px;">↑</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Glassmorphism Card</h3>
+      <p>Frosted glass with gradient accents and subtle borders. Feels modern and polished — more "product" than "dev tool".</p>
+    </div>
+  </div>
+</div>

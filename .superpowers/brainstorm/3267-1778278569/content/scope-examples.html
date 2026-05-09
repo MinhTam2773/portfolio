@@ -1,0 +1,31 @@
+<h2>What can the chatbot answer?</h2>
+<p class="subtitle">Question asked: <em>"Can you explain what RAG means?"</em> (an off-topic general question)</p>
+
+<div class="options">
+  <div class="option" data-choice="portfolio-only" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Portfolio-focused only</h3>
+      <p style="font-style:italic;color:#a1a1aa;margin-bottom:8px;">"I'm here specifically to answer questions about Tam — his projects, skills, experience, and background. For general tech topics, a quick Google search would serve you better! Is there something about Tam's work I can help with?"</p>
+      <p>Stays strictly on-topic. Redirects gracefully. Keeps the chatbot's purpose laser-focused.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="general-fallback" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Portfolio-first, general fallback</h3>
+      <p style="font-style:italic;color:#a1a1aa;margin-bottom:8px;">"RAG (Retrieval-Augmented Generation) is a technique where an AI retrieves relevant documents before generating a response — rather than relying purely on its training data. Interestingly, Tam used a multi-namespace RAG architecture in Pathr, his education platform, to retrieve program data across Alberta institutions. Want to know more about that project?"</p>
+      <p>Answers the question, then ties it back to Tam's work. Keeps visitors engaged and showcases expertise naturally.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="canned" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Strictly gated</h3>
+      <p style="font-style:italic;color:#a1a1aa;margin-bottom:8px;">"I can only answer questions about Tam's portfolio. Try asking about his projects, tech stack, education, or how to contact him!"</p>
+      <p>Hard stop. No flexibility. Simple to implement but can feel robotic when a visitor asks something reasonable.</p>
+    </div>
+  </div>
+</div>

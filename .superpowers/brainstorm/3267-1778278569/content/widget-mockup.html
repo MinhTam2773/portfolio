@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Widget Mockup</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #09090b;
+    color: #e4e4e7;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Fake portfolio background */
+  .fake-page {
+    position: fixed; inset: 0;
+    background: #09090b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    opacity: 0.3;
+    pointer-events: none;
+    user-select: none;
+  }
+  .fake-nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 56px; background: rgba(9,9,11,0.9);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; padding: 0 32px; gap: 32px;
+  }
+  .fake-nav span { color: #6366f1; font-weight: 700; font-size: 15px; }
+  .fake-nav a { color: #71717a; font-size: 13px; }
+  .fake-hero { text-align: center; }
+  .fake-hero h1 { font-size: 48px; font-weight: 800; color: #e4e4e7; margin-bottom: 12px; }
+  .fake-hero p { color: #71717a; font-size: 16px; }
+
+  /* === CHAT WIDGET === */
+  .chat-widget {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
+  /* Panel */
+  .chat-panel {
+    width: 320px;
+    height: 480px;
+    background: rgba(9,9,11,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(99,102,241,0.1);
+    transform-origin: bottom right;
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
+  }
+  .chat-panel.hidden {
+    transform: scale(0.85) translateY(8px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Header */
+  .chat-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .chat-header-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #6366f1;
+    box-shadow: 0 0 6px rgba(99,102,241,0.8);
+    flex-shrink: 0;
+  }
+  .chat-header-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e4e4e7;
+    flex: 1;
+  }
+  .chat-header-sub {
+    font-size: 11px;
+    color: #52525b;
+  }
+  .chat-close {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    color: #52525b;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+  .chat-close:hover { background: rgba(255,255,255,0.06); color: #a1a1aa; }
+
+  /* Messages */
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
+  }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-track { background: transparent; }
+  .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+  .msg {
+    max-width: 85%;
+    padding: 9px 13px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    word-break: break-word;
+    animation: msgIn 0.2s ease;
+  }
+  @keyframes msgIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .msg.assistant {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 4px 14px 14px 14px;
+    color: #a1a1aa;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: #6366f1;
+    border-radius: 14px 14px 4px 14px;
+    color: #fff;
+  }
+  .msg.error {
+    align-self: flex-start;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.2);
+    color: #f87171;
+    font-size: 12px;
+  }
+
+  /* Typing dots */
+  .typing-dots {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 4px 14px 14px 14px;
+    padding: 12px 16px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  .typing-dots span {
+    width: 6px; height: 6px;
+    background: #52525b;
+    border-radius: 50%;
+    animation: dot 1.2s infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes dot {
+    0%, 80%, 100% { transform: scale(1); opacity: 0.4; }
+    40% { transform: scale(1.2); opacity: 1; }
+  }
+
+  /* Rate limit message */
+  .rate-limit-msg {
+    font-size: 11px;
+    color: #f87171;
+    text-align: center;
+    padding: 4px 8px;
+    display: none;
+  }
+  .rate-limit-msg.visible { display: block; }
+
+  /* Input */
+  .chat-input-row {
+    padding: 10px 12px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .chat-input {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 8px 12px;
+    color: #e4e4e7;
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.15s;
+    resize: none;
+    height: 36px;
+    line-height: 1.4;
+  }
+  .chat-input:focus { border-color: rgba(99,102,241,0.5); }
+  .chat-input::placeholder { color: #3f3f46; }
+  .chat-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .chat-send {
+    width: 34px; height: 34px;
+    border-radius: 9px;
+    background: #6366f1;
+    border: none;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+    flex-shrink: 0;
+  }
+  .chat-send:hover { background: #4f46e5; }
+  .chat-send:active { transform: scale(0.94); }
+  .chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Toggle button */
+  .chat-toggle {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 20px rgba(99,102,241,0.45), 0 0 0 1px rgba(99,102,241,0.2);
+    transition: transform 0.15s, box-shadow 0.15s;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .chat-toggle:hover {
+    transform: scale(1.07);
+    box-shadow: 0 6px 28px rgba(99,102,241,0.6), 0 0 0 1px rgba(99,102,241,0.3);
+  }
+  .chat-toggle svg { width: 22px; height: 22px; color: white; transition: transform 0.2s; }
+  .chat-toggle.open svg { transform: rotate(45deg); }
+
+  /* Unread badge */
+  .unread-badge {
+    position: absolute;
+    top: 0; right: 0;
+    width: 14px; height: 14px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 2px solid #09090b;
+    display: none;
+  }
+  .unread-badge.visible { display: block; }
+
+  /* Demo controls */
+  .demo-bar {
+    position: fixed;
+    top: 64px; left: 50%; transform: translateX(-50%);
+    background: rgba(24,24,27,0.95);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 10px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    z-index: 2000;
+    font-size: 12px;
+    color: #71717a;
+  }
+  .demo-btn {
+    padding: 5px 12px;
+    border-radius: 7px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: #a1a1aa;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .demo-btn:hover { background: rgba(255,255,255,0.1); color: #e4e4e7; }
+</style>
+</head>
+<body>
+
+<!-- Fake portfolio page background -->
+<div class="fake-page">
+  <div class="fake-nav">
+    <span>Tam</span>
+    <a href="#">Home</a><a href="#">Projects</a><a href="#">Experience</a><a href="#">Tech</a>
+  </div>
+  <div class="fake-hero">
+    <h1>Minh Tam Nguyen</h1>
+    <p>Software Developer · Calgary, AB</p>
+  </div>
+</div>
+
+<!-- Demo controls -->
+<div class="demo-bar">
+  <span>Interactive mockup →</span>
+  <button class="demo-btn" onclick="simulateUserMsg('Tell me about your projects')">Ask about projects</button>
+  <button class="demo-btn" onclick="simulateUserMsg('What is your GPA?')">Ask about GPA</button>
+  <button class="demo-btn" onclick="simulateRateLimit()">Trigger rate limit</button>
+  <button class="demo-btn" onclick="clearChat()">Clear chat</button>
+</div>
+
+<!-- Chat Widget -->
+<div class="chat-widget">
+  <!-- Panel -->
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-header">
+      <div class="chat-header-dot"></div>
+      <div style="flex:1">
+        <div class="chat-header-title">Tam's AI Assistant</div>
+        <div class="chat-header-sub">Powered by Gemini</div>
+      </div>
+      <button class="chat-close" onclick="toggleChat()" title="Close">✕</button>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="rate-limit-msg" id="rateLimitMsg">⚠ Too many messages. Please wait a moment.</div>
+
+    <div class="chat-input-row">
+      <input class="chat-input" id="chatInput" placeholder="Ask me anything about Tam…" onkeydown="handleKey(event)" />
+      <button class="chat-send" id="sendBtn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Toggle button -->
+  <button class="chat-toggle" id="chatToggle" onclick="toggleChat()">
+    <div class="unread-badge" id="unreadBadge"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10a9.96 9.96 0 0 1-5.06-1.37L2 22l1.37-4.94A9.96 9.96 0 0 1 2 12 10 10 0 0 1 12 2z"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+  const OPENER = "Hi! I can tell you about Tam's projects, tech stack, experience, or how to reach him. What are you curious about?";
+  const MOCK_RESPONSES = {
+    'projects': "Tam has built two standout projects in production. <strong>AllBarber</strong> is a multi-tenant SaaS for barbershops with real-time queue management, Stripe Terminal POS, and a full client CRM — secured with Supabase Row-Level Security. <strong>Pathr</strong> is an AI-powered education platform with a 5-stage reasoning pipeline (Understand → Retrieve → Reason → Validate → Present) using OpenAI embeddings and multi-namespace RAG retrieval across Alberta institutions.",
+    'gpa': "Tam has a cumulative GPA of <strong>4.00 / 4.00</strong> at SAIT's Software Development program — with 45 completed credits and 180 Quality Points. He's received A+ in Database Design, Software Analysis, UX Design, and several other courses.",
+    'default': "That's a great question! Tam is a full-stack developer based in Calgary, AB, currently completing his Software Development diploma at SAIT (expected April 2026). He specialises in TypeScript, Next.js, Supabase, and AI integrations. Want to know more about a specific project or his tech stack?"
+  };
+
+  let isOpen = true;
+  let isLoading = false;
+
+  function addMsg(role, html) {
+    const container = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = `msg ${role}`;
+    div.innerHTML = html;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    return div;
+  }
+
+  function showTyping() {
+    const container = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'typing-dots';
+    div.id = 'typingDots';
+    div.innerHTML = '<span></span><span></span><span></span>';
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function removeTyping() {
+    const dots = document.getElementById('typingDots');
+    if (dots) dots.remove();
+  }
+
+  function setLoading(val) {
+    isLoading = val;
+    document.getElementById('chatInput').disabled = val;
+    document.getElementById('sendBtn').disabled = val;
+  }
+
+  function toggleChat() {
+    isOpen = !isOpen;
+    const panel = document.getElementById('chatPanel');
+    const toggle = document.getElementById('chatToggle');
+    const badge = document.getElementById('unreadBadge');
+    panel.classList.toggle('hidden', !isOpen);
+    toggle.classList.toggle('open', isOpen);
+    if (isOpen) badge.classList.remove('visible');
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+
+  function sendMessage() {
+    if (isLoading) return;
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addMsg('user', text);
+    simulateResponse(text);
+  }
+
+  function simulateUserMsg(text) {
+    if (!isOpen) toggleChat();
+    setTimeout(() => {
+      addMsg('user', text);
+      simulateResponse(text);
+    }, 200);
+  }
+
+  function simulateResponse(text) {
+    setLoading(true);
+    showTyping();
+    const lower = text.toLowerCase();
+    const key = lower.includes('project') ? 'projects' : lower.includes('gpa') || lower.includes('grade') ? 'gpa' : 'default';
+    setTimeout(() => {
+      removeTyping();
+      addMsg('assistant', MOCK_RESPONSES[key]);
+      setLoading(false);
+    }, 900 + Math.random() * 400);
+  }
+
+  function simulateRateLimit() {
+    if (!isOpen) toggleChat();
+    const msg = document.getElementById('rateLimitMsg');
+    msg.classList.add('visible');
+    document.getElementById('chatInput').disabled = true;
+    document.getElementById('sendBtn').disabled = true;
+    setTimeout(() => {
+      msg.classList.remove('visible');
+      document.getElementById('chatInput').disabled = false;
+      document.getElementById('sendBtn').disabled = false;
+    }, 3000);
+  }
+
+  function clearChat() {
+    document.getElementById('chatMessages').innerHTML = '';
+    setTimeout(() => addMsg('assistant', OPENER), 300);
+  }
+
+  // Auto-open on load with opener message
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      addMsg('assistant', OPENER);
+    }, 600);
+  });
+</script>
+</body>
+</html>
