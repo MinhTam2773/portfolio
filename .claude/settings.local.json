@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_context-mode_context-mode__ctx_batch_execute",
+      "Skill(gsd:fast)",
+      "Bash(C:/Users/User/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.6/skills/brainstorming/scripts/start-server.sh:*)",
+      "mcp__plugin_context-mode_context-mode__ctx_execute",
+      "mcp__plugin_context-mode_context-mode__ctx_execute_file",
+      "Bash(npm run:*)",
+      "Bash(python:*)",
+      "mcp__playwright__browser_navigate",
+      "Bash(npm install:*)",
+      "mcp__playwright__browser_tabs",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_console_messages",
+      "Bash(printf '\\\\n--- dist ---\\\\n')",
+      "Bash(git:*)",
+      "mcp__plugin_context-mode_context-mode__ctx_search"
+    ]
+  }
+}

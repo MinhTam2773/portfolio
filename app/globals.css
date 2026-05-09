@@ -2,34 +2,38 @@
 @import "tailwindcss";
 
 :root {
-  /* Dark Navy Theme - Replit's color scheme */
-  --background: 222 47% 11%;      /* #0f172a - Slate 900 base */
-  --foreground: 210 40% 98%;      /* Slate 50 */
-  
-  --primary: 217 91% 60%;         /* Blue 500 - Vibrant primary */
-  --primary-foreground: 222 47% 11%;
-  
-  --secondary: 215 25% 27%;       /* Slate 800 - Card backgrounds */
+  /* ── Blue-Cyan Palette ── */
+  --background: 230 25% 7%;           /* Deep space black */
+  --foreground: 210 40% 98%;          /* Near-white */
+
+  --primary: 220 90% 60%;             /* Bright blue */
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 230 20% 14%;           /* Dark card surface */
   --secondary-foreground: 210 40% 98%;
-  
-  --muted: 215 25% 27%;
-  --muted-foreground: 215 20% 65%; /* Slate 400 */
-  
-  --accent: 173 80% 40%;          /* Teal/Cyan - Code accents */
-  --accent-foreground: 210 40% 98%;
-  
+
+  --muted: 230 18% 18%;
+  --muted-foreground: 230 15% 55%;
+
+  --accent: 185 80% 50%;              /* Cyan accent */
+  --accent-foreground: 230 25% 7%;
+
   --destructive: 0 84% 60%;
   --destructive-foreground: 210 40% 98%;
 
-  --border: 215 25% 27%;
-  --input: 215 25% 27%;
-  --ring: 217 91% 60%;
-  
-  --radius: 0.5rem;
+  --border: 230 18% 18%;
+  --input: 230 18% 18%;
+  --ring: 260 85% 65%;
+
+  --radius: 0.75rem;
+
+  /* Gradient tokens */
+  --gradient-start: 260 85% 65%;      /* Violet */
+  --gradient-mid: 220 90% 60%;        /* Blue */
+  --gradient-end: 185 80% 50%;        /* Cyan */
 }
 
 @theme inline {
-  /* Color mappings from Replit theme */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-primary: hsl(var(--primary));
@@ -45,25 +49,29 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-  
-  /* Border radius */
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
-  
-  /* Font families */
+
   --font-sans: 'Inter', var(--font-geist-sans), sans-serif;
   --font-heading: 'Outfit', sans-serif;
   --font-mono: 'JetBrains Mono', var(--font-geist-mono), monospace;
 }
 
-/* Base styles */
+/* ─── Smooth scroll ─── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ─── Base body ─── */
 body {
   background: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 ::selection {
@@ -71,11 +79,203 @@ body {
   color: hsl(var(--primary-foreground));
 }
 
-/* Component classes (copied from Replit) */
+/* ─── Animated Mesh Background ─── */
+.mesh-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.mesh-bg::before,
+.mesh-bg::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  animation: float-orb 20s ease-in-out infinite;
+}
+
+.mesh-bg::before {
+  width: 600px;
+  height: 600px;
+  background: hsl(var(--gradient-start));
+  top: -10%;
+  left: -5%;
+  animation-delay: 0s;
+}
+
+.mesh-bg::after {
+  width: 500px;
+  height: 500px;
+  background: hsl(var(--gradient-end));
+  bottom: -10%;
+  right: -5%;
+  animation-delay: -10s;
+}
+
+.mesh-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.1;
+  animation: float-orb 25s ease-in-out infinite;
+}
+
+.mesh-orb-1 {
+  width: 400px;
+  height: 400px;
+  background: hsl(var(--gradient-mid));
+  top: 40%;
+  left: 50%;
+  animation-delay: -5s;
+}
+
+.mesh-orb-2 {
+  width: 350px;
+  height: 350px;
+  background: hsl(var(--accent));
+  top: 60%;
+  right: 20%;
+  animation-delay: -15s;
+}
+
+@keyframes float-orb {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -40px) scale(1.05); }
+  50% { transform: translate(-20px, 20px) scale(0.95); }
+  75% { transform: translate(40px, 30px) scale(1.02); }
+}
+
+/* ─── Floating particles ─── */
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: hsl(var(--primary) / 0.4);
+  animation: float-particle linear infinite;
+  pointer-events: none;
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(100vh) translateX(0);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% {
+    transform: translateY(-10vh) translateX(50px);
+    opacity: 0;
+  }
+}
+
+/* ─── Container ─── */
 .container-custom {
   @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
+/* ─── Glass Card ─── */
+.glass-card {
+  background: hsl(var(--secondary) / 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: var(--radius);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  box-shadow:
+    0 0 0 1px hsl(var(--primary) / 0.1),
+    0 8px 32px hsl(var(--primary) / 0.08);
+}
+
+/* ─── Gradient Text ─── */
+.gradient-text {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--gradient-start)),
+    hsl(var(--gradient-mid)),
+    hsl(var(--gradient-end))
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Section Heading ─── */
+.section-heading {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.section-divider {
+  position: relative;
+  height: 2px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 9999px;
+}
+
+.section-divider::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--gradient-start)),
+    hsl(var(--gradient-end)),
+    transparent
+  );
+}
+
+.section-divider::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--primary) / 0.3),
+    transparent
+  );
+  filter: blur(4px);
+}
+
+/* ─── Glow Border ─── */
+.glow-border {
+  position: relative;
+}
+
+.glow-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--gradient-start) / 0.4),
+    transparent 40%,
+    transparent 60%,
+    hsl(var(--gradient-end) / 0.4)
+  );
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.glow-border:hover::before {
+  opacity: 1;
+}
+
+/* ─── Nav link ─── */
 .nav-link {
   @apply text-sm font-medium text-muted-foreground hover:text-primary transition-colors duration-200 relative;
 }
@@ -86,7 +286,8 @@ body {
 
 .nav-link::after {
   content: '';
-  @apply absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300;
+  @apply absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-300;
+  background: linear-gradient(90deg, hsl(var(--gradient-start)), hsl(var(--gradient-end)));
 }
 
 .nav-link:hover::after,
@@ -94,6 +295,56 @@ body {
   @apply w-full;
 }
 
-.glass-card {
-  @apply bg-secondary/40 backdrop-blur-md border border-white/5 shadow-xl;
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
+
+/* ─── Typing cursor ─── */
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.typing-cursor::after {
+  content: '|';
+  animation: blink-cursor 1s step-end infinite;
+  color: hsl(var(--accent));
+  font-weight: 300;
+  margin-left: 2px;
+}
+
+/* ─── GPA Ring Animation ─── */
+@keyframes draw-ring {
+  from { stroke-dashoffset: 283; }
+  to { stroke-dashoffset: 0; }
+}
+
+.gpa-ring {
+  animation: draw-ring 2s ease-out forwards;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+}
+
+/* ─── Timeline glow ─── */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); }
+  50% { box-shadow: 0 0 0 8px hsl(var(--primary) / 0); }
+}
+
+.timeline-dot {
+  animation: pulse-glow 2s ease-in-out infinite;
 }

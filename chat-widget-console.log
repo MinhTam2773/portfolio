@@ -1,0 +1,187 @@
+Total messages: 21 (Errors: 9, Warnings: 0)
+Returning 9 messages for level "error"
+
+[ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/:0
+[ERROR] ./Downloads/Personal/for it/portfolio/app/globals.css
+Error evaluating Node.js code
+Error: Cannot find module '../lightningcss.win32-x64-msvc.node'
+Require stack:
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\node\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\postcss\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[root-of-the-server]__20e71c20._.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[turbopack]_runtime.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\postcss.js
+    [at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)]
+    [at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)]
+    [at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)]
+    [at Module._load (node:internal/modules/cjs/loader:1242:25)]
+    [at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)]
+    [at Module.require (node:internal/modules/cjs/loader:1556:12)]
+    [at require (node:internal/modules/helpers:152:16)]
+    [at Object.<anonymous> (C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js:22:22)]
+    [at Module._compile (node:internal/modules/cjs/loader:1812:14)]
+    [at Object..js (node:internal/modules/cjs/loader:1943:10)]
+
+Import trace:
+  Client Component Browser:
+    ./Downloads/Personal/for it/portfolio/app/globals.css [Client Component Browser]
+    ./Downloads/Personal/for it/portfolio/app/layout.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/c0cca_next_dist_f1f13737._.js:1920
+[ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/favicon.ico:0
+[ERROR] ./Downloads/Personal/for it/portfolio/app/globals.css
+Error evaluating Node.js code
+Error: Cannot find module '../lightningcss.win32-x64-msvc.node'
+Require stack:
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\node\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\postcss\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[root-of-the-server]__20e71c20._.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[turbopack]_runtime.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\postcss.js
+    [at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)]
+    [at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)]
+    [at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)]
+    [at Module._load (node:internal/modules/cjs/loader:1242:25)]
+    [at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)]
+    [at Module.require (node:internal/modules/cjs/loader:1556:12)]
+    [at require (node:internal/modules/helpers:152:16)]
+    [at Object.<anonymous> (C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js:22:22)]
+    [at Module._compile (node:internal/modules/cjs/loader:1812:14)]
+    [at Object..js (node:internal/modules/cjs/loader:1943:10)]
+
+Import trace:
+  Client Component Browser:
+    ./Downloads/Personal/for it/portfolio/app/globals.css [Client Component Browser]
+    ./Downloads/Personal/for it/portfolio/app/layout.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/c0cca_next_dist_f1f13737._.js:1920
+[ERROR] ./Downloads/Personal/for it/portfolio/app/globals.css
+Error evaluating Node.js code
+Error: Cannot find module '../lightningcss.win32-x64-msvc.node'
+Require stack:
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\node\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\postcss\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[root-of-the-server]__20e71c20._.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[turbopack]_runtime.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\postcss.js
+    [at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)]
+    [at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)]
+    [at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)]
+    [at Module._load (node:internal/modules/cjs/loader:1242:25)]
+    [at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)]
+    [at Module.require (node:internal/modules/cjs/loader:1556:12)]
+    [at require (node:internal/modules/helpers:152:16)]
+    [at Object.<anonymous> (C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js:22:22)]
+    [at Module._compile (node:internal/modules/cjs/loader:1812:14)]
+    [at Object..js (node:internal/modules/cjs/loader:1943:10)]
+
+Import trace:
+  Client Component Browser:
+    ./Downloads/Personal/for it/portfolio/app/globals.css [Client Component Browser]
+    ./Downloads/Personal/for it/portfolio/app/layout.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/c0cca_next_dist_f1f13737._.js:1920
+[ERROR] ./Downloads/Personal/for it/portfolio/app/globals.css
+Error evaluating Node.js code
+Error: Cannot find module '../lightningcss.win32-x64-msvc.node'
+Require stack:
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\node\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\postcss\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[root-of-the-server]__20e71c20._.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[turbopack]_runtime.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\postcss.js
+    [at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)]
+    [at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)]
+    [at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)]
+    [at Module._load (node:internal/modules/cjs/loader:1242:25)]
+    [at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)]
+    [at Module.require (node:internal/modules/cjs/loader:1556:12)]
+    [at require (node:internal/modules/helpers:152:16)]
+    [at Object.<anonymous> (C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js:22:22)]
+    [at Module._compile (node:internal/modules/cjs/loader:1812:14)]
+    [at Object..js (node:internal/modules/cjs/loader:1943:10)]
+
+Import trace:
+  Client Component Browser:
+    ./Downloads/Personal/for it/portfolio/app/globals.css [Client Component Browser]
+    ./Downloads/Personal/for it/portfolio/app/layout.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/c0cca_next_dist_f1f13737._.js:1920
+[ERROR] ./Downloads/Personal/for it/portfolio/app/globals.css
+Error evaluating Node.js code
+Error: Cannot find module '../lightningcss.win32-x64-msvc.node'
+Require stack:
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\node\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\postcss\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[root-of-the-server]__20e71c20._.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[turbopack]_runtime.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\postcss.js
+    [at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)]
+    [at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)]
+    [at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)]
+    [at Module._load (node:internal/modules/cjs/loader:1242:25)]
+    [at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)]
+    [at Module.require (node:internal/modules/cjs/loader:1556:12)]
+    [at require (node:internal/modules/helpers:152:16)]
+    [at Object.<anonymous> (C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js:22:22)]
+    [at Module._compile (node:internal/modules/cjs/loader:1812:14)]
+    [at Object..js (node:internal/modules/cjs/loader:1943:10)]
+
+Import trace:
+  Client Component Browser:
+    ./Downloads/Personal/for it/portfolio/app/globals.css [Client Component Browser]
+    ./Downloads/Personal/for it/portfolio/app/layout.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/c0cca_next_dist_f1f13737._.js:1920
+[ERROR] ./Downloads/Personal/for it/portfolio/app/globals.css
+Error evaluating Node.js code
+Error: Cannot find module '../lightningcss.win32-x64-msvc.node'
+Require stack:
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\node\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\postcss\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[root-of-the-server]__20e71c20._.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[turbopack]_runtime.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\postcss.js
+    [at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)]
+    [at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)]
+    [at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)]
+    [at Module._load (node:internal/modules/cjs/loader:1242:25)]
+    [at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)]
+    [at Module.require (node:internal/modules/cjs/loader:1556:12)]
+    [at require (node:internal/modules/helpers:152:16)]
+    [at Object.<anonymous> (C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js:22:22)]
+    [at Module._compile (node:internal/modules/cjs/loader:1812:14)]
+    [at Object..js (node:internal/modules/cjs/loader:1943:10)]
+
+Import trace:
+  Client Component Browser:
+    ./Downloads/Personal/for it/portfolio/app/globals.css [Client Component Browser]
+    ./Downloads/Personal/for it/portfolio/app/layout.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/c0cca_next_dist_f1f13737._.js:1920
+Error: ./Downloads/Personal/for it/portfolio/app/globals.css
+Error evaluating Node.js code
+Error: Cannot find module '../lightningcss.win32-x64-msvc.node'
+Require stack:
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\node\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\@tailwindcss\postcss\dist\index.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[root-of-the-server]__20e71c20._.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\chunks\[turbopack]_runtime.js
+- C:\Users\User\Downloads\Personal\for it\portfolio\.next\dev\build\postcss.js
+    [at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)]
+    [at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)]
+    [at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)]
+    [at Module._load (node:internal/modules/cjs/loader:1242:25)]
+    [at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)]
+    [at Module.require (node:internal/modules/cjs/loader:1556:12)]
+    [at require (node:internal/modules/helpers:152:16)]
+    [at Object.<anonymous> (C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\lightningcss\node\index.js:22:22)]
+    [at Module._compile (node:internal/modules/cjs/loader:1812:14)]
+    [at Object..js (node:internal/modules/cjs/loader:1943:10)]
+
+Import trace:
+  Client Component Browser:
+    ./Downloads/Personal/for it/portfolio/app/globals.css [Client Component Browser]
+    ./Downloads/Personal/for it/portfolio/app/layout.tsx [Server Component]
+
+
+    at Object.getCompilationErrors (file://C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\next\dist\server\dev\hot-reloader-turbopack.js:1008:59)
+    at DevBundlerService.getCompilationError (file://C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\next\dist\server\lib\dev-bundler-service.js:44:55)
+    at DevServer.getCompilationError (file://C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\next\dist\server\dev\next-dev-server.js:706:42)
+    at DevServer.findPageComponents (file://C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\next\dist\server\dev\next-dev-server.js:676:43)
+    at async DevServer.renderErrorToResponseImpl (file://C:\Users\User\Downloads\Personal\for it\portfolio\node_modules\next\dist\server\base-server.js:1713:26)
