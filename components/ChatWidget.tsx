@@ -82,6 +82,7 @@ export function ChatWidget() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const openerTimeoutRef = useRef<number | null>(null);
 
@@ -137,6 +138,7 @@ export function ChatWidget() {
     setInput("");
     setError(null);
     setIsLoading(true);
+    requestAnimationFrame(() => inputRef.current?.focus());
 
     try {
       const response = await fetch("/api/chat", {
@@ -274,10 +276,10 @@ export function ChatWidget() {
             <div className={`border-t border-border/50 p-3 ${isExpanded ? "md:p-4" : ""}`}>
               <div className="flex items-center gap-2">
                 <input
+                  ref={inputRef}
                   value={input}
                   onChange={(event) => setInput(event.target.value)}
                   onKeyDown={handleKeyDown}
-                  disabled={isLoading}
                   placeholder="Ask me anything about Tam..."
                   className="h-10 flex-1 rounded-xl border border-border/50 bg-muted/40 px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary/50"
                 />
