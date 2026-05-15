@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { MessageCircle, Send, X } from "lucide-react";
+import { Maximize2, MessageCircle, Minimize2, Send, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type Message = {
@@ -77,10 +77,12 @@ function trimMessages(messages: Message[]) {
 
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const openerTimeoutRef = useRef<number | null>(null);
 
@@ -136,6 +138,7 @@ export function ChatWidget() {
     setInput("");
     setError(null);
     setIsLoading(true);
+    requestAnimationFrame(() => inputRef.current?.focus());
 
     try {
       const response = await fetch("/api/chat", {
@@ -170,16 +173,40 @@ export function ChatWidget() {
     }
   }
 
+  function closeChat() {
+    setIsExpanded(false);
+    setIsOpen(false);
+  }
+
+  function toggleChat() {
+    setIsOpen((current) => {
+      if (current) {
+        setIsExpanded(false);
+      }
+
+      return !current;
+    });
+  }
+
+  function toggleExpanded() {
+    setIsExpanded((current) => !current);
+  }
+
   return (
-    <div className="fixed bottom-6 right-6 z-[60] flex flex-col items-end gap-3">
+    <div className={`fixed z-[70] flex flex-col gap-3 ${isExpanded ? "inset-y-0 right-0" : "bottom-6 right-6 items-end"}`}>
+      {isExpanded && <div className="hidden w-[min(42rem,calc(100vw-2rem))] md:block" />}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 12 }}
+            initial={isExpanded ? { opacity: 0, x: 40 } : { opacity: 0, scale: 0.9, y: 12 }}
+            animate={isExpanded ? { opacity: 1, x: 0 } : { opacity: 1, scale: 1, y: 0 }}
+            exit={isExpanded ? { opacity: 0, x: 40 } : { opacity: 0, scale: 0.9, y: 12 }}
             transition={{ type: "spring", damping: 24, stiffness: 220 }}
-            className="flex h-[480px] w-[320px] flex-col overflow-hidden rounded-[20px] border border-border/50 bg-background/90 shadow-2xl backdrop-blur-xl"
+            className={`flex flex-col overflow-hidden border border-border/50 bg-background/90 shadow-2xl backdrop-blur-xl ${
+              isExpanded
+                ? "h-screen w-screen rounded-none md:h-screen md:w-[min(42rem,calc(100vw-2rem))] md:rounded-l-[24px]"
+                : "h-[480px] w-[320px] rounded-[20px]"
+            }`}
           >
             <div className="flex items-center gap-3 border-b border-border/50 px-4 py-3">
               <div className="min-w-0 flex-1">
@@ -187,7 +214,15 @@ export function ChatWidget() {
               </div>
               <button
                 type="button"
-                onClick={() => setIsOpen(false)}
+                onClick={toggleExpanded}
+                className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+                aria-label={isExpanded ? "Collapse chat" : "Expand chat"}
+              >
+                {isExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+              </button>
+              <button
+                type="button"
+                onClick={closeChat}
                 className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
                 aria-label="Close chat"
               >
@@ -195,14 +230,16 @@ export function ChatWidget() {
               </button>
             </div>
 
-            <div className="flex-1 space-y-3 overflow-y-auto px-3 py-4">
+            <div className={`flex-1 space-y-3 overflow-y-auto py-4 ${isExpanded ? "px-4 md:px-5" : "px-3"}`}>
               {messages.map((message, index) => (
                 <div
                   key={`${message.role}-${index}-${message.content.slice(0, 16)}`}
                   className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-6 ${
+                    className={`rounded-2xl px-3 py-2 text-sm leading-6 ${
+                      isExpanded ? "max-w-[80%] md:max-w-[75%]" : "max-w-[85%]"
+                    } ${
                       message.role === "user"
                         ? "rounded-br-md bg-primary text-primary-foreground"
                         : "rounded-bl-md bg-muted text-white"
@@ -236,13 +273,13 @@ export function ChatWidget() {
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="border-t border-border/50 p-3">
+            <div className={`border-t border-border/50 p-3 ${isExpanded ? "md:p-4" : ""}`}>
               <div className="flex items-center gap-2">
                 <input
+                  ref={inputRef}
                   value={input}
                   onChange={(event) => setInput(event.target.value)}
                   onKeyDown={handleKeyDown}
-                  disabled={isLoading}
                   placeholder="Ask me anything about Tam..."
                   className="h-10 flex-1 rounded-xl border border-border/50 bg-muted/40 px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary/50"
                 />
@@ -261,14 +298,16 @@ export function ChatWidget() {
         )}
       </AnimatePresence>
 
-      <button
-        type="button"
-        onClick={() => setIsOpen((current) => !current)}
-        className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-gradient-to-br from-primary to-blue-500 text-white shadow-[0_10px_30px_rgba(59,130,246,0.45)] transition-transform hover:scale-105"
-        aria-label={isOpen ? "Close chat" : "Open chat"}
-      >
-        <MessageCircle className="h-5 w-5" />
-      </button>
+      {!isExpanded && (
+        <button
+          type="button"
+          onClick={toggleChat}
+          className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-gradient-to-br from-primary to-blue-500 text-white shadow-[0_10px_30px_rgba(59,130,246,0.45)] transition-transform hover:scale-105"
+          aria-label={isOpen ? "Close chat" : "Open chat"}
+        >
+          <MessageCircle className="h-5 w-5" />
+        </button>
+      )}
     </div>
   );
 }
