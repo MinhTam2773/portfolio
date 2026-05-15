@@ -50,10 +50,12 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          I&apos;m a Software Development student at SAIT with{" "}
-          <span className="text-white font-bold">4.0 GPA</span> and Tech Lead on
-          a production-scale SaaS capstone. Experienced in building secure,
-          scalable full-stack applications with modern web and AI integration.
+          I&apos;m a Software Development new grad from SAIT with{" "}
+          <span className="text-white font-bold">4.0 GPA</span> and a habit of building things 
+          that actually work. I led a six-person team to ship a full multi-tenant SaaS platform, 
+          and built an AI-powered career pathways tool. 
+          I&apos;m most driven by hard problems — the kind that take a week of fighting through docs. 
+          Currently looking for my first professional role where I can contribute and keep growing.
         </motion.p>
 
         {/* Contact Info */}
