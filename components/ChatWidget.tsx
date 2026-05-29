@@ -99,7 +99,8 @@ export function ChatWidget() {
       window.localStorage.removeItem(STORAGE_KEY);
     }
 
-    setIsOpen(true);
+    const isMobile = window.innerWidth < 768;
+    setIsOpen(!isMobile);
 
     if (!window.sessionStorage.getItem(SESSION_OPENED_KEY)) {
       window.sessionStorage.setItem(SESSION_OPENED_KEY, "true");

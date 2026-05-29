@@ -41,6 +41,47 @@ export const projects: Project[] = [
     isProtected: true,
   },
   {
+    slug: "rezume",
+    title: "Rezume",
+    shortDescription:
+      "An AI-powered resume builder and job application tracker that lets users generate tailored career documents using their personal API keys rather than paying for a platform subscription.",
+    problemStatement: [
+      "Job seekers need an efficient way to adapt their resumes and cover letters to match specific job descriptions.",
+      "Keeping track of the entire job search process is often disorganized and disconnected from document creation.",
+      "Many automated application tools force users into paid subscriptions."
+    ],
+    solution: [
+      "Allows users to build a master profile of experiences that serves as an AI source of truth for customization.",
+      "Tailors materials to job descriptions (imported manually or via web scraper) to generate an ATS-friendly resume along with interview prep.",
+      "Features a Kanban-style pipeline to monitor progress from saving a job to accepting an offer.",
+      "Utilizes a BYOK (Bring Your Own Key) setup, letting users connect free or personal tiers of popular AI APIs."
+    ],
+    coverImage: "/projects/rezume/cover.png",
+    galleryImages: [
+      "/projects/rezume/cover.png",
+      "/projects/rezume/image-1.png",
+      "/projects/rezume/image-2.png",
+      "/projects/rezume/image-3.png",
+      "/projects/rezume/image-4.png",
+      "/projects/rezume/image-5.png",
+      "/projects/rezume/image-6.png"
+    ],
+    techStack: [
+      "Next.js",
+      "TypeScript",
+      "React",
+      "Tailwind CSS v4",
+      "Clerk",
+      "Convex",
+      "Python",
+      "Playwright"
+    ],
+    role: "Full Stack Developer",
+    timeline: "May 2026",
+    liveDemoUrl: "https://www.rezume.website",
+    githubUrl: "https://github.com/MinhTam2773/cursor-hackahon",
+  },
+  {
     slug: "pathr",
     title: "Pathr",
     shortDescription:
@@ -144,7 +185,7 @@ export const projects: Project[] = [
     role: "Frontend Mobile Developer",
     timeline: "Dec 2025",
     liveDemoUrl: "",
-    githubUrl: "https://github.com/MinhTam2773/B2B-Ecommerce",
+    githubUrl: "https://github.com/MinhTam2773/Ecommerce",
   },
   {
     slug: "sharie",

@@ -121,13 +121,13 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
               ))}
             </article>
 
-            <section className="space-y-4">
+            <section className="space-y-4 w-full overflow-hidden">
               <h2 className="text-3xl font-bold">Interface Gallery</h2>
-              <div className="space-y-6">
+              <div className="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-border/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-border">
                 {project.galleryImages.map((imagePath, index) => (
                   <div
                     key={`${imagePath}-${index}`}
-                    className="relative w-full aspect-16/10 rounded-xl overflow-hidden border border-border/40"
+                    className="relative w-[85vw] sm:w-[500px] lg:w-[600px] shrink-0 snap-center aspect-16/10 rounded-xl overflow-hidden border border-border/40"
                   >
                     <Image
                       src={imagePath}
