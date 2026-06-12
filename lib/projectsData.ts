@@ -5,19 +5,57 @@ export const projects: Project[] = [
     slug: "allbarber",
     title: "AllBarber",
     shortDescription:
-      "A multi-tenant SaaS platform for barbershops combining real-time queue management, point-of-sale with tipping, staff scheduling and client CRM.",
+      "A full-stack operating system for modern barbershops, bringing scheduling, walk-in queues, point-of-sale, staff operations, and client relationships into one real-time multi-tenant platform.",
     problemStatement: [
-      "Barbershops operate in a mix of appointment-based and walk-in models, making scheduling chaotic. Customers face long, unpredictable wait times, while barbers lack visibility into their day's flow and earnings.",
-      "Managing payments is fragmented—cash, card, and tips often require separate systems, leading to accounting headaches and tip distribution disputes among staff.",
-      "Owners of multi-location shops need a unified view of performance across sites, but data is siloed and security concerns make it hard to share infrastructure.",
+      "Barbershops often rely on disconnected tools for booking, payments, customer updates, staff coordination, and reporting. AllBarber needed to unify those workflows without slowing down the front desk during a busy service day.",
     ],
     solution: [
-      "Built a secure multi-tenant platform using Supabase and PostgreSQL with Row-Level Security (RLS) to ensure complete data isolation between barbershops while sharing a single codebase and infrastructure.",
-      "Implemented a flexible scheduling engine supporting Walk‑In Only, Hybrid, and Appointment modes. A real‑time queue system allows customers to join remotely via QR code, receive SMS updates with ETA, and reduces wait times by 25% through smart allocation.",
-      "Developed an integrated Point‑of‑Sale (POS) system with Stripe Terminal for in‑person payments, cash tracking, and automated tip handling. Supports multiple tip policies (direct, pool, split) with a TipLedger that auto‑adjusts on refunds and simplifies payroll exports.",
-      "Created a lightweight CRM to store client notes, preferences, and no‑show scores, enabling personalized service and loyalty features. Basic inventory management tracks products, suppliers, and low‑stock alerts.",
-      "Delivered role‑based dashboards (Owner, Manager, Barber, Front Desk) with real‑time analytics on revenue, utilization, tip percentages, and no‑show rates. Daily close reports automate end‑of‑day reconciliation.",
-      "Leveraged Supabase's real‑time capabilities to sync queue updates, ticket status, and POS transactions across all devices instantly, ensuring staff and customers always have the latest information.",
+      "I helped build a multi-tenant SaaS platform with real-time queues, Stripe Terminal POS, role-aware dashboards, staff scheduling, CRM, inventory, and automated operational workflows.",
+    ],
+    caseStudySections: [
+      {
+        title: "System Architecture & Key Features",
+        items: [
+          {
+            title: "1. Relational Data Isolation: The 34-Table Schema",
+            body: "I designed a 34-table relational PostgreSQL schema for a multi-tenant environment spanning shops, staff roles, services, customers, queues, tickets, payments, tips, and reporting. Supabase Row Level Security policies enforce tenant-scoped access so each barbershop only reaches its own operational data.",
+          },
+          {
+            title: "2. Asynchronous Event-Driven Engine",
+            body: "Appointment workflows depend on background work that cannot silently fail. I implemented an event-driven engine with Inngest to handle scheduling jobs, notification fanouts through Twilio and email, and retryable workers for booking confirmations and customer updates.",
+          },
+          {
+            title: "3. Performance & Scaling",
+            body: "To keep dashboards responsive under heavier usage, I used tenant-scoped caching strategies and optimized query paths around the highest-traffic views. The platform was deployed on Microsoft Azure and validated through intensive load testing around 1,000-user scenarios.",
+          },
+        ],
+      },
+      {
+        title: "The Biggest Bottleneck: Stripe POS Integration",
+        items: [
+          {
+            title: "The Problem",
+            body: "The most complex part of the build was automating the financial workflow. Stripe Terminal had to support physical point-of-sale transactions while the platform calculated tips, refunds, and multi-barber payout logic inside a single shop tenant. Webhooks, asynchronous payment states, and multi-party accounting made this the riskiest integration in the product.",
+          },
+          {
+            title: "The Solution",
+            body: "I took ownership of the payment routing logic, mapped the asynchronous Stripe state transitions, and rebuilt the payment handler around webhook validation, isolated testing, and auditable Tip Ledger updates. The final flow automated payout calculations that would otherwise create hours of manual administrative work for shop owners each week.",
+          },
+        ],
+      },
+      {
+        title: "Testing, Quality, & Team Delivery",
+        items: [
+          {
+            title: "Automated QA",
+            body: "For a team of six, I helped establish a multi-layer testing approach with Playwright for end-to-end flows and Vitest for lower-level logic. This caught edge cases earlier in development, especially around booking, role permissions, and payment workflows.",
+          },
+          {
+            title: "Delivery Velocity",
+            body: "I also pushed for stronger peer review habits, clearer Git workflows, and standardized backend response contracts so frontend and backend work could move in parallel with fewer handoff issues.",
+          },
+        ],
+      },
     ],
     coverImage: "/projects/allbarber.png",
     galleryImages: ["/projects/allbarber.png", "/projects/allbarber/allbarber-1.png", "/projects/allbarber/allbarber-2.png", "/projects/allbarber/allbarber-3.png", "/projects/allbarber/allbarber-4.png", "/projects/allbarber/allbarber-5.png", "/projects/allbarber/allbarber-6.png"],
@@ -27,17 +65,23 @@ export const projects: Project[] = [
       "Supabase",
       "PostgreSQL",
       "RLS",
+      "Redis",
       "Auth.js",
       "Stripe",
       "Tailwind CSS",
       "Postmark",
       "Twilio",
       "Inngest",
+      "Azure",
+      "Playwright",
+      "Vitest",
     ],
     role: "Fullstack Developer",
     timeline: "Aug 2025 - Present",
     liveDemoUrl: "http://allbarber.website/",
     githubUrl: "https://github.com/MinhTam2773/AllBarber",
+    videoUrl: "https://youtu.be/pAQvZMyPveE",
+    videoLabel: "Watch the journey",
     isProtected: true,
   },
   {

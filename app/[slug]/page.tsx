@@ -8,6 +8,7 @@ import { ArrowLeft, ExternalLink, Github, Shield } from "lucide-react";
 import { PageTransition } from "@/components/PageTransition";
 import ProjectHeroCarousel from "@/components/ProjectHeroCarousel";
 import KeepExploringCarousel from "@/components/KeepExploringCarousel";
+import ProjectVideoButton from "@/components/ProjectVideoButton";
 import { projects } from "@/lib/projectsData";
 
 function getProjectBySlug(slug: string) {
@@ -121,6 +122,23 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
               ))}
             </article>
 
+            {project.caseStudySections?.map((section) => (
+              <article key={section.title} className="space-y-5">
+                <h2 className="text-3xl font-bold">{section.title}</h2>
+                <div className="space-y-5">
+                  {section.items.map((item, index) => (
+                    <div
+                      key={`${section.title}-${item.title ?? index}`}
+                      className="rounded-xl border border-border/40 bg-background/50 p-5"
+                    >
+                      {item.title && <h3 className="text-xl font-semibold mb-2">{item.title}</h3>}
+                      <p className="text-muted-foreground leading-relaxed text-lg">{item.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ))}
+
             <section className="space-y-4 w-full overflow-hidden">
               <h2 className="text-3xl font-bold">Interface Gallery</h2>
               <div className="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-border/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-border">
@@ -188,6 +206,14 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
                     <ExternalLink className="w-4 h-4" />
                     Live Demo
                   </a>
+                )}
+
+                {project.videoUrl && (
+                  <ProjectVideoButton
+                    videoUrl={project.videoUrl}
+                    title={project.title}
+                    label={project.videoLabel}
+                  />
                 )}
 
                 {project.githubUrl && !project.isProtected && (
