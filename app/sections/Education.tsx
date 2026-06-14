@@ -23,6 +23,13 @@ export default function Education() {
           <div>
             <div className="rounded-xl mb-8">
               <div className="space-y-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Book className="text-primary w-6 h-6" />
+                  <h2 className="text-2xl font-semibold">
+                    Education
+                  </h2>
+                </div>
+
                 <div className="pb-6 border-b border-border/30">
                   <h3 className="font-bold text-lg">
                     Software Development Diploma
@@ -73,21 +80,43 @@ export default function Education() {
                 <div className="flex items-center gap-3 mb-4">
                   <Award className="text-primary w-6 h-6" />
                   <h2 className="text-2xl font-semibold">
-                    2nd at SAIT MegaHack Hackathon
+                    Awards
                   </h2>
+                </div>
+
+                <div className="p-5 bg-primary/10 rounded-xl border border-primary/30">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="font-bold text-lg">
+                      Alvin and Mona Libin Foundation Award for Capstone Excellence
+                    </h3>
+                    <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded-full">
+                      SAIT Award
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Recognized for capstone excellence in software development, highlighting
+                    technical execution, team delivery, and real-world project impact.
+                  </p>
+                  <div className="mt-4">
+                    <a
+                      href="https://www.linkedin.com/posts/minhtam-dev_i-am-incredibly-honored-to-have-been-selected-share-7471390736286908416-lXsx/?utm_source=share&utm_medium=member_desktop&rcm=ACoAAFJB_E0BQAQnURjuBtXNVSZXFJ1V76OzLhs"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      LinkedIn Post
+                    </a>
+                  </div>
                 </div>
 
                 {/* VibeMap Entry */}
                 <div className="p-5 bg-secondary/20 rounded-xl border border-border/50">
                   <h3 className="font-bold text-lg flex items-center gap-2">
-                    VibeMap
-                    <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded-full">
-                      Hackathon Project
-                    </span>
+                    2nd at SAIT MegaHack Hackathon
                   </h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Vibe Check your city – discover spaces that match your
-                    energy.
+                    VibeMap
                   </p>
                   <p className="text-sm mt-3">
                     VibeMap reimagines community mapping through an
