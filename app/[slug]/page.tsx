@@ -181,20 +181,6 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
                 </div>
               </div>
 
-              <div className="pt-5 border-t border-border/40">
-                <h2 className="text-xs uppercase tracking-wide text-muted-foreground mb-3">Tech Stack</h2>
-                <ul className="flex flex-wrap gap-2">
-                  {project.techStack.map((tech) => (
-                    <li
-                      key={tech}
-                      className="px-3 py-1.5 rounded-full border border-primary/25 bg-primary/10 text-sm text-primary"
-                    >
-                      {tech}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
               <div className="pt-5 border-t border-border/40 space-y-3">
                 {project.liveDemoUrl && (
                   <a
@@ -234,6 +220,20 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
                     Source code protected
                   </p>
                 )}
+              </div>
+
+              <div className="pt-5 border-t border-border/40">
+                <h2 className="text-xs uppercase tracking-wide text-muted-foreground mb-3">Tech Stack</h2>
+                <ul className="flex flex-wrap gap-2">
+                  {project.techStack.map((tech) => (
+                    <li
+                      key={tech}
+                      className="px-3 py-1.5 rounded-full border border-primary/25 bg-primary/10 text-sm text-primary"
+                    >
+                      {tech}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </aside>
