@@ -7,6 +7,18 @@ import { Briefcase, GitPullRequest } from "lucide-react";
 export default function ProfessionalJourney() {
   const experiences = [
     {
+      id: "intelbyte",
+      title: "Intelbyte Corp",
+      subtitle: "Power Platform & AI Solutions Developer",
+      icon: <GitPullRequest className="w-5 h-5" />,
+      bullets: [
+        "Support senior developers in client meetings by capturing business processes, documenting requirements, and translating them into low-code prototypes and proof-of-concept solutions.",
+        "Build and test Canvas and Model-Driven Power Apps, Power Automate flows, and Copilot Studio experiences under mentorship while communicating progress and questions clearly.",
+        "Integrate Azure OpenAI Service, custom connectors, and AI-enabled workflows for document processing, prediction, and intelligent automation use cases.",
+        "Contribute to agile delivery, solution documentation, user guides, and basic ALM tasks such as exporting solutions and version updates.",
+      ],
+    },
+    {
       id: "capstone",
       title: "Capstone Project",
       subtitle: "Fullstack Developer",
@@ -73,7 +85,17 @@ export default function ProfessionalJourney() {
 
               {/* Badge */}
               <div className="mb-6">
-                {exp.id === "capstone" ? (
+                {exp.id === "intelbyte" ? (
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
+                      Full-Time Role
+                    </span>
+
+                    <span className="text-right flex-1 py-1 text-muted-foreground text-xs font-bold rounded-full">
+                      Aug 2026 - Present
+                    </span>
+                  </div>
+                ) : exp.id === "capstone" ? (
                   <div className="flex items-center gap-2">
                     <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
                       Leadership

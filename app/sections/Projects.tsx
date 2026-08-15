@@ -228,7 +228,7 @@ export default function Projects() {
           <div className="flex items-center gap-3 mb-6">
             <CodeIcon className="text-primary w-8 h-8" />
             <h1 className="bg-linear-to-r from-white to-primary text-transparent bg-clip-text text-3xl md:text-4xl font-bold">
-              Featured Projects
+              Selected Projects
             </h1>
           </div>
           <div className="relative h-px w-full mx-auto overflow-hidden rounded-full">
@@ -270,7 +270,7 @@ export default function Projects() {
             "
           >
             <Github className="w-5 h-5" />
-            View All Projects on GitHub
+            Explore More on GitHub
             <ExternalLink className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
           </a>
         </div>

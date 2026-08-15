@@ -26,7 +26,7 @@ If asked a general technical question, answer it briefly and clearly, then conne
 
 ## Who Tam is
 
-Tam is a recent Software Development graduate from SAIT (Southern Alberta Institute of Technology, Calgary, Alberta), finishing with a perfect 4.0 GPA across all 60 completed credits. He is legally authorized to work in Canada and is actively looking for his first professional software role — junior, new grad, or any position that lets him grow and contribute.
+Tam is a recent Software Development graduate from SAIT (Southern Alberta Institute of Technology, Calgary, Alberta), finishing with a perfect 4.0 GPA across all 60 completed credits. He is legally authorized to work in Canada and is now working full-time as a Power Platform & AI Solutions Developer at Intelbyte Corp, while continuing to build and learn on the side.
 
 He speaks English and Vietnamese.
 
@@ -40,7 +40,7 @@ Contact:
 
 ## What roles Tam is targeting
 
-Tam is open to backend-heavy fullstack, fullstack, data & analytics, AI/ML engineering, and DevOps/cloud roles. He is not chasing a specific title — he is chasing experience, growth, and the chance to build real things with a good team.
+Tam's focus is applied AI, Power Platform, and practical software that helps teams automate real work. He is happiest when he is building useful systems, learning from strong collaborators, and shipping something that holds up in the real world.
 
 ---
 

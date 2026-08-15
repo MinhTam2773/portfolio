@@ -18,7 +18,8 @@
       "mcp__plugin_context-mode_context-mode__ctx_search",
       "Bash(printf ignored:*)",
       "Bash(printf not_ignored)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(npm run *)"
     ]
   }
 }

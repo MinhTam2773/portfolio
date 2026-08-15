@@ -50,12 +50,12 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          I&apos;m a Software Development new grad from SAIT with{" "}
-          <span className="text-white font-bold">4.0 GPA</span> and a habit of building things 
-          that actually work. I led a six-person team to ship a full multi-tenant SaaS platform, 
-          and built an AI-powered career pathways tool. 
-          I&apos;m most driven by hard problems — the kind that take a week of fighting through docs. 
-          Currently looking for my first professional role where I can contribute and keep growing.
+          I&apos;m a Software Development graduate from SAIT with{" "}
+          <span className="text-white font-bold">4.0 GPA</span> and a habit of building things
+          that actually work. I&apos;m currently a Power Platform &amp; AI Solutions Developer at
+          Intelbyte Corp in Calgary, where I help turn business processes into low-code and AI
+          solutions under senior guidance. Outside work, I keep exploring applied AI engineering,
+          especially RAG systems, agents, and retrieval pipelines.
         </motion.p>
 
         {/* Contact Info */}

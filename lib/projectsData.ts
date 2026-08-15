@@ -88,15 +88,15 @@ export const projects: Project[] = [
     slug: "rezume",
     title: "Rezume",
     shortDescription:
-      "An AI-powered resume builder and job application tracker that lets users generate tailored career documents using their personal API keys rather than paying for a platform subscription.",
+      "An AI-powered career document builder and application tracker that lets users generate tailored materials using their personal API keys rather than paying for a platform subscription.",
     problemStatement: [
-      "Job seekers need an efficient way to adapt their resumes and cover letters to match specific job descriptions.",
-      "Keeping track of the entire job search process is often disorganized and disconnected from document creation.",
+      "Users need an efficient way to adapt their resumes and cover letters to match specific opportunities.",
+      "Keeping track of the entire application process is often disorganized and disconnected from document creation.",
       "Many automated application tools force users into paid subscriptions."
     ],
     solution: [
       "Allows users to build a master profile of experiences that serves as an AI source of truth for customization.",
-      "Tailors materials to job descriptions (imported manually or via web scraper) to generate an ATS-friendly resume along with interview prep.",
+      "Tailors materials to opportunity descriptions (imported manually or via web scraper) to generate an ATS-friendly resume along with interview prep.",
       "Features a Kanban-style pipeline to monitor progress from saving a job to accepting an offer.",
       "Utilizes a BYOK (Bring Your Own Key) setup, letting users connect free or personal tiers of popular AI APIs."
     ],

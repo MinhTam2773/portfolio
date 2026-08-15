@@ -107,7 +107,7 @@ export function Navigation() {
             rel="noopener noreferrer"
             className="ml-3 px-4 py-2 rounded-lg border border-primary/40 text-primary font-mono text-sm hover:bg-primary/10 hover:border-primary/60 transition-all duration-200"
           >
-            Resume
+            Resume PDF
           </a>
         </nav>
 
@@ -180,7 +180,7 @@ export function Navigation() {
                   rel="noopener noreferrer"
                   className="block text-center w-full px-4 py-3 rounded-lg border border-primary/40 text-primary font-mono text-sm hover:bg-primary/10 transition-all"
                 >
-                  Download Resume
+                  Resume PDF
                 </a>
               </div>
             </motion.div>

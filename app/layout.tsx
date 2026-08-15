@@ -11,8 +11,8 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" });
 
 export const metadata: Metadata = {
-  title: "Minh Tam Nguyen — Software Developer",
-  description: "Full-stack developer crafting secure, scalable applications with modern web and AI integration. SAIT Software Development student with 4.0 GPA.",
+  title: "Minh Tam Nguyen — Power Platform & AI Solutions Developer",
+  description: "Minh Tam Nguyen is a Software Development graduate from SAIT and Power Platform & AI Solutions Developer at Intelbyte Corp, building automation and applied AI solutions.",
 };
 
 export default function RootLayout({
