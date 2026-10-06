@@ -1,6 +1,6 @@
 "use client"
 
-import { PageTransition } from "@/components/PageTransition";
+import SectionHeader from "@/components/fx/SectionHeader";
 import { 
   SiTypescript, SiJavascript, SiPython, 
   SiReact, SiNextdotjs, SiTailwindcss, SiNodedotjs, SiExpress,
@@ -11,7 +11,7 @@ import {
 import { IoLogoFirebase } from "react-icons/io5";
 import { TbBrandCSharp } from "react-icons/tb";
 import { FaJava } from "react-icons/fa";
-import { Database, Server, Key, Cpu, Mail, Workflow, BrainCircuit, ShieldCheck} from "lucide-react";
+import { Database, Server, Key, Mail, Workflow, BrainCircuit, ShieldCheck} from "lucide-react";
 
 export default function TechArsenal() {
   const techIcons = [
@@ -56,70 +56,45 @@ export default function TechArsenal() {
 
   ];
 
-  return (
-    <PageTransition>
-      <div id="tech">
-        <header className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <Cpu className="text-primary w-8 h-8" />
-            <h1 className="bg-linear-to-r from-white to-primary text-transparent bg-clip-text text-3xl md:text-4xl font-bold">
-              Tech Arsenal
-            </h1>
-          </div>
-          <div className="relative h-px w-full mx-auto overflow-hidden rounded-full">
-            {/* Static gradient bar */}
-            <div className="absolute inset-0 bg-linear-to-r from-transparent via-primary to-transparent"></div>
-            {/* Glow effect */}
-            <div className="absolute inset-0 bg-primary/20 blur-sm"></div>
-          </div>
-        </header>
+  const rows = [techIcons.slice(0, 16), techIcons.slice(16)];
 
-          {/* Tech Icons Grid */}
-          <div className="relative">
-            {/* Grid Container - Adjusted for text space */}
-            <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 md:gap-3">
-              {techIcons.map(({ Icon, name, color, shortName }) => (
-                <div 
-                  key={name} 
-                  className="relative group flex flex-col items-center"
-                >
-                  {/* Icon Container */}
-                  <div 
-                    className="
-                      w-14 h-14 md:w-16 md:h-16 rounded-xl
-                      flex items-center justify-center
-                      bg-secondary/40 backdrop-blur-sm
-                      border border-border/50
-                      transition-all duration-300
-                      group-hover:scale-110
-                      group-hover:border-primary/30
-                      group-hover:shadow-lg
-                      group-hover:shadow-primary/10
-                      group-hover:z-10
-                      mb-2
-                    "
-                  >
-                    <Icon 
-                      className="w-7 h-7 md:w-8 md:h-8" 
-                      style={{ color }}
-                    />
-                  </div>
-                  
-                  {/* Technology Name */}
-                  <div className="
-                    text-xs font-medium text-center text-muted-foreground
-                    transition-colors duration-200
-                    group-hover:text-foreground
-                    line-clamp-2 h-8 flex items-center justify-center
-                    px-1
-                  ">
-                    {shortName}
-                  </div>
-                </div>
+  return (
+    <section id="tech" className="scroll-mt-24">
+      <SectionHeader index={4} total={4} title="Tech" emphasis="Arsenal" kicker="Instruments in the field kit" />
+
+      <div className="-mx-4 space-y-2 sm:-mx-6 lg:-mx-8">
+        {rows.map((row, rowIndex) => (
+          <div
+            key={rowIndex}
+            className="marquee overflow-hidden border-y border-border [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]"
+          >
+            <div
+              className={`marquee-track flex w-max ${rowIndex === 1 ? "reverse" : ""}`}
+              style={{ ["--marquee-duration" as string]: `${row.length * 3.2}s` }}
+            >
+              {[0, 1].map((copy) => (
+                <ul key={copy} aria-hidden={copy === 1} className="flex shrink-0">
+                  {row.map(({ Icon, name, color }) => (
+                    <li
+                      key={name}
+                      data-cursor={name.toUpperCase()}
+                      className="group flex items-center gap-4 border-r border-border px-8 py-6"
+                      style={{ ["--brand" as string]: color }}
+                    >
+                      <Icon className="h-7 w-7 text-muted-foreground transition-colors duration-300 group-hover:text-[var(--brand)]" />
+                      <span className="whitespace-nowrap font-serif text-4xl tracking-[-0.01em] transition-colors duration-300 group-hover:italic group-hover:text-primary md:text-5xl">
+                        {name}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               ))}
             </div>
           </div>
+        ))}
       </div>
-    </PageTransition>
+
+      <p className="annot mt-6 text-right">Hover to hold a row · {techIcons.length} instruments</p>
+    </section>
   );
 }

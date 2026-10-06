@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Outfit } from "next/font/google";
+import { Geist, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ChatWidget } from "@/components/ChatWidget";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
+import FxLayer from "@/components/fx/FxLayer";
+import { BOOT_SCRIPT } from "@/components/fx/boot";
 
-const inter = Inter({ subsets: ["latin"] });
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+});
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains" });
 
 export const metadata: Metadata = {
@@ -21,8 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={`${inter.className} ${outfit.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: BOOT_SCRIPT }} />
+      </head>
+      <body className={`${geist.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} font-sans`}>
         {/* Main content above background */}
         <div className="relative z-10">
           <ConvexClientProvider>
@@ -32,6 +42,7 @@ export default function RootLayout({
             <ChatWidget />
           </ConvexClientProvider>
         </div>
+        <FxLayer />
       </body>
     </html>
   );

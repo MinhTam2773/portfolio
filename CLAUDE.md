@@ -96,7 +96,8 @@ NEXT_PUBLIC_CONVEX_URL=<your-convex-deployment-url>
 - Animations use **Framer Motion** (`framer-motion`)
 - Styling is **Tailwind CSS v4** (PostCSS-based config via `postcss.config.mjs`)
 - Icons from both **Lucide React** and **React Icons**
-- `components/` holds shared UI: `Navigation`, `Footer`, `PageTransition`, `ScrollReveal`, `ProjectHeroCarousel`, `KeepExploringCarousel`
+- `components/` holds shared UI: `Navigation`, `Footer`, `PageTransition`, `ProjectHeroCarousel`, `KeepExploringCarousel`
+- `components/fx/` holds the "field survey" effects: `TerrainCanvas` (hero ridgeline map), `sound.ts` (Web Audio synth, off by default), `FxLayer` (reticle cursor, boot intro, grain, "fire" easter egg), `SectionHeader`, `ElevationRail`, `ScrambleText`, `SoundToggle`
 - `app/sections/` holds the home page sections: `Hero`, `Projects`, `TechArsenal`, `ProfessionalJourney`, `Education`
 
 #### Project Detail Pages

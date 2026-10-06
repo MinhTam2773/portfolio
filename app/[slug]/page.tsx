@@ -105,7 +105,7 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
             <ProjectHeroCarousel images={heroImages} title={project.title} />
 
             <article className="space-y-4">
-              <h2 className="text-3xl font-bold">The Challenge</h2>
+              <h2 className="font-serif text-4xl md:text-5xl tracking-[-0.015em]">The Challenge</h2>
               {project.problemStatement.map((paragraph, index) => (
                 <p key={`challenge-${index}`} className="text-muted-foreground leading-relaxed text-lg">
                   {paragraph}
@@ -114,7 +114,7 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
             </article>
 
             <article className="space-y-4">
-              <h2 className="text-3xl font-bold">The Solution</h2>
+              <h2 className="font-serif text-4xl md:text-5xl tracking-[-0.015em]">The Solution</h2>
               {project.solution.map((paragraph, index) => (
                 <p key={`solution-${index}`} className="text-muted-foreground leading-relaxed text-lg">
                   {paragraph}
@@ -124,14 +124,14 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
 
             {project.caseStudySections?.map((section) => (
               <article key={section.title} className="space-y-5">
-                <h2 className="text-3xl font-bold">{section.title}</h2>
+                <h2 className="font-serif text-4xl md:text-5xl tracking-[-0.015em]">{section.title}</h2>
                 <div className="space-y-5">
                   {section.items.map((item, index) => (
                     <div
                       key={`${section.title}-${item.title ?? index}`}
                       className="rounded-xl border border-border/40 bg-background/50 p-5"
                     >
-                      {item.title && <h3 className="text-xl font-semibold mb-2">{item.title}</h3>}
+                      {item.title && <h3 className="font-serif text-2xl mb-2">{item.title}</h3>}
                       <p className="text-muted-foreground leading-relaxed text-lg">{item.body}</p>
                     </div>
                   ))}
@@ -140,7 +140,7 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
             ))}
 
             <section className="space-y-4 w-full overflow-hidden">
-              <h2 className="text-3xl font-bold">Interface Gallery</h2>
+              <h2 className="font-serif text-4xl md:text-5xl tracking-[-0.015em]">Interface Gallery</h2>
               <div className="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-border/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-border">
                 {project.galleryImages.map((imagePath, index) => (
                   <div
@@ -162,7 +162,7 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
           <aside className="lg:sticky lg:top-8 lg:self-start">
             <div className="rounded-xl border border-border/50 bg-background/60 backdrop-blur-sm p-6 space-y-6">
               <header className="space-y-3">
-                <h1 className="text-3xl font-bold">{project.title}</h1>
+                <h1 className="font-serif text-5xl leading-none tracking-[-0.02em]">{project.title}</h1>
                 <p className="text-muted-foreground">{project.shortDescription}</p>
               </header>
 
@@ -187,7 +187,7 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
                     href={project.liveDemoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 bg-primary text-white font-semibold hover:opacity-90 transition-opacity"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-3 bg-primary text-primary-foreground font-mono text-sm uppercase tracking-[0.12em] hover:bg-foreground transition-colors"
                   >
                     <ExternalLink className="w-4 h-4" />
                     Live Demo
@@ -240,7 +240,7 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
         </div>
 
         <section className="mt-14 pt-10 border-t border-border/40">
-          <h2 className="text-2xl font-bold mb-6">Keep Exploring</h2>
+          <h2 className="font-serif text-4xl mb-6">Keep <span className="italic text-primary">Exploring</span></h2>
           <KeepExploringCarousel projects={projects} currentSlug={project.slug} />
         </section>
       </main>

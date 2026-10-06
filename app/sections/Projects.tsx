@@ -1,296 +1,171 @@
 "use client";
 
-import { PageTransition } from "@/components/PageTransition";
-import {
-  ExternalLink,
-  Github,
-  Code,
-  Database,
-  Server,
-  Globe,
-  Cpu,
-  Smartphone,
-  Wifi,
-  CodeIcon,
-  Shield,
-  Bell,
-  CreditCard,
-  Users,
-  Mail,
-  Workflow,
-  BrainCircuit,
-  Blocks,
-  ShieldCheck,
-  Navigation,
-  HardDrive,
-  AudioWaveform,
-} from "lucide-react";
-import {
-  SiPostgresql,
-  SiNextdotjs,
-  SiTypescript,
-  SiPrisma,
-  SiExpress,
-  SiMongodb,
-  SiReact,
-  SiNodedotjs,
-  SiExpo,
-  SiTailwindcss,
-  SiFramer,
-  SiVercel,
-  SiSocketdotio,
-  SiRedux,
-  SiSupabase,
-  SiTwilio,
-  SiOpenai,
-  SiAxios,
-  SiReactrouter,
-  SiThreedotjs,
-  SiVite,
-  SiGreensock,
-  SiElevenlabs,
-  SiDatabricks,
-  SiPython,
-  SiTerraform,
-} from "react-icons/si";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ArrowUpRight, Github } from "lucide-react";
 import { projects } from "@/lib/projectsData";
+import SectionHeader from "@/components/fx/SectionHeader";
 
-// Tech Stack Icons Mapping - UPDATED
-const techIcons: Record<string, React.ReactNode> = {
-  // Databases & Backend Services
-  PostgreSQL: <SiPostgresql className="w-5 h-5" />,
-  Supabase: <SiSupabase className="w-5 h-5" />,
-  MongoDB: <SiMongodb className="w-5 h-5" />,
-  Prisma: <SiPrisma className="w-5 h-5" />,
-  Database: <Database className="w-5 h-5" />,
+/** The hovered project's screenshot trails the cursor, leaning into the motion. */
+function FloatingPreview({ active }: { active: number | null }) {
+  const ref = useRef<HTMLDivElement>(null);
 
-  // Backend
-  "Node.js": <SiNodedotjs className="w-5 h-5" />,
-  "Express.js": <SiExpress className="w-5 h-5" />,
-  "Auth.js": <Server className="w-5 h-5" />,
-  JWT: <Shield className="w-5 h-5" />,
-  Stripe: <CreditCard className="w-5 h-5" />,
-  bcrypt: <Cpu className="w-5 h-5" />,
-  Postmark: <Mail className="w-5 h-5" />,
-  Twilio: <SiTwilio className="w-5 h-5" />,
-  Inngest: <Workflow className="w-5 h-5" />,
-
-  // Frontend
-  React: <SiReact className="w-5 h-5" />,
-  "Next.js": <SiNextdotjs className="w-5 h-5" />,
-  TypeScript: <SiTypescript className="w-5 h-5" />,
-  "Tailwind CSS": <SiTailwindcss className="w-5 h-5" />,
-  Redux: <SiRedux className="w-5 h-5" />,
-  "Context API": <Server className="w-5 h-5" />,
-  Convex: <Database className="w-5 h-5" />,
-  OpenAI: <SiOpenai className="w-5 h-5" />,
-  RAG: <BrainCircuit className="w-5 h-5" />,
-  "shadcn/ui": <Blocks className="w-5 h-5" />,
-  Clerk: <ShieldCheck className="w-5 h-5" />,
-
-  // Mobile
-  "React Native": <SiReact className="w-5 h-5" />,
-  Expo: <SiExpo className="w-5 h-5" />,
-  Smartphone: <Smartphone className="w-5 h-5" />,
-  "React Navigation": <Navigation className="w-5 h-5" />,
-  Axios: <SiAxios className="w-5 h-5" />,
-  AsyncStorage: <HardDrive className="w-5 h-5" />,
-  "React Router": <SiReactrouter className="w-5 h-5" />,
-  "Wavesurfer.js": <AudioWaveform className="w-5 h-5" />,
-
-  // 3D, AI & Infrastructure
-  "Three.js": <SiThreedotjs className="w-5 h-5" />,
-  Vite: <SiVite className="w-5 h-5" />,
-  GSAP: <SiGreensock className="w-5 h-5" />,
-  "ElevenLabs Agents": <SiElevenlabs className="w-5 h-5" />,
-  Databricks: <SiDatabricks className="w-5 h-5" />,
-  Python: <SiPython className="w-5 h-5" />,
-  Terraform: <SiTerraform className="w-5 h-5" />,
-
-  // Real-time (keeping for reference but not using for these projects)
-  WebSockets: <Wifi className="w-5 h-5" />,
-  "Socket.io": <SiSocketdotio className="w-5 h-5" />,
-
-  // Features
-  RLS: <Shield className="w-5 h-5" />,
-  "REST API": <Globe className="w-5 h-5" />,
-  "REST API Integration": <Globe className="w-5 h-5" />,
-  "Framer Motion": <SiFramer className="w-5 h-5" />,
-  Vercel: <SiVercel className="w-5 h-5" />,
-  "SMS Notifications": <Bell className="w-5 h-5" />,
-  Authentication: <Users className="w-5 h-5" />,
-};
-
-// Tech Stack Tooltip Component
-const TechIcon = ({ tech }: { tech: string }) => {
-  const icon = techIcons[tech] || <Code className="w-5 h-5" />;
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !window.matchMedia("(pointer: fine)").matches) return;
+    const target = { x: 0, y: 0 };
+    const pos = { x: 0, y: 0 };
+    let tilt = 0;
+    let raf = 0;
+    const onMove = (event: PointerEvent) => {
+      target.x = event.clientX;
+      target.y = event.clientY;
+    };
+    const tick = () => {
+      const vx = target.x - pos.x;
+      pos.x += vx * 0.12;
+      pos.y += (target.y - pos.y) * 0.12;
+      tilt += (Math.max(-12, Math.min(12, vx * 0.06)) - tilt) * 0.15;
+      el.style.transform = `translate3d(${pos.x + 28}px, ${pos.y - 120}px, 0) rotate(${tilt}deg)`;
+      raf = requestAnimationFrame(tick);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    raf = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+    };
+  }, []);
 
   return (
-    <div className="relative group/tech">
-      <div className="p-2 rounded-lg bg-secondary/50 border border-border hover:bg-secondary hover:border-primary/30 transition-all duration-200 cursor-help">
-        {icon}
-      </div>
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-foreground text-background text-xs font-medium rounded opacity-0 group-hover/tech:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
-        {tech}
-        <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-foreground"></div>
-      </div>
+    <div ref={ref} aria-hidden className="pointer-events-none fixed left-0 top-0 z-30 hidden [@media(pointer:fine)]:block">
+      <motion.div
+        className="relative aspect-[16/10] w-[380px] overflow-hidden border border-foreground/20 bg-secondary shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)]"
+        initial={false}
+        animate={active === null ? { clipPath: "inset(50% 50% 50% 50%)", opacity: 0 } : { clipPath: "inset(0% 0% 0% 0%)", opacity: 1 }}
+        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+      >
+        {projects.map((project, i) => (
+          <Image
+            key={project.slug}
+            src={project.coverImage}
+            alt=""
+            fill
+            sizes="380px"
+            className={`object-cover transition-[opacity,transform] duration-500 ${active === i ? "scale-100 opacity-100" : "scale-110 opacity-0"}`}
+          />
+        ))}
+        <div className="absolute inset-x-0 bottom-0 flex justify-between bg-background/85 px-3 py-1.5 font-mono text-[9px] tracking-[0.15em] text-foreground/80">
+          <span>SITE {active !== null ? String(active + 1).padStart(2, "0") : "--"}</span>
+          <span>{active !== null ? projects[active].title.toUpperCase() : ""}</span>
+        </div>
+      </motion.div>
     </div>
   );
-};
+}
 
-// Project Card Component
-const ProjectCard = ({
-  slug,
-  title,
-  description,
-  tags,
-  imageUrl,
-  liveDemoUrl,
-  githubUrl,
-  isProtected,
-}: {
-  slug: string;
-  title: string;
-  description: string;
-  tags: string[];
-  imageUrl: string;
-  liveDemoUrl?: string;
-  githubUrl?: string;
-  isProtected?: boolean;
-}) => {
-  const router = useRouter();
-
-  const handleCardClick = () => {
-    router.push(`/${slug}`);
-  };
-
-  return (
-    <article
-      onClick={handleCardClick}
-      className="group h-full flex flex-col overflow-hidden rounded-xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:scale-[1.02] bg-background/50 backdrop-blur-sm cursor-pointer"
-    >
-      {/* Project Image */}
-      <div className="relative h-48 overflow-hidden bg-linear-to-br from-secondary to-background">
-        {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={title}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-primary/10 to-accent/10">
-            <Code className="w-16 h-16 text-primary/30" />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-linear-to-t from-background/80 via-background/20 to-transparent" />
-      </div>
-
-      <div className="p-6 flex-1 flex flex-col">
-        <h3 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors mb-4">
-          {title} {title === "VibeMap" && <span className="text-sm font-mono text-primary/80">2nd place Hackthon</span>}
-        </h3>
-
-        <div className="flex flex-wrap gap-2 mb-4">
-          {tags.map((tag) => (
-            <TechIcon key={tag} tech={tag} />
-          ))}
-        </div>
-
-        <p className="text-muted-foreground mb-6 line-clamp-3">{description}</p>
-
-        <div className="mt-auto flex items-center justify-between pt-4 border-t border-border/30 text-sm text-muted-foreground">
-          <span className="flex items-center gap-3">
-            {liveDemoUrl && (
-              <a
-                href={liveDemoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 text-white hover:text-primary transition-colors"
-              >
-                <ExternalLink className="w-4 h-4" />
-                Live Demo
-              </a>
-            )}
-            {!isProtected && githubUrl && (
-              <a
-                href={githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1 text-white hover:text-primary transition-colors"
-              >
-                <Github className="w-4 h-4" />
-                GitHub
-              </a>
-            )}
-            {isProtected && <span>Protected Code</span>}
-          </span>
-        </div>
-      </div>
-    </article>
-  );
-};
-
-// Main Projects Component
 export default function Projects() {
+  const [active, setActive] = useState<number | null>(null);
+
   return (
-    <PageTransition>
-      <div id="projects">
-        <header className="mb-12">
-          <div className="flex items-center gap-3 mb-6">
-            <CodeIcon className="text-primary w-8 h-8" />
-            <h1 className="bg-linear-to-r from-white to-primary text-transparent bg-clip-text text-3xl md:text-4xl font-bold">
-              Selected Projects
-            </h1>
-          </div>
-          <div className="relative h-px w-full mx-auto overflow-hidden rounded-full">
-            {/* Static gradient bar */}
-            <div className="absolute inset-0 bg-linear-to-r from-transparent via-primary to-transparent"></div>
-            {/* Glow effect */}
-            <div className="absolute inset-0 bg-primary/20 blur-sm"></div>
-          </div>
-        </header>
+    <section id="projects" className="scroll-mt-24">
+      <SectionHeader index={2} total={4} title="Selected" emphasis="Projects" kicker="Sites surveyed, built, and shipped" />
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project) => (
-            <ProjectCard
+      <FloatingPreview active={active} />
+
+      <ol className="border-t border-border" onPointerLeave={() => setActive(null)}>
+        {projects.map((project, i) => {
+          const extraTech = project.techStack.length - 5;
+          return (
+            <motion.li
               key={project.slug}
-              slug={project.slug}
-              title={project.title}
-              description={project.shortDescription}
-              tags={project.techStack}
-              imageUrl={project.coverImage}
-              liveDemoUrl={project.liveDemoUrl}
-              githubUrl={project.githubUrl}
-              isProtected={project.isProtected}
-            />
-          ))}
-        </div>
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-8% 0px" }}
+              transition={{ duration: 0.8, delay: (i % 2) * 0.06, ease: [0.16, 1, 0.3, 1] }}
+              onPointerEnter={() => setActive(i)}
+              className="group relative border-b border-border"
+            >
+              {/* Hover wash sweeping in from the left */}
+              <span className="pointer-events-none absolute inset-0 origin-left scale-x-0 bg-secondary transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100" />
+              <span className="pointer-events-none absolute left-0 top-0 h-full w-[2px] origin-top scale-y-0 bg-primary transition-transform duration-500 group-hover:scale-y-100" />
 
-        {/* View More Button */}
-        <div className="text-center mt-12">
-          <a
-            href="https://github.com/MinhTam2773"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              inline-flex items-center gap-2 px-6 py-3 rounded-lg
-              border border-primary text-primary font-medium
-              hover:bg-primary/10 transition-all duration-200
-              group
-            "
-          >
-            <Github className="w-5 h-5" />
-            Explore More on GitHub
-            <ExternalLink className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-          </a>
-        </div>
+              <div className="relative grid grid-cols-12 gap-x-4 gap-y-4 py-8 md:py-10">
+                <span className="col-span-12 font-mono text-xs text-muted-foreground transition-colors group-hover:text-primary md:col-span-1 md:pt-4">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+
+                {/* Inline cover on touch screens, where there's no hover preview */}
+                <div className="relative col-span-12 aspect-[16/9] overflow-hidden border border-border [@media(pointer:fine)]:hidden">
+                  <Image src={project.coverImage} alt={project.title} fill sizes="100vw" className="object-cover" />
+                </div>
+
+                <div className="col-span-12 md:col-span-7">
+                  <h3 className="font-serif text-[clamp(2.6rem,6vw,5rem)] leading-[0.95] tracking-[-0.02em] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-3">
+                    {project.title}
+                    {project.title === "VibeMap" && (
+                      <span className="annot ml-4 inline-block align-middle text-primary">2nd place hackathon</span>
+                    )}
+                  </h3>
+                  <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground line-clamp-3">{project.shortDescription}</p>
+                </div>
+
+                <div className="col-span-12 flex flex-col justify-between gap-6 md:col-span-4 md:items-end md:text-right">
+                  <div className="annot space-y-1">
+                    <p className="text-foreground">{project.role}</p>
+                    <p>{project.timeline}</p>
+                  </div>
+                  <p className="font-mono text-[10px] uppercase leading-relaxed tracking-[0.12em] text-muted-foreground">
+                    {project.techStack.slice(0, 5).join(" / ")}
+                    {extraTech > 0 && <span className="text-primary"> +{extraTech}</span>}
+                  </p>
+                  <div className="relative z-10 flex items-center gap-5 font-mono text-[11px] tracking-[0.12em]">
+                    {project.liveDemoUrl && (
+                      <a
+                        href={project.liveDemoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-foreground transition-colors hover:text-primary"
+                      >
+                        LIVE <ArrowUpRight className="h-3.5 w-3.5" />
+                      </a>
+                    )}
+                    {!project.isProtected && project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-foreground transition-colors hover:text-primary"
+                      >
+                        <Github className="h-3.5 w-3.5" /> CODE
+                      </a>
+                    )}
+                    {project.isProtected && <span className="text-muted-foreground">PROTECTED CODE</span>}
+                  </div>
+                </div>
+              </div>
+
+              {/* The whole row opens the case study; the links above sit on top of it */}
+              <Link href={`/${project.slug}`} className="absolute inset-0" data-cursor="OPEN CASE STUDY" aria-label={`${project.title} case study`} />
+            </motion.li>
+          );
+        })}
+      </ol>
+
+      <div className="mt-12 flex justify-end">
+        <a
+          href="https://github.com/MinhTam2773"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="annot group inline-flex items-center gap-3 border border-border px-5 py-3 text-foreground transition-colors hover:border-primary hover:text-primary"
+        >
+          <Github className="h-4 w-4" />
+          Explore more on GitHub
+          <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+        </a>
       </div>
-    </PageTransition>
+    </section>
   );
 }

@@ -1,10 +1,31 @@
 "use client";
 
-import { Menu, X, Terminal } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import SoundToggle from "@/components/fx/SoundToggle";
+
+function CalgaryClock() {
+  const [time, setTime] = useState("");
+
+  useEffect(() => {
+    const format = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/Edmonton",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZoneName: "short",
+    });
+    const update = () => setTime(format.format(new Date()).toUpperCase());
+    update();
+    const timer = window.setInterval(update, 15_000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return <span suppressHydrationWarning>YYC {time}</span>;
+}
 
 export function Navigation() {
   const path = usePathname();
@@ -65,60 +86,64 @@ export function Navigation() {
     <header
       className={`fixed top-0 w-full z-50 h-16 border-b transition-all duration-300 ${
         scrolled
-          ? "bg-background/90 backdrop-blur-xl border-border/50"
+          ? "bg-background/80 backdrop-blur-md border-border"
           : "bg-transparent border-transparent"
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="bg-primary/10 p-1.5 rounded-lg group-hover:bg-primary/20 transition-colors border border-primary/20">
-            <Terminal className="w-5 h-5 text-primary" />
-          </div>
-          <span className="font-heading font-bold text-lg tracking-tight text-white">
-            minhtam
+        <Link href="/" className="flex items-center gap-3 group" data-cursor="TO SUMMIT">
+          <span className="font-serif text-2xl leading-none tracking-tight text-foreground">
+            M<span className="text-primary transition-colors group-hover:text-foreground">T</span>N
+          </span>
+          <span className="annot hidden lg:inline">
+            <CalgaryClock />
           </span>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-1">
-          {links.map((link) => (
+          {links.map((link, i) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`relative px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                isActive(link)
-                  ? "text-primary bg-primary/10"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              className={`relative px-3 py-2 font-mono text-[11px] uppercase tracking-[0.14em] transition-colors duration-200 ${
+                isActive(link) ? "text-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
             >
+              <span className={`mr-1.5 ${isActive(link) ? "text-primary" : "text-foreground/25"}`}>0{i}</span>
               {link.label}
               {isActive(link) && (
                 <motion.div
                   layoutId="nav-active"
-                  className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary"
+                  className="absolute -bottom-px left-3 right-3 h-px bg-primary"
                   transition={{ type: "spring", duration: 0.4 }}
                 />
               )}
             </Link>
           ))}
+          <SoundToggle className="ml-2" />
           <a
             href="/Resume_Minh_Tam_Nguyen.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="ml-3 px-4 py-2 rounded-lg border border-primary/40 text-primary font-mono text-sm hover:bg-primary/10 hover:border-primary/60 transition-all duration-200"
+            data-cursor="DOWNLOAD"
+            className="ml-2 px-4 py-2 bg-primary text-primary-foreground font-mono text-[11px] uppercase tracking-[0.14em] hover:bg-foreground transition-colors duration-200"
           >
-            Resume PDF
+            Resume ↓
           </a>
         </nav>
 
         {/* Mobile Toggle */}
+        <div className="flex items-center gap-1 md:hidden">
+        <SoundToggle />
         <button
-          className="md:hidden p-2 text-foreground rounded-lg hover:bg-muted/50 transition-colors"
+          className="p-2 text-foreground hover:text-primary transition-colors"
           onClick={toggleMenu}
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
           {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
+        </div>
       </div>
 
       {/* Mobile Nav - Slide from right */}
@@ -137,10 +162,10 @@ export function Navigation() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-0 z-[60] min-h-screen w-screen bg-[#0b0f19] md:hidden flex flex-col overflow-y-auto"
+              className="fixed inset-0 z-[60] min-h-screen w-screen bg-background md:hidden flex flex-col overflow-y-auto"
             >
               <div className="flex items-center justify-between p-4 border-b border-border/30">
-                <span className="font-heading font-bold gradient-text">Menu</span>
+                <span className="annot">Index</span>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="p-2 rounded-lg hover:bg-muted/50 transition-colors"
@@ -158,17 +183,15 @@ export function Navigation() {
                   >
                     <Link
                       href={link.href}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                        isActive(link)
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
+                      className={`flex items-baseline gap-4 border-b border-border px-2 py-4 transition-colors ${
+                        isActive(link) ? "text-primary" : "text-foreground hover:text-primary"
                       }`}
                       onClick={() => setIsOpen(false)}
                     >
-                      <span className="font-mono text-xs text-primary/60">
-                        0{i + 1}
+                      <span className="font-mono text-xs text-primary/70">
+                        0{i}
                       </span>
-                      <span className="font-medium">{link.label}</span>
+                      <span className="font-serif text-5xl leading-none">{link.label}</span>
                     </Link>
                   </motion.div>
                 ))}
@@ -178,7 +201,7 @@ export function Navigation() {
                   href="/Resume_Minh_Tam_Nguyen.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-center w-full px-4 py-3 rounded-lg border border-primary/40 text-primary font-mono text-sm hover:bg-primary/10 transition-all"
+                  className="block text-center w-full px-4 py-3 bg-primary text-primary-foreground font-mono text-sm uppercase tracking-[0.14em]"
                 >
                   Resume PDF
                 </a>

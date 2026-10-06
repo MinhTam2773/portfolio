@@ -303,7 +303,7 @@ export function ChatWidget() {
         <button
           type="button"
           onClick={toggleChat}
-          className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-gradient-to-br from-primary to-blue-500 text-white shadow-[0_10px_30px_rgba(59,130,246,0.45)] transition-transform hover:scale-105"
+          className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_10px_30px_rgba(255,90,31,0.35)] transition-transform hover:scale-105"
           aria-label={isOpen ? "Close chat" : "Open chat"}
         >
           <MessageCircle className="h-5 w-5" />
