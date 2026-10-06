@@ -23,7 +23,9 @@ function getYouTubeEmbedUrl(videoUrl: string) {
 
 export default function ProjectVideoButton({ videoUrl, title, label }: ProjectVideoButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const embedUrl = getYouTubeEmbedUrl(videoUrl);
+  // Site-relative paths (e.g. /projects/x/video.mp4) are self-hosted files, not YouTube links.
+  const isLocalVideo = videoUrl.startsWith("/");
+  const embedUrl = isLocalVideo ? videoUrl : getYouTubeEmbedUrl(videoUrl);
 
   useEffect(() => {
     if (!isOpen) {
@@ -84,14 +86,25 @@ export default function ProjectVideoButton({ videoUrl, title, label }: ProjectVi
             </div>
 
             <div className="aspect-video w-full bg-black">
-              <iframe
-                src={embedUrl}
-                title={`${title} journey video`}
-                className="h-full w-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-              />
+              {isLocalVideo ? (
+                <video
+                  src={embedUrl}
+                  title={`${title} video`}
+                  className="h-full w-full"
+                  controls
+                  autoPlay
+                  playsInline
+                />
+              ) : (
+                <iframe
+                  src={embedUrl}
+                  title={`${title} journey video`}
+                  className="h-full w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              )}
             </div>
           </div>
         </div>,

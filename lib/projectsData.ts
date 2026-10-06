@@ -85,6 +85,71 @@ export const projects: Project[] = [
     isProtected: true,
   },
   {
+    slug: "firewatch",
+    title: "FIRE//WATCH",
+    shortDescription:
+      "A real-time wildfire risk intelligence map for all of Canada, rendering fire danger, live weather, and projected fire spread on a 3D hex grid, with Firefly, a voice and text AI agent that answers questions and flies the map for you.",
+    problemStatement: [
+      "Wildfire data in Canada is spread across satellite hotspots, agency fire reports, weather stations, and forecasts. Duty officers and residents have to piece it together themselves to answer simple questions like \"how risky is my town this week?\" or \"where should the next crew go?\"",
+    ],
+    solution: [
+      "Built during the IEEE YP Industry Hackathon 2026 by a team of four, FIRE//WATCH turns open data into one interactive 3D map. Fire danger follows the Canadian Fire Weather Index System, spread uses the Fire Behaviour Prediction System, and a 7-day forecast bar lets users step through each day. Firefly, our AI mascot, answers typed or spoken questions straight from the same data the map shows.",
+    ],
+    caseStudySections: [
+      {
+        title: "What I Built",
+        items: [
+          {
+            title: "1. Firefly: A Voice & Text AI Agent",
+            body: "I built Firefly end to end: an ElevenLabs voice agent and a Databricks-hosted LLM for typed questions, both wired to client-side tools that read and drive the live map. Firefly can brief the situation, check a community's risk over the next 7 days, explain why an area is rated the way it is, fly the camera to a place, and raise proactive alerts when a town enters a projected fire path. Answers are grounded in app state, so the model never guesses at numbers.",
+          },
+          {
+            title: "2. Projected Fire Spread",
+            body: "I implemented the projected spread layer: an ellipse-based scenario model that grows each active fire with wind and fuel, highlights the reachable hexes for the selected forecast day, and lists the communities in its path.",
+          },
+          {
+            title: "3. Wind Streamlines & Risk Ranking",
+            body: "I replaced static wind arrows with animated, Windfinder-style streamlines that follow the forecast day and glide smoothly over terraced terrain. I also ranked at-risk communities by the map's risk score and scored each day by its peak so the forecast slider compares like with like.",
+          },
+        ],
+      },
+      {
+        title: "The Hardest Part: Making the Agent Feel Natural",
+        items: [
+          {
+            title: "The Problem",
+            body: "A talking mascot on a live map has many moving parts: voice, speech bubbles, camera flights, loading screens, and side panels all compete for the screen. Early versions greeted users over their first question, flew to a spot without actually answering, and lost the mascot behind other panels.",
+          },
+          {
+            title: "The Solution",
+            body: "I reworked the conversation flow so every question gets a spoken answer, the speech bubble follows the voice, flights loop once and return home after explaining, and follow-up questions in a conversation route to the agent instead of the rule-based fallback. When neither AI is reachable, the same tools answer directly from app data, so a question never goes unanswered.",
+          },
+        ],
+      },
+    ],
+    coverImage: "/projects/firewatch/firewatch-1.webp",
+    galleryImages: ["/projects/firewatch/firewatch-1.webp", "/projects/firewatch/firewatch-2.webp"],
+    techStack: [
+      "React",
+      "TypeScript",
+      "Three.js",
+      "Vite",
+      "Tailwind CSS",
+      "GSAP",
+      "ElevenLabs Agents",
+      "Databricks",
+      "Node.js",
+      "Python",
+      "Terraform",
+    ],
+    role: "Full Stack Developer (AI Agent & Geospatial)",
+    timeline: "Oct 2026 · IEEE YP Industry Hackathon",
+    liveDemoUrl: "https://fire-watch.ca/",
+    githubUrl: "https://github.com/SaladStik/Firewatch",
+    videoUrl: "/projects/firewatch/firewatch-showcase.mp4",
+    videoLabel: "Video showcase",
+  },
+  {
     slug: "rezume",
     title: "Rezume",
     shortDescription:

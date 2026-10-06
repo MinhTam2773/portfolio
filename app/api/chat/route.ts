@@ -90,6 +90,14 @@ Stack: Next.js, TypeScript, Supabase, PostgreSQL, Stripe, Twilio, Inngest, Azure
 - Mentored 3 team members, improving delivery speed by 30%
 Link: minhtam.info/allbarber
 
+**FIRE//WATCH** — Real-time wildfire risk intelligence map for all of Canada (IEEE YP Industry Hackathon 2026)
+Stack: React, TypeScript, Three.js, Vite, ElevenLabs Agents, Databricks Model Serving, Node.js
+- Team of 4; renders fire danger (Canadian FWI System), live weather, and projected fire spread on a 3D hex grid with a 7-day forecast
+- Built Firefly, a voice (ElevenLabs) and text (Databricks-hosted LLM) AI agent wired to client-side tools that read and drive the live map: situation briefings, community risk checks, "explain why" answers, camera flights, and proactive alerts
+- Implemented the projected fire spread model, which highlights reachable hexes per forecast day and lists communities in the path
+- Built animated wind streamlines that follow the forecast day, and ranked at-risk communities by the map's risk score
+Link: minhtam.info/firewatch — live at fire-watch.ca
+
 **Pathr** — AI-powered education and career pathways platform
 Stack: Next.js 15, Convex, Vercel AI SDK, OpenAI GPT-4o, Claude 3.5 Sonnet, RAG
 - Architected a deterministic 5-stage AI pipeline: Understand → Retrieve → Reason → Validate → Present

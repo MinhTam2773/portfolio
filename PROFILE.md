@@ -125,6 +125,24 @@ _Multi-Tenant Barbershop Management SaaS_
 
  
 
+|                                                                                        |                                                                                   |
+| -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **FIRE//WATCH \| Role: Full Stack Developer, AI Agent & Geospatial \| Team size: 4** | _React · TypeScript · Three.js · Vite · ElevenLabs Agents · Databricks · Node.js_ |
+
+_Real-Time Wildfire Risk Intelligence Map for Canada (IEEE YP Industry Hackathon 2026)_
+
+<!--[if !supportLists]-->•      <!--[endif]-->Built a 3D wildfire risk map covering all of Canada with a team of 4, rendering fire danger (Canadian FWI System), live weather, and projected fire spread on a hex grid with a 7-day forecast. Live at fire-watch.ca.
+
+<!--[if !supportLists]-->•      <!--[endif]-->Built Firefly, a voice and text AI agent (ElevenLabs Agents for voice, a Databricks-hosted LLM for typed questions), wired to client-side tools that read and drive the live map, so answers are grounded in app data instead of model guesses.
+
+<!--[if !supportLists]-->•      <!--[endif]-->Gave Firefly situation briefings, 7-day community risk checks, "explain why" answers, camera flights to places and fires, and proactive alerts when a town enters a projected fire path.
+
+<!--[if !supportLists]-->•      <!--[endif]-->Implemented the projected fire spread layer, which grows each active fire with wind and fuel, highlights reachable hexes for the selected forecast day, and lists communities in the path.
+
+<!--[if !supportLists]-->•      <!--[endif]-->Replaced static wind arrows with animated streamlines that follow the forecast day, and ranked at-risk communities by the map's risk score.
+
+ 
+
 |                                                                       |                                                                                 |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
 | **Pathr \| Role: Backend Developer , AI Integration \| Team size: 4** | _Next.js 15 · Convex · Vercel AI SDK · OpenAI GPT-4o · Claude 3.5 Sonnet · RAG_ |

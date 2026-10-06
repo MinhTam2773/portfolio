@@ -45,6 +45,13 @@ import {
   SiOpenai,
   SiAxios,
   SiReactrouter,
+  SiThreedotjs,
+  SiVite,
+  SiGreensock,
+  SiElevenlabs,
+  SiDatabricks,
+  SiPython,
+  SiTerraform,
 } from "react-icons/si";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -92,6 +99,15 @@ const techIcons: Record<string, React.ReactNode> = {
   AsyncStorage: <HardDrive className="w-5 h-5" />,
   "React Router": <SiReactrouter className="w-5 h-5" />,
   "Wavesurfer.js": <AudioWaveform className="w-5 h-5" />,
+
+  // 3D, AI & Infrastructure
+  "Three.js": <SiThreedotjs className="w-5 h-5" />,
+  Vite: <SiVite className="w-5 h-5" />,
+  GSAP: <SiGreensock className="w-5 h-5" />,
+  "ElevenLabs Agents": <SiElevenlabs className="w-5 h-5" />,
+  Databricks: <SiDatabricks className="w-5 h-5" />,
+  Python: <SiPython className="w-5 h-5" />,
+  Terraform: <SiTerraform className="w-5 h-5" />,
 
   // Real-time (keeping for reference but not using for these projects)
   WebSockets: <Wifi className="w-5 h-5" />,
