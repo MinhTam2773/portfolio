@@ -97,7 +97,8 @@ NEXT_PUBLIC_CONVEX_URL=<your-convex-deployment-url>
 - Styling is **Tailwind CSS v4** (PostCSS-based config via `postcss.config.mjs`)
 - Icons from both **Lucide React** and **React Icons**
 - `components/` holds shared UI: `Navigation`, `Footer`, `PageTransition`, `ProjectHeroCarousel`, `KeepExploringCarousel`
-- `components/fx/` holds the "field survey" effects: `TerrainCanvas` (hero ridgeline map), `sound.ts` (Web Audio synth, off by default), `FxLayer` (reticle cursor, boot intro, grain, "fire" easter egg), `SectionHeader`, `ElevationRail`, `ScrambleText`, `SoundToggle`
+- `components/ocean/` holds the "sky ocean" hero (site is moving to this theme section by section): `SkyLayers` (sky, moon, cloud bands), `SkyOceanCanvas` (three.js: fish school, light shafts, specks), `school.ts` (boids + vortex), `atmosphere.ts`, `music.ts` + `SoundToggle` (site music). Fish model: `public/ocean/fish.glb`, rebuilt with `scripts/blender/make_fish.py`
+- `components/fx/` holds the older "field survey" effects still used by sections not yet redesigned: `sound.ts` (Web Audio synth, off by default), `FxLayer` (reticle cursor, boot intro, grain, "fire" easter egg), `SectionHeader`, `ElevationRail`, `ScrambleText`
 - `app/sections/` holds the home page sections: `Hero`, `Projects`, `TechArsenal`, `ProfessionalJourney`, `Education`
 
 #### Project Detail Pages

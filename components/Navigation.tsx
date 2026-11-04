@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import SoundToggle from "@/components/fx/SoundToggle";
+import SoundToggle from "@/components/ocean/SoundToggle";
 
 function CalgaryClock() {
   const [time, setTime] = useState("");

@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import TerrainCanvas, { type TerrainReadout } from "@/components/fx/TerrainCanvas";
+import SkyLayers from "@/components/ocean/SkyLayers";
+import SkyOceanCanvas from "@/components/ocean/SkyOceanCanvas";
 import { useBootDone } from "@/components/fx/boot";
 import { sfx } from "@/components/fx/sound";
 
@@ -35,7 +36,6 @@ const Hero = () => {
   const incrementView = useMutation(api.stats.incrementView);
   const incrementLike = useMutation(api.stats.incrementLike);
   const ready = useBootDone();
-  const readoutRef = useRef<HTMLSpanElement>(null);
   const [pins, setPins] = useState<number[]>([]);
 
   useEffect(() => {
@@ -48,13 +48,6 @@ const Hero = () => {
     sessionStorage.setItem(viewSessionKey, "1");
     void incrementView();
   }, [incrementView]);
-
-  const onReadout = useCallback<TerrainReadout>((info) => {
-    if (!readoutRef.current) return;
-    readoutRef.current.textContent = info
-      ? `ELEV ${info.elevation.toLocaleString("en-CA")} M · ${info.lat.toFixed(3)}°N ${Math.abs(info.lon).toFixed(3)}°W`
-      : "HOVER THE LAND · CLICK TO DROP A PIN";
-  }, []);
 
   const views = stats?.views ?? 0;
   const likes = stats?.likes ?? 0;
@@ -76,77 +69,42 @@ const Hero = () => {
       <section className="relative h-[100svh] min-h-[640px] w-full overflow-hidden">
         <motion.div
           className="absolute inset-0"
-          initial={{ opacity: 0, scale: 1.08 }}
+          initial={{ opacity: 0, scale: 1.04 }}
           animate={ready ? { opacity: 1, scale: 1 } : undefined}
           transition={{ duration: 2.2, ease: EASE }}
         >
-          <TerrainCanvas onReadout={onReadout} />
-        </motion.div>
-
-        {/* Ink scrim so the name stays legible over the foreground ridges */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[62%] bg-linear-to-t from-background via-background/75 to-transparent" />
-
-        {/* Survey HUD */}
-        <motion.div
-          {...fadeUp(0.5)}
-          className="annot container-custom pointer-events-none absolute inset-x-0 top-24 flex justify-between gap-6"
-        >
-          <div className="space-y-1">
-            <p className="text-foreground">SHEET 00 — FIELD SURVEY</p>
-            <p>CALGARY, ALBERTA</p>
-            <p>51.0447°N · 114.0719°W</p>
-          </div>
-          <div className="hidden space-y-1 text-right sm:block">
-            <p>
-              <span className="text-foreground">W</span> ← ROCKIES ······ PRAIRIE → <span className="text-foreground">E</span>
-            </p>
-            <p>
-              <span className="text-accent">━</span> BOW RIVER
-            </p>
-            <p className="text-primary">
-              <span ref={readoutRef}>HOVER THE LAND · CLICK TO DROP A PIN</span>
-            </p>
-          </div>
+          <SkyLayers className="absolute inset-0" />
+          <SkyOceanCanvas className="absolute inset-0" />
+          <div className="scanlines pointer-events-none absolute inset-0" />
         </motion.div>
 
         {/* Name */}
-        <div className="container-custom pointer-events-none absolute inset-x-0 bottom-0 pb-8 md:pb-12">
-          <motion.p {...fadeUp(0.3)} className="annot mb-5 flex items-center gap-3">
-            <span className="beacon inline-block h-2 w-2 bg-primary" />
-            Power Platform &amp; AI Solutions Developer · Intelbyte Corp
-          </motion.p>
-
-          <h1 className="font-serif text-[clamp(4.25rem,15vw,13.5rem)] leading-[0.8] tracking-[-0.035em]">
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-4 pb-[6vh] text-center text-[#f6f1ec] [text-shadow:0_2px_30px_rgb(60_70_110/0.35)]">
+          <h1 className="font-serif text-[clamp(3.5rem,11vw,10rem)] leading-[0.85] tracking-[-0.02em]">
             <span className="sr-only">Minh Tam Nguyen</span>
             <span aria-hidden>
-              <RisingLine text="Minh Tam" delay={0.15} ready={ready} />
-              <RisingLine text="Nguyen." delay={0.45} ready={ready} className="italic text-primary md:pl-[0.9em]" />
+              <RisingLine text="Minh Tam Nguyen" delay={0.15} ready={ready} />
             </span>
           </h1>
-
-          <motion.div
-            {...fadeUp(1.1)}
-            className="mt-8 flex flex-col gap-4 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between"
-          >
-            <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
-              I map messy business problems into software that works — low-code, full-stack, and applied AI.
-            </p>
-            <a
-              href="#field-notes"
-              data-cursor="DESCEND"
-              className="annot pointer-events-auto inline-flex items-center gap-3 text-foreground transition-colors hover:text-primary"
-            >
-              Scroll to descend
-              <span className="relative block h-8 w-px overflow-hidden bg-border">
-                <motion.span
-                  className="absolute left-0 top-0 block h-3 w-px bg-primary"
-                  animate={{ y: ["-100%", "280%"] }}
-                  transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                />
-              </span>
-            </a>
-          </motion.div>
+          <motion.p {...fadeUp(0.9)} className="mt-5 text-sm uppercase tracking-[0.3em] text-[#f6f1ec]/85 md:text-base">
+            Software &amp; AI Developer
+          </motion.p>
         </div>
+
+        {/* Scroll cue */}
+        <motion.a
+          {...fadeUp(1.3)}
+          href="#field-notes"
+          aria-label="Scroll down"
+          data-cursor="DESCEND"
+          className="absolute bottom-8 left-1/2 block h-12 w-px -translate-x-1/2 overflow-hidden bg-white/25"
+        >
+          <motion.span
+            className="absolute left-0 top-0 block h-4 w-px bg-white"
+            animate={{ y: ["-100%", "320%"] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </motion.a>
       </section>
 
       {/* Field notes: who's behind the survey */}
