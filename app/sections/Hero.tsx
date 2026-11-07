@@ -75,7 +75,6 @@ const Hero = () => {
         >
           <SkyLayers className="absolute inset-0" />
           <SkyOceanCanvas className="absolute inset-0" />
-          <div className="scanlines pointer-events-none absolute inset-0" />
         </motion.div>
 
         {/* Name */}

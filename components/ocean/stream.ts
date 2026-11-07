@@ -18,7 +18,16 @@ export type StreamOptions = {
   /** Loops per second. */
   speed: number;
   look: CreatureLook;
-  vortex?: { center: THREE.Vector3; radius: number; turns: number; cycle: number; from: number; to: number };
+  vortex?: {
+    center: THREE.Vector3;
+    radius: number;
+    turns: number;
+    cycle: number;
+    from: number;
+    to: number;
+    /** Tilt of the tunnel's ring (radians around X, then Z), so it weaves in depth. */
+    tilt: { x: number; z: number };
+  };
 };
 
 const smooth = (a: number, b: number, x: number) => {
@@ -41,6 +50,8 @@ export class Stream {
   private readonly laneR: Float32Array; // lane distance from the tube's centre
   private readonly size: Float32Array;
   private readonly push: Float32Array; // cursor displacement, eases back to 0
+  private readonly jitter: Float32Array; // -1..1, per-fish speed offset in the tunnel
+  private readonly tilt = new THREE.Quaternion();
   private head = Math.random();
   private readonly a = new THREE.Vector3();
   private readonly b = new THREE.Vector3();
@@ -66,7 +77,10 @@ export class Stream {
     this.laneR = new Float32Array(n);
     this.size = new Float32Array(n);
     this.push = new Float32Array(n * 3);
+    this.jitter = new Float32Array(n);
+    if (opts.vortex) this.tilt.setFromEuler(new THREE.Euler(opts.vortex.tilt.x, 0, opts.vortex.tilt.z));
     for (let i = 0; i < n; i++) {
+      this.jitter[i] = Math.random() * 2 - 1;
       phase[i] = Math.random() * Math.PI * 2;
       // Denser in the middle of the stream, thinning toward head and tail.
       this.along[i] = (Math.random() + Math.random()) / 2;
@@ -103,8 +117,9 @@ export class Stream {
       const s = this.along[i];
       const u = (((this.head - s * length) % 1) + 1) % 1;
 
-      this.centre(u, s, time, swirl, this.a);
-      this.centre((u + EPS) % 1, s - EPS / length, time, swirl, this.b);
+      const jit = this.jitter[i];
+      this.centre(u, s, jit, time, swirl, this.a);
+      this.centre((u + EPS) % 1, s - EPS / length, jit, time, swirl, this.b);
       this.tan.subVectors(this.b, this.a).normalize();
       this.nrm.crossVectors(this.tan, this.up);
       if (this.nrm.lengthSq() < 1e-6) this.nrm.set(0, 0, 1);
@@ -160,18 +175,19 @@ export class Stream {
   }
 
   /** Centre line of the stream at loop position u, blended toward the spiral tunnel. */
-  private centre(u: number, s: number, time: number, swirl: number, out: THREE.Vector3) {
+  private centre(u: number, s: number, jit: number, time: number, swirl: number, out: THREE.Vector3) {
     this.curve.getPoint(u, out);
     const v = this.opts.vortex;
     if (!v || swirl <= 0) return out;
-    // Tunnel: fish spread along a helix around the camera axis by their place in the stream.
-    const radius = Math.min(v.radius, 7 * this.widthScale);
-    const angle = s * Math.PI * 2 * v.turns - time * 0.9;
-    this.helix.set(
-      v.center.x + Math.cos(angle) * radius,
-      v.center.y + Math.sin(angle) * radius,
-      v.center.z + (0.5 - s) * 8,
-    );
+    // Tunnel: fish spread along a helix by their place in the stream. The ring is tilted
+    // so the school dives away and swoops toward the camera; each fish circles at its own
+    // pace (±18%) and the radius breathes, so it never reads as a perfect spinner.
+    const radius = Math.min(v.radius, 7 * this.widthScale) * (1 + 0.15 * Math.sin(s * 7 + time * 0.8));
+    const angle = s * Math.PI * 2 * v.turns - time * 0.9 * (1 + 0.18 * jit);
+    this.helix
+      .set(Math.cos(angle) * radius, Math.sin(angle) * radius, (0.5 - s) * 3)
+      .applyQuaternion(this.tilt)
+      .add(v.center);
     return out.lerp(this.helix, swirl);
   }
 }

@@ -8,9 +8,10 @@ import { useEffect, useRef } from "react";
 const SKY =
   "linear-gradient(180deg, #6c8cb8 0%, #87a1c6 32%, #a6b4cc 55%, #d4b8ae 76%, #eab598 88%, #e9a98c 100%)";
 
-// Bottom of the hero: dusk falls into the site background below.
+// Bottom of the hero: dusk falls through twilight violet into the site background below,
+// rather than straight to near-black (which turns the warm clouds muddy grey).
 const DUSK_FADE =
-  "linear-gradient(180deg, transparent 72%, rgb(46 48 72 / 0.85) 90%, hsl(var(--background)) 100%)";
+  "linear-gradient(180deg, rgb(45 32 74 / 0) 68%, rgb(38 28 68 / 0.5) 82%, rgb(20 16 38 / 0.88) 93%, hsl(var(--background)) 100%)";
 
 /**
  * A cloud painting followed by its mirror image. The pair loops with no visible seam,
@@ -70,9 +71,11 @@ export default function SkyLayers({ className = "" }: { className?: string }) {
 
   return (
     <div aria-hidden className={`pointer-events-none overflow-hidden ${className}`} style={{ background: SKY }}>
-      <div ref={moonRef} className="absolute left-1/2 top-[16%] -translate-x-1/2 will-change-transform">
+      {/* Screen blend: seen through lit dusk air, no part of the moon is darker than the sky.
+          It sits on the wrapper, which has its own stacking context, so it blends with the sky. */}
+      <div ref={moonRef} className="absolute left-1/2 top-[16%] -translate-x-1/2 opacity-80 mix-blend-screen will-change-transform">
         <div
-          className="h-[min(34vmin,300px)] aspect-[264/492] opacity-90"
+          className="h-[min(34vmin,300px)] aspect-[264/492] rotate-[16deg]"
           style={{ background: "url(/ocean/moon.webp) center / contain no-repeat" }}
         />
       </div>

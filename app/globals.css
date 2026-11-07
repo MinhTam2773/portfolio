@@ -180,12 +180,6 @@ html.intro-seen .boot-overlay {
   animation: cloud-drift var(--drift, 240s) linear infinite;
 }
 
-/* Faint scanlines from the reference, over the whole hero */
-.scanlines {
-  background: repeating-linear-gradient(0deg, rgb(0 0 0 / 0.035) 0 1px, transparent 1px 3px);
-  mix-blend-mode: multiply;
-}
-
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar {
   width: 6px;

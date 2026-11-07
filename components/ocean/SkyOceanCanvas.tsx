@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { createAtmosphere } from "./atmosphere";
-import type { CreatureModel } from "./creatureMaterial";
+import { resolution, type CreatureModel } from "./creatureMaterial";
 import { Gliders, type GliderOptions } from "./gliders";
 import { Stream, type StreamOptions } from "./stream";
 
@@ -19,8 +19,10 @@ const SCHOOL_Z = -2;
 const DESIGN_HALF_WIDTH = 17.7;
 
 const v = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
+const ZERO = new THREE.Vector2();
 
 // Main silver stream: a long loop sweeping across the sky, coiling into a tunnel every 32 s.
+// The tunnel's ring is tilted and sits above the subtitle, weaving around the name.
 const SILVER_STREAM: StreamOptions = {
   count: 140,
   scale: 0.5,
@@ -28,47 +30,57 @@ const SILVER_STREAM: StreamOptions = {
   length: 0.32,
   thickness: 1.2,
   speed: 0.028,
-  look: { bendSpeed: 9, bendAmount: 0.12 },
-  vortex: { center: v(0, 0.5, -2), radius: 5.5, turns: 2.2, cycle: 32, from: 18, to: 28 },
+  look: { rim: "#ffe4d6", bendSpeed: 9, bendAmount: 0.12, minLight: 0.6 },
+  vortex: { center: v(0, 3.4, -4), radius: 5.5, turns: 2.2, cycle: 32, from: 18, to: 28, tilt: { x: 1.05, z: 0.35 } },
 };
 
-// A small golden school on its own loop, lower and closer.
+// A small golden school cruising level across the lower sky, among the clouds.
 const GOLDEN_STREAM: StreamOptions = {
   count: 24,
   scale: 0.7,
-  path: [v(2, -5, 5), v(9, -2.5, 3), v(15, -4.5, -1), v(10, -7.5, 0), v(3, -7, 4)],
-  length: 0.45,
-  thickness: 0.7,
-  speed: 0.045,
-  look: { rim: "#fff0c8", bendSpeed: 11, bendAmount: 0.13 },
+  path: [v(-14, -5, 3), v(-4, -4.2, 4), v(8, -4.6, 3), v(16, -5.4, 0), v(6, -6, -2), v(-8, -5.6, -1)],
+  length: 0.22,
+  thickness: 0.8,
+  speed: 0.04,
+  look: { rim: "#fff0c8", bendSpeed: 11, bendAmount: 0.13, minLight: 0.55 },
 };
 
-const MANTAS: GliderOptions = {
+// Two mantas at clearly different depths, sizes and speeds, so they never move in step.
+const NEAR_MANTA: GliderOptions = {
   kind: "manta",
-  scale: 1.4,
-  paths: [
-    [v(-24, 1, -12), v(-6, 3, -9), v(14, 0, -13), v(26, 2, -16), v(6, 5, -20), v(-14, 2, -18)],
-    [v(22, -2, -8), v(4, -4, -6), v(-16, -1, -10), v(-26, -3, -14), v(-4, -6, -16), v(14, -4, -14)],
-  ],
-  speed: 0.012,
+  scale: 1.8,
+  paths: [[v(-26, -4, -6), v(-8, -2.5, -4), v(10, -3.5, -6), v(26, -2, -9), v(8, -6, -12), v(-12, -5, -10)]],
+  speed: 0.011,
   roll: 0.9,
-  look: { bendSpeed: 1.6, bendAmount: 0.25 },
+  look: { bendSpeed: 2.8, bendAmount: 0.25 },
 };
 
-// One whale, far back and hazy, crossing very slowly.
+const FAR_MANTA: GliderOptions = {
+  kind: "manta",
+  scale: 0.8,
+  paths: [[v(24, 7, -22), v(6, 8.5, -20), v(-14, 7.5, -24), v(-28, 9, -26), v(-6, 10, -28), v(14, 8, -26)]],
+  speed: 0.007,
+  roll: 0.7,
+  look: { bendSpeed: 2.2, bendAmount: 0.25, fogNear: 25, fogFar: 50, fogMax: 0.5 },
+};
+
+// One whale, high above the name, far back and hazy, crossing very slowly.
 const WHALES: GliderOptions = {
   kind: "whale",
   scale: 3.6,
-  paths: [[v(-38, 8, -32), v(0, 10, -36), v(38, 7, -32), v(20, 5, -42), v(-20, 6, -42)]],
+  paths: [[v(-38, 12, -32), v(0, 14, -36), v(38, 11, -32), v(20, 10, -42), v(-20, 11, -42)]],
   speed: 0.005,
   look: {
-    bendSpeed: 0.8,
-    bendAmount: 0.15,
+    bendSpeed: 1.2,
+    bendAmount: 0.22,
     fogNear: 30,
     fogFar: 60,
-    fogMax: 0.55,
+    fogMax: 0.7,
   },
 };
+
+// On phones the golden school swims higher, clear of the chat button in the corner.
+const lift = (path: THREE.Vector3[], by: THREE.Vector3) => path.map((p) => p.clone().add(by));
 
 export default function SkyOceanCanvas({ className = "" }: { className?: string }) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -118,6 +130,7 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
       const { clientWidth: w, clientHeight: h } = host;
       if (!w || !h) return;
       renderer.setSize(w, h, false);
+      renderer.getDrawingBufferSize(resolution.value);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       fitWidth();
@@ -140,10 +153,11 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
       .then(([silver, golden, manta, whale]) => {
         if (disposed) return;
         streams.push(
-          new Stream(silver, { ...SILVER_STREAM, count: mobile ? 80 : SILVER_STREAM.count }),
-          new Stream(golden, GOLDEN_STREAM),
+          // Fewer, bigger fish on phones so they read as fish, not specks.
+          new Stream(silver, mobile ? { ...SILVER_STREAM, count: 75, scale: 0.7 } : SILVER_STREAM),
+          new Stream(golden, mobile ? { ...GOLDEN_STREAM, path: lift(GOLDEN_STREAM.path, v(-1.5, 1.8, 0)) } : GOLDEN_STREAM),
         );
-        gliders.push(new Gliders(whale, WHALES), new Gliders(manta, MANTAS));
+        gliders.push(new Gliders(whale, WHALES), new Gliders(manta, FAR_MANTA), new Gliders(manta, NEAR_MANTA));
         // Far to near, so the transparent-free scene still sorts cheaply.
         [...gliders, ...streams].forEach((c) => scene.add(c.mesh));
         fitWidth();
@@ -166,6 +180,7 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
     const ray = new THREE.Raycaster();
     const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -SCHOOL_Z);
     let hasPointer = false;
+    const parallax = new THREE.Vector2(); // eased toward the pointer, drives camera sway
     const onPointerMove = (e: PointerEvent) => {
       const rect = host.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -194,6 +209,15 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
       const dt = Math.min((now - last) / 1000, 1 / 30);
       last = now;
       time += dt;
+      // The camera breathes in a slow figure-eight and leans a little toward the cursor,
+      // so the scene feels like a space you're floating in rather than a video.
+      parallax.lerp(hasPointer ? ndc : ZERO, 0.04);
+      camera.position.set(
+        Math.sin((time * Math.PI * 2) / 18) * 0.25 + parallax.x * 0.8,
+        Math.sin((time * Math.PI * 4) / 18) * 0.12 + parallax.y * 0.5,
+        CAMERA_Z,
+      );
+      camera.lookAt(0, 0, SCHOOL_Z);
       streams.forEach((s) => s.update(dt, time, hasPointer ? pointer : null));
       gliders.forEach((g) => g.update(dt, time));
       atmosphere.update(time);
@@ -218,12 +242,21 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
     document.addEventListener("visibilitychange", sync);
     sync();
 
+    // Creatures fade out as the hero scrolls away, so none float over the dark sections below.
+    const onScroll = () => {
+      const t = Math.min(1, Math.max(0, (window.scrollY / host.clientHeight - 0.15) / 0.4));
+      renderer.domElement.style.opacity = String(1 - t * t * (3 - 2 * t));
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
       resizeObserver.disconnect();
       viewObserver.disconnect();
       document.removeEventListener("visibilitychange", sync);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerup", onPointerLeave);
       document.removeEventListener("pointerleave", onPointerLeave);
