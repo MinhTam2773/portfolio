@@ -25,14 +25,18 @@ const ZERO = new THREE.Vector2();
 
 // Main silver stream: a long loop sweeping across the sky. Every so often, as it passes
 // over the moon, it peels into a ring that curls down and back behind the name, then
-// carries on along the same path.
+// carries on along the same path. The off-screen ends turn wide and level (through depth,
+// not over the top), so the tube never folds or flips there.
 const SILVER_STREAM: StreamOptions = {
   count: 140,
   scale: 0.5,
-  path: [v(-22, 3, -6), v(-10, 5.5, -1), v(2, 4, 2), v(13, 1, 0), v(19, -3, -6), v(9, -5.5, -11), v(-4, -3, -9), v(-15, -4.5, -3)],
-  length: 0.32,
+  path: [
+    v(-10, 5.5, -1), v(2, 4, 2), v(13, 1, 0), v(18, -1.5, -3), v(20, -3.5, -7), v(16, -5, -10), v(9, -5.5, -11),
+    v(-4, -3, -9), v(-14, -4, -9), v(-20, -3, -9.5), v(-24, -0.5, -6), v(-24, 2, -1.5), v(-19, 4.5, 0.5),
+  ],
+  length: 0.3,
   thickness: 1.2,
-  speed: 0.028,
+  speed: 0.026,
   look: { rim: "#ffe4d6", bendSpeed: 9, bendAmount: 0.12, minLight: 0.6 },
   tunnel: { near: v(0, 4.4, 1.5), radius: 3.4, dive: 1.15, first: 10, every: 16 },
 };
@@ -41,10 +45,13 @@ const SILVER_STREAM: StreamOptions = {
 const GOLDEN_STREAM: StreamOptions = {
   count: 24,
   scale: 0.7,
-  path: [v(-14, -5, 3), v(-4, -4.2, 4), v(8, -4.6, 3), v(16, -5.4, 0), v(6, -6, -2), v(-8, -5.6, -1)],
-  length: 0.22,
+  path: [
+    v(-4, -4.2, 4), v(8, -4.6, 3), v(14, -5, 2.5), v(18, -5.4, 0.5), v(18, -5.8, -2.5), v(13, -6, -4), v(4, -6, -3),
+    v(-8, -5.6, -1.5), v(-14, -5.4, -2), v(-18.5, -5.2, 0), v(-19, -5, 3), v(-15, -4.8, 5), v(-9, -4.5, 5),
+  ],
+  length: 0.17,
   thickness: 0.8,
-  speed: 0.04,
+  speed: 0.031,
   look: { rim: "#fff0c8", bendSpeed: 11, bendAmount: 0.13, minLight: 0.55 },
 };
 
@@ -92,9 +99,12 @@ const PHONE_SILVER: StreamOptions = {
   count: 30,
   scale: 0.52,
   thickness: 0.65,
-  path: [v(-8, -5.5, -3), v(-2, -3.5, -2), v(3, -0.5, -3), v(5, 3.5, -5), v(1, 6, -7), v(-5, 6.5, -6), v(-10, 5, -4), v(-12, 0, -6), v(-11, -4, -5)],
-  length: 0.22,
-  speed: SILVER_STREAM.speed * 0.7,
+  path: [
+    v(-8, -5.5, -3), v(-2, -3.5, -2), v(3, -0.5, -3), v(5, 2.5, -4), v(5.2, 4.8, -6), v(3, 6.3, -7.5),
+    v(-1, 6.8, -7.5), v(-5, 6.5, -6), v(-10, 5, -4), v(-12, 0, -6), v(-11, -4, -5),
+  ],
+  length: 0.21,
+  speed: SILVER_STREAM.speed * 0.73,
   tunnel: undefined,
 };
 

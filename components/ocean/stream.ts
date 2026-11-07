@@ -37,6 +37,8 @@ export type StreamOptions = {
 };
 
 const UP = new THREE.Vector3(0, 1, 0);
+const wrap = (x: number) => ((x % 1) + 1) % 1;
+const smoothstep = (x: number) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x));
 
 export class Stream {
   readonly mesh: THREE.InstancedMesh;
@@ -53,12 +55,14 @@ export class Stream {
   private readonly size: Float32Array;
   private readonly push: Float32Array; // cursor displacement, eases back to 0
   private readonly forward: Float32Array; // smoothed heading per fish
+  private readonly sideways: Float32Array; // each fish's own "right", carried along frame to frame
   private started = false;
 
-  // Track state, in world units travelled along the track.
-  private head = 0;
-  private inserted = 0; // total length of rings already passed through
-  private ring: { start: number } | null = null;
+  // Track state, in loops (1 = once round the path), not world units: the path's length
+  // breathes every frame, and a place counted in world units would slide along it.
+  private head = 0; // track position of the ribbon's head; only head mod 1 matters on the path
+  /** Where the ring starts on the track (always at tunnelAt on the path) and its length, in loops. */
+  private ring: { start: number; length: number } | null = null;
   private nextTunnel: number;
   private tunnelAt = 0; // loop position (0–1) of the ring's entry point
 
@@ -79,9 +83,13 @@ export class Stream {
     const n = opts.count;
     this.base = opts.path.map((p) => p.clone());
     this.curve = new THREE.CatmullRomCurve3(opts.path.map((p) => p.clone()), true, "centripetal");
+    // Arc-length table with samples landing exactly on the control points. The spline's own
+    // speed jumps at each control point, so a sample straddling one (as with the default 200)
+    // makes every fish hiccup there.
+    this.curve.arcLengthDivisions = opts.path.length * 120;
     this.material = createCreatureMaterial("fish", model.map, opts.look);
     this.nextTunnel = opts.tunnel?.first ?? Infinity;
-    this.head = Math.random() * this.curve.getLength();
+    this.head = Math.random();
     if (opts.tunnel) {
       let best = Infinity;
       for (let k = 0; k < 400; k++) {
@@ -90,8 +98,7 @@ export class Stream {
       }
       // Start the head where it reaches the entry point just after the first tunnel is due
       // (a little after, so it can't slip past a moment too early and wait a whole loop).
-      const u0 = (((this.tunnelAt - opts.speed * (opts.tunnel.first + 1.5)) % 1) + 1) % 1;
-      this.head = u0 * this.curve.getLength();
+      this.head = wrap(this.tunnelAt - opts.speed * (opts.tunnel.first + 1.5));
     }
 
     const geo = model.geometry.clone();
@@ -103,6 +110,7 @@ export class Stream {
     this.size = new Float32Array(n);
     this.push = new Float32Array(n * 3);
     this.forward = new Float32Array(n * 3);
+    this.sideways = new Float32Array(n * 3);
     for (let i = 0; i < n; i++) {
       phase[i] = Math.random() * Math.PI * 2;
       // Denser in the middle of the ribbon, thinning toward head and tail.
@@ -123,39 +131,60 @@ export class Stream {
   update(dt: number, time: number, pointer: THREE.Vector3 | null) {
     const { count: n, length, thickness, speed, tunnel } = this.opts;
 
-    // The path breathes slowly so the loop never repeats exactly.
+    // The path breathes slowly so the loop never repeats exactly. The sway is a smooth field
+    // over space, so neighbouring points move together and never pinch the path into a kink.
     this.curve.points.forEach((p, k) => {
       const b = this.base[k];
       p.set(
         b.x * this.widthScale,
-        b.y + Math.sin(time * 0.11 + k * 1.7) * 1.2,
-        b.z + Math.sin(time * 0.09 + k * 2.3) * 1.5,
+        b.y + Math.sin(time * 0.11 + b.x * 0.17 + b.z * 0.1) * 1.2,
+        b.z + Math.sin(time * 0.09 + b.x * 0.13 - b.y * 0.2) * 1.5,
       );
     });
     this.curve.updateArcLengths();
-    const loop = this.curve.getLength();
-    const ribbon = length * loop;
     const prevHead = this.head;
-    this.head += speed * loop * dt;
+    this.head += speed * dt;
 
-    if (tunnel) this.updateTunnel(tunnel, prevHead, loop, ribbon, time);
+    if (tunnel) this.updateTunnel(tunnel, prevHead, time);
+    // Keep the numbers small. Positions only depend on the track position mod 1 (and on its
+    // distance from the ring's start), so shifting both by a whole loop changes nothing.
+    if (this.head >= 2) {
+      this.head -= 1;
+      if (this.ring) this.ring.start -= 1;
+    }
 
     const ease = Math.exp(-dt * 1.5);
     const turn = this.started ? 1 - Math.exp(-dt * 14) : 1; // heading smoothing
+    const level = 1 - Math.exp(-dt * 2); // how fast a fish rights itself after a steep climb
     for (let i = 0; i < n; i++) {
       // A small, bounded surge lets fish drift forward and back in the ribbon without
       // ever losing their order.
       const s = this.along[i] + 0.008 * Math.sin(1.6 * time + this.surge[i]);
-      const ringness = this.trackAt(this.head - s * ribbon, loop, this.p, this.t);
+      const ringness = this.trackAt(this.head - s * length, this.p, this.t);
 
       const i3 = i * 3;
       this.fwd.set(this.forward[i3], this.forward[i3 + 1], this.forward[i3 + 2]).lerp(this.t, turn).normalize();
       this.forward[i3] = this.fwd.x;
       this.forward[i3 + 1] = this.fwd.y;
       this.forward[i3 + 2] = this.fwd.z;
-      this.right.crossVectors(this.fwd, UP);
-      if (this.right.lengthSq() < 1e-6) this.right.set(0, 0, 1);
+      // Sideways direction: last frame's, kept square to the new heading, and eased toward
+      // level (fwd x UP) only as much as level is well defined. Building it fresh from world up
+      // each frame flips it 180 degrees whenever the path passes straight up or down, which
+      // threw the fish (and their lanes) across the tube in one frame.
+      this.up.crossVectors(this.fwd, UP);
+      const h2 = this.up.lengthSq();
+      if (this.started) {
+        this.right.set(this.sideways[i3], this.sideways[i3 + 1], this.sideways[i3 + 2]);
+        this.right.addScaledVector(this.fwd, -this.right.dot(this.fwd));
+        if (h2 > 1e-8) this.right.addScaledVector(this.up.normalize(), level * h2);
+      } else {
+        if (h2 > 1e-8) this.right.copy(this.up);
+        else this.right.set(0, 0, 1);
+      }
       this.right.normalize();
+      this.sideways[i3] = this.right.x;
+      this.sideways[i3 + 1] = this.right.y;
+      this.sideways[i3 + 2] = this.right.z;
       this.up.crossVectors(this.right, this.fwd);
 
       // The tube swells and thins along the ribbon, and tightens inside the ring.
@@ -201,18 +230,19 @@ export class Stream {
   }
 
   /** Opens a ring when the head next reaches the entry point; removes it once the tail is out. */
-  private updateTunnel(tunnel: NonNullable<StreamOptions["tunnel"]>, prevHead: number, loop: number, ribbon: number, time: number) {
-    const ringLength = Math.PI * 2 * tunnel.radius;
-    const uOf = (d: number) => ((((d - this.inserted) / loop) % 1) + 1) % 1;
-
+  private updateTunnel(tunnel: NonNullable<StreamOptions["tunnel"]>, prevHead: number, time: number) {
     if (!this.ring && time >= this.nextTunnel) {
-      const before = uOf(prevHead);
-      const now = uOf(this.head);
+      const before = wrap(prevHead);
+      const now = wrap(this.head);
       const crossed = before <= now ? before < this.tunnelAt && this.tunnelAt <= now : this.tunnelAt > before || this.tunnelAt <= now;
-      if (crossed) this.ring = { start: this.head - (((now - this.tunnelAt) % 1) + 1) % 1 * loop };
+      // The ring's length in loops is fixed when it opens, so its two ends stay pinned to
+      // tunnelAt on the path however the path breathes while fish are inside.
+      if (crossed) this.ring = { start: this.head - wrap(now - this.tunnelAt), length: (Math.PI * 2 * tunnel.radius) / this.curve.getLength() };
     }
-    if (this.ring && this.head - ribbon * 1.05 > this.ring.start + ringLength) {
-      this.inserted += ringLength;
+    if (this.ring && this.head - this.opts.length * 1.05 > this.ring.start + this.ring.length) {
+      // Everyone is out: drop the ring and pull the track back by its length, so every fish
+      // keeps exactly the same place on the path.
+      this.head -= this.ring.length;
       this.ring = null;
       this.nextTunnel = time + tunnel.every;
     }
@@ -229,27 +259,29 @@ export class Stream {
   }
 
   /**
-   * Position and direction on the track at distance d, written to pos and tan.
+   * Position and direction at track position x (in loops), written to pos and tan.
    * @returns how deep inside the ring this point is (0 on the path, 1 well inside).
    */
-  private trackAt(d: number, loop: number, pos: THREE.Vector3, tan: THREE.Vector3) {
+  private trackAt(x: number, pos: THREE.Vector3, tan: THREE.Vector3) {
     const tunnel = this.opts.tunnel;
     if (tunnel && this.ring) {
-      const ringLength = Math.PI * 2 * tunnel.radius;
-      const into = d - this.ring.start;
-      if (into >= 0 && into < ringLength) {
-        const a = into / tunnel.radius;
-        const R = tunnel.radius;
+      const R = tunnel.radius;
+      const ringLength = Math.PI * 2 * R;
+      const k = (x - this.ring.start) / this.ring.length; // 0..1 once round the ring
+      if (k >= 0 && k < 1) {
+        const into = k * ringLength;
+        const a = k * Math.PI * 2;
         pos
           .copy(this.entry)
           .addScaledVector(this.ringOut, R * (1 - Math.cos(a)))
           .addScaledVector(this.entryTan, R * Math.sin(a));
         tan.copy(this.entryTan).multiplyScalar(Math.cos(a)).addScaledVector(this.ringOut, Math.sin(a)).normalize();
-        return Math.min(1, into / 3, (ringLength - into) / 3);
+        // Eased in and out (not a linear ramp), so lanes start and stop tightening smoothly.
+        return smoothstep(into / 3) * smoothstep((ringLength - into) / 3);
       }
-      if (into >= ringLength) d -= ringLength;
+      if (k >= 1) x -= this.ring.length;
     }
-    const u = ((((d - this.inserted) / loop) % 1) + 1) % 1;
+    const u = wrap(x);
     this.curve.getPointAt(u, pos);
     this.curve.getTangentAt(u, tan);
     return 0;
