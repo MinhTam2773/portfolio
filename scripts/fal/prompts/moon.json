@@ -1,0 +1,11 @@
+{
+  "prompt": "A pale waxing half moon seen in the early evening sky, painterly hand-painted anime film background style with soft cel-like shading and soft edges, subtle crater detail, cool off-white with a faint blue-lavender tint and a soft warm peach edge on the lit right side. Centered and fully visible with margin around it, isolated on a fully transparent background: no stars, no clouds, no halo ring, no text.",
+  "image_size": {
+    "width": 1024,
+    "height": 1024
+  },
+  "quality": "high",
+  "output_format": "png",
+  "background": "transparent",
+  "num_images": 1
+}

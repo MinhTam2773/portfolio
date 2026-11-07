@@ -1,0 +1,11 @@
+{
+  "prompt": "A wide horizontal band of soft billowing cumulus clouds at sunset, painterly hand-painted anime film background style with soft cel-like shading and soft edges. Peach and apricot sunlit tops, lavender-grey shadowed undersides. Five or six cloud masses of varied size spread along the lower half of the frame with open gaps between them; the left and right edges are empty sky so the band can repeat. Clouds only, isolated on a fully transparent background: no sky colour, no sun, no moon, no ground, no birds, no text.",
+  "image_size": {
+    "width": 2560,
+    "height": 1088
+  },
+  "quality": "high",
+  "output_format": "png",
+  "background": "transparent",
+  "num_images": 1
+}
