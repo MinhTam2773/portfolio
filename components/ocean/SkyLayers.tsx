@@ -75,7 +75,7 @@ export default function SkyLayers({ className = "" }: { className?: string }) {
           It sits on the wrapper, which has its own stacking context, so it blends with the sky. */}
       <div ref={moonRef} className="absolute left-1/2 top-[16%] -translate-x-1/2 opacity-80 mix-blend-screen will-change-transform">
         <div
-          className="h-[min(34vmin,300px)] aspect-[264/492] rotate-[16deg]"
+          className="h-[min(34vmin,300px)] aspect-square"
           style={{ background: "url(/ocean/moon.webp) center / contain no-repeat" }}
         />
       </div>
