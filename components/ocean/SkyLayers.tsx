@@ -71,9 +71,9 @@ export default function SkyLayers({ className = "" }: { className?: string }) {
 
   return (
     <div aria-hidden className={`pointer-events-none overflow-hidden ${className}`} style={{ background: SKY }}>
-      {/* Screen blend: seen through lit dusk air, no part of the moon is darker than the sky.
-          It sits on the wrapper, which has its own stacking context, so it blends with the sky. */}
-      <div ref={moonRef} className="absolute left-1/2 top-[16%] -translate-x-1/2 opacity-80 mix-blend-screen will-change-transform">
+      {/* Normal blend (not screen), so the dark side of the half moon reads darker than the sky;
+          a little transparency lets the dusk air soften it. */}
+      <div ref={moonRef} className="absolute left-1/2 top-[16%] -translate-x-1/2 opacity-90 will-change-transform">
         <div
           className="h-[min(34vmin,300px)] aspect-square rotate-[16deg]"
           style={{ background: "url(/ocean/moon.webp) center / contain no-repeat" }}
