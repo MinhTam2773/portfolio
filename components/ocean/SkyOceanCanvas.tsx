@@ -21,8 +21,11 @@ const DESIGN_HALF_WIDTH = 17.7;
 const v = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
 const ZERO = new THREE.Vector2();
 
-// Main silver stream: a long loop sweeping across the sky, coiling into a tunnel every 32 s.
-// The tunnel's ring is tilted and sits above the subtitle, weaving around the name.
+// ── Desktop (laid out for 16:9; squeezed sideways on narrower desktop windows) ──
+
+// Main silver stream: a long loop sweeping across the sky. Every so often, as it passes
+// over the moon, it peels into a ring that curls down and back behind the name, then
+// carries on along the same path.
 const SILVER_STREAM: StreamOptions = {
   count: 140,
   scale: 0.5,
@@ -31,7 +34,7 @@ const SILVER_STREAM: StreamOptions = {
   thickness: 1.2,
   speed: 0.028,
   look: { rim: "#ffe4d6", bendSpeed: 9, bendAmount: 0.12, minLight: 0.6 },
-  vortex: { center: v(0, 3.4, -4), radius: 5.5, turns: 2.2, cycle: 32, from: 18, to: 28, tilt: { x: 1.05, z: 0.35 } },
+  tunnel: { near: v(0, 4.4, 1.5), radius: 3.4, dive: 1.15, first: 10, every: 16 },
 };
 
 // A small golden school cruising level across the lower sky, among the clouds.
@@ -79,8 +82,35 @@ const WHALES: GliderOptions = {
   },
 };
 
-// On phones the golden school swims higher, clear of the chat button in the corner.
-const lift = (path: THREE.Vector3[], by: THREE.Vector3) => path.map((p) => p.clone().add(by));
+// ── Phones (laid out for a portrait screen, ~4.6 units half-width at the school's depth) ──
+// Calmer: one fish ribbon, one manta, one whale, about 32 creatures. Every turn happens
+// off-screen, the ribbon crosses behind the name once on a shallow diagonal and crests
+// behind the moon, and there's no tunnel (the ring wouldn't fit the screen).
+
+const PHONE_SILVER: StreamOptions = {
+  ...SILVER_STREAM,
+  count: 30,
+  scale: 0.52,
+  thickness: 0.65,
+  path: [v(-8, -5.5, -3), v(-2, -3.5, -2), v(3, -0.5, -3), v(5, 3.5, -5), v(1, 6, -7), v(-5, 6.5, -6), v(-10, 5, -4), v(-12, 0, -6), v(-11, -4, -5)],
+  length: 0.22,
+  speed: SILVER_STREAM.speed * 0.7,
+  tunnel: undefined,
+};
+
+const PHONE_MANTA: GliderOptions = {
+  ...NEAR_MANTA,
+  scale: NEAR_MANTA.scale * 0.75,
+  paths: [[v(-8, -6.5, -3), v(0, -4.5, -4), v(8, -1.8, -5), v(12, -5, -8), v(-12, -8, -8)]],
+  speed: NEAR_MANTA.speed * 0.75,
+};
+
+const PHONE_WHALE: GliderOptions = {
+  ...WHALES,
+  scale: WHALES.scale * 0.85,
+  paths: [[v(-24, 13, -32), v(0, 14.5, -34), v(24, 12.5, -32), v(26, 20, -48), v(-26, 20, -48)]],
+  speed: WHALES.speed * 0.8,
+};
 
 export default function SkyOceanCanvas({ className = "" }: { className?: string }) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -119,10 +149,11 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
 
     const render = () => renderer.render(scene, camera);
 
-    // The paths are laid out for a 16:9 screen; narrower screens squeeze them sideways.
+    // Desktop paths are laid out for 16:9; narrower desktop windows squeeze them sideways.
+    // Phones have their own portrait layout, so no squeeze there.
     const fitWidth = () => {
       const halfWidth = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * (CAMERA_Z - SCHOOL_Z) * camera.aspect;
-      const scale = Math.min(1, halfWidth / DESIGN_HALF_WIDTH);
+      const scale = mobile ? 1 : Math.min(1, halfWidth / DESIGN_HALF_WIDTH);
       [...streams, ...gliders].forEach((c) => (c.widthScale = scale));
     };
 
@@ -152,12 +183,13 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
     Promise.all(["fish-silver", "fish-golden", "manta", "whale"].map((name) => modelOf(`/ocean/${name}.glb`)))
       .then(([silver, golden, manta, whale]) => {
         if (disposed) return;
-        streams.push(
-          // Fewer, bigger fish on phones so they read as fish, not specks.
-          new Stream(silver, mobile ? { ...SILVER_STREAM, count: 75, scale: 0.7 } : SILVER_STREAM),
-          new Stream(golden, mobile ? { ...GOLDEN_STREAM, path: lift(GOLDEN_STREAM.path, v(-1.5, 1.8, 0)) } : GOLDEN_STREAM),
-        );
-        gliders.push(new Gliders(whale, WHALES), new Gliders(manta, FAR_MANTA), new Gliders(manta, NEAR_MANTA));
+        if (mobile) {
+          streams.push(new Stream(silver, PHONE_SILVER));
+          gliders.push(new Gliders(whale, PHONE_WHALE), new Gliders(manta, PHONE_MANTA));
+        } else {
+          streams.push(new Stream(silver, SILVER_STREAM), new Stream(golden, GOLDEN_STREAM));
+          gliders.push(new Gliders(whale, WHALES), new Gliders(manta, FAR_MANTA), new Gliders(manta, NEAR_MANTA));
+        }
         // Far to near, so the transparent-free scene still sorts cheaply.
         [...gliders, ...streams].forEach((c) => scene.add(c.mesh));
         fitWidth();

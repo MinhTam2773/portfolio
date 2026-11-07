@@ -1,66 +1,77 @@
 import * as THREE from "three";
 import { createCreatureMaterial, type CreatureLook, type CreatureModel } from "./creatureMaterial";
 
-// A school that moves like a river: every fish rides the same smooth looping path, packed
-// into a tube that swells and thins along its length. Fish keep their lane, so the
-// stream stays coherent instead of jittering. Every so often the path coils into a
-// spiral tunnel around the camera's line of sight, then unwinds again.
+// A school that moves like a river: every fish rides one shared track, packed into a tube
+// that swells and thins along its length. Each fish has a fixed place in the ribbon and a
+// fixed lane in the tube, so the school stays one coherent ribbon.
+//
+// The tunnel is part of that track, not a blend toward it. When it's due, a ring is
+// inserted into the track at a fixed point on the path: the ring leaves the path along
+// the path's own direction and comes back to the same point along the same direction.
+// The leader peels into the ring first and every fish behind follows through the same
+// entry point; once the tail is out, the ring is removed and the path carries on. No
+// fish ever cuts across, so nothing scatters.
 
 export type StreamOptions = {
   count: number;
   scale: number;
-  /** Control points of the closed loop the stream follows (desktop layout). */
+  /** Control points of the closed loop the stream follows. */
   path: THREE.Vector3[];
-  /** How much of the loop the stream fills, 0–1. */
+  /** How much of the loop the ribbon fills, 0–1. */
   length: number;
   /** Radius of the tube the fish pack into. */
   thickness: number;
   /** Loops per second. */
   speed: number;
   look: CreatureLook;
-  vortex?: {
-    center: THREE.Vector3;
+  tunnel?: {
+    /** The ribbon peels into the ring at the point on the path closest to this. */
+    near: THREE.Vector3;
     radius: number;
-    turns: number;
-    cycle: number;
-    from: number;
-    to: number;
-    /** Tilt of the tunnel's ring (radians around X, then Z), so it weaves in depth. */
-    tilt: { x: number; z: number };
+    /** How far the ring is tipped back into depth, in radians (0 = hangs straight down). */
+    dive: number;
+    /** Seconds before the first tunnel, and between the end of one and the next. */
+    first: number;
+    every: number;
   };
 };
 
-const smooth = (a: number, b: number, x: number) => {
-  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-};
-
-const EPS = 0.004;
+const UP = new THREE.Vector3(0, 1, 0);
 
 export class Stream {
   readonly mesh: THREE.InstancedMesh;
-  /** Horizontal squeeze for narrow screens (1 on desktop). */
+  /** Horizontal squeeze for narrow screens (1 when the path was laid out for this screen). */
   widthScale = 1;
   private readonly opts: StreamOptions;
   private readonly material: THREE.ShaderMaterial;
   private readonly curve: THREE.CatmullRomCurve3;
   private readonly base: THREE.Vector3[];
-  private readonly along: Float32Array; // 0 = head of the stream, 1 = tail
+  private readonly along: Float32Array; // 0 = head of the ribbon, 1 = tail
   private readonly laneA: Float32Array; // lane angle around the tube
   private readonly laneR: Float32Array; // lane distance from the tube's centre
+  private readonly surge: Float32Array; // phase of each fish's small back-and-forth
   private readonly size: Float32Array;
   private readonly push: Float32Array; // cursor displacement, eases back to 0
-  private readonly jitter: Float32Array; // -1..1, per-fish speed offset in the tunnel
-  private readonly tilt = new THREE.Quaternion();
-  private head = Math.random();
-  private readonly a = new THREE.Vector3();
-  private readonly b = new THREE.Vector3();
-  private readonly tan = new THREE.Vector3();
-  private readonly nrm = new THREE.Vector3();
-  private readonly bin = new THREE.Vector3();
-  private readonly pos = new THREE.Vector3();
-  private readonly up = new THREE.Vector3(0, 1, 0);
-  private readonly helix = new THREE.Vector3();
+  private readonly forward: Float32Array; // smoothed heading per fish
+  private started = false;
+
+  // Track state, in world units travelled along the track.
+  private head = 0;
+  private inserted = 0; // total length of rings already passed through
+  private ring: { start: number } | null = null;
+  private nextTunnel: number;
+  private tunnelAt = 0; // loop position (0–1) of the ring's entry point
+
+  // Ring frame, re-anchored to the (slowly breathing) path every frame.
+  private readonly entry = new THREE.Vector3();
+  private readonly entryTan = new THREE.Vector3();
+  private readonly ringOut = new THREE.Vector3();
+
+  private readonly p = new THREE.Vector3();
+  private readonly t = new THREE.Vector3();
+  private readonly fwd = new THREE.Vector3();
+  private readonly right = new THREE.Vector3();
+  private readonly up = new THREE.Vector3();
   private readonly matrix = new THREE.Matrix4();
 
   constructor(model: CreatureModel, opts: StreamOptions) {
@@ -69,23 +80,36 @@ export class Stream {
     this.base = opts.path.map((p) => p.clone());
     this.curve = new THREE.CatmullRomCurve3(opts.path.map((p) => p.clone()), true, "centripetal");
     this.material = createCreatureMaterial("fish", model.map, opts.look);
+    this.nextTunnel = opts.tunnel?.first ?? Infinity;
+    this.head = Math.random() * this.curve.getLength();
+    if (opts.tunnel) {
+      let best = Infinity;
+      for (let k = 0; k < 400; k++) {
+        const d = this.curve.getPointAt(k / 400, this.p).distanceToSquared(opts.tunnel.near);
+        if (d < best) [best, this.tunnelAt] = [d, k / 400];
+      }
+      // Start the head where it reaches the entry point just after the first tunnel is due
+      // (a little after, so it can't slip past a moment too early and wait a whole loop).
+      const u0 = (((this.tunnelAt - opts.speed * (opts.tunnel.first + 1.5)) % 1) + 1) % 1;
+      this.head = u0 * this.curve.getLength();
+    }
 
     const geo = model.geometry.clone();
     const phase = new Float32Array(n);
     this.along = new Float32Array(n);
     this.laneA = new Float32Array(n);
     this.laneR = new Float32Array(n);
+    this.surge = new Float32Array(n);
     this.size = new Float32Array(n);
     this.push = new Float32Array(n * 3);
-    this.jitter = new Float32Array(n);
-    if (opts.vortex) this.tilt.setFromEuler(new THREE.Euler(opts.vortex.tilt.x, 0, opts.vortex.tilt.z));
+    this.forward = new Float32Array(n * 3);
     for (let i = 0; i < n; i++) {
-      this.jitter[i] = Math.random() * 2 - 1;
       phase[i] = Math.random() * Math.PI * 2;
-      // Denser in the middle of the stream, thinning toward head and tail.
+      // Denser in the middle of the ribbon, thinning toward head and tail.
       this.along[i] = (Math.random() + Math.random()) / 2;
       this.laneA[i] = Math.random() * Math.PI * 2;
       this.laneR[i] = Math.sqrt(Math.random());
+      this.surge[i] = Math.random() * Math.PI * 2;
       this.size[i] = opts.scale * (0.85 + Math.random() * 0.3);
     }
     geo.setAttribute("aPhase", new THREE.InstancedBufferAttribute(phase, 1));
@@ -97,8 +121,7 @@ export class Stream {
 
   /** @param pointer where the cursor meets the scene, or null when it's away. */
   update(dt: number, time: number, pointer: THREE.Vector3 | null) {
-    const { count: n, length, thickness, speed, vortex } = this.opts;
-    this.head = (this.head + speed * dt) % 1;
+    const { count: n, length, thickness, speed, tunnel } = this.opts;
 
     // The path breathes slowly so the loop never repeats exactly.
     this.curve.points.forEach((p, k) => {
@@ -109,61 +132,64 @@ export class Stream {
         b.z + Math.sin(time * 0.09 + k * 2.3) * 1.5,
       );
     });
+    this.curve.updateArcLengths();
+    const loop = this.curve.getLength();
+    const ribbon = length * loop;
+    const prevHead = this.head;
+    this.head += speed * loop * dt;
 
-    const cycleT = vortex ? time % vortex.cycle : 0;
-    const swirl = vortex ? smooth(vortex.from, vortex.from + 3, cycleT) * (1 - smooth(vortex.to - 3, vortex.to, cycleT)) : 0;
+    if (tunnel) this.updateTunnel(tunnel, prevHead, loop, ribbon, time);
 
+    const ease = Math.exp(-dt * 1.5);
+    const turn = this.started ? 1 - Math.exp(-dt * 14) : 1; // heading smoothing
     for (let i = 0; i < n; i++) {
-      const s = this.along[i];
-      const u = (((this.head - s * length) % 1) + 1) % 1;
+      // A small, bounded surge lets fish drift forward and back in the ribbon without
+      // ever losing their order.
+      const s = this.along[i] + 0.008 * Math.sin(1.6 * time + this.surge[i]);
+      const ringness = this.trackAt(this.head - s * ribbon, loop, this.p, this.t);
 
-      const jit = this.jitter[i];
-      this.centre(u, s, jit, time, swirl, this.a);
-      this.centre((u + EPS) % 1, s - EPS / length, jit, time, swirl, this.b);
-      this.tan.subVectors(this.b, this.a).normalize();
-      this.nrm.crossVectors(this.tan, this.up);
-      if (this.nrm.lengthSq() < 1e-6) this.nrm.set(0, 0, 1);
-      this.nrm.normalize();
-      this.bin.crossVectors(this.nrm, this.tan);
+      const i3 = i * 3;
+      this.fwd.set(this.forward[i3], this.forward[i3 + 1], this.forward[i3 + 2]).lerp(this.t, turn).normalize();
+      this.forward[i3] = this.fwd.x;
+      this.forward[i3 + 1] = this.fwd.y;
+      this.forward[i3 + 2] = this.fwd.z;
+      this.right.crossVectors(this.fwd, UP);
+      if (this.right.lengthSq() < 1e-6) this.right.set(0, 0, 1);
+      this.right.normalize();
+      this.up.crossVectors(this.right, this.fwd);
 
-      // The tube swells and thins along the stream, like the shoals in the reference.
-      const width = thickness * (0.55 + 0.45 * Math.sin(s * 9 + time * 0.6));
+      // The tube swells and thins along the ribbon, and tightens inside the ring.
+      const width = thickness * (0.55 + 0.45 * Math.sin(s * 9 + time * 0.6)) * (1 - 0.35 * ringness);
       const r = this.laneR[i] * width;
       const ang = this.laneA[i];
-      this.pos
-        .copy(this.a)
-        .addScaledVector(this.nrm, Math.cos(ang) * r)
-        .addScaledVector(this.bin, Math.sin(ang) * r);
+      this.p.addScaledVector(this.right, Math.cos(ang) * r).addScaledVector(this.up, Math.sin(ang) * r);
 
       // Fish part around the cursor and drift back into their lane.
-      const i3 = i * 3;
-      const ease = Math.exp(-dt * 1.5);
       this.push[i3] *= ease;
       this.push[i3 + 1] *= ease;
-      this.push[i3 + 2] *= ease;
       if (pointer) {
-        const dx = this.pos.x + this.push[i3] - pointer.x;
-        const dy = this.pos.y + this.push[i3 + 1] - pointer.y;
+        const dx = this.p.x + this.push[i3] - pointer.x;
+        const dy = this.p.y + this.push[i3 + 1] - pointer.y;
         const d2 = dx * dx + dy * dy;
         if (d2 < 9 && d2 > 1e-4) {
-          const k = ((9 - d2) / 9) * 6 * dt / Math.sqrt(d2);
+          const k = (((9 - d2) / 9) * 6 * dt) / Math.sqrt(d2);
           this.push[i3] += dx * k;
           this.push[i3 + 1] += dy * k;
         }
       }
-      this.pos.x += this.push[i3];
-      this.pos.y += this.push[i3 + 1];
-      this.pos.z += this.push[i3 + 2];
+      this.p.x += this.push[i3];
+      this.p.y += this.push[i3 + 1];
 
       const sz = this.size[i];
       this.matrix.makeBasis(
-        this.tan.multiplyScalar(sz),
-        this.bin.multiplyScalar(sz),
-        this.nrm.multiplyScalar(sz),
+        this.fwd.multiplyScalar(sz),
+        this.up.multiplyScalar(sz),
+        this.right.multiplyScalar(sz),
       );
-      this.matrix.setPosition(this.pos);
+      this.matrix.setPosition(this.p);
       this.mesh.setMatrixAt(i, this.matrix);
     }
+    this.started = true;
 
     this.mesh.instanceMatrix.needsUpdate = true;
     this.material.uniforms.uTime.value = time;
@@ -174,20 +200,58 @@ export class Stream {
     this.material.dispose();
   }
 
-  /** Centre line of the stream at loop position u, blended toward the spiral tunnel. */
-  private centre(u: number, s: number, jit: number, time: number, swirl: number, out: THREE.Vector3) {
-    this.curve.getPoint(u, out);
-    const v = this.opts.vortex;
-    if (!v || swirl <= 0) return out;
-    // Tunnel: fish spread along a helix by their place in the stream. The ring is tilted
-    // so the school dives away and swoops toward the camera; each fish circles at its own
-    // pace (±18%) and the radius breathes, so it never reads as a perfect spinner.
-    const radius = Math.min(v.radius, 7 * this.widthScale) * (1 + 0.15 * Math.sin(s * 7 + time * 0.8));
-    const angle = s * Math.PI * 2 * v.turns - time * 0.9 * (1 + 0.18 * jit);
-    this.helix
-      .set(Math.cos(angle) * radius, Math.sin(angle) * radius, (0.5 - s) * 3)
-      .applyQuaternion(this.tilt)
-      .add(v.center);
-    return out.lerp(this.helix, swirl);
+  /** Opens a ring when the head next reaches the entry point; removes it once the tail is out. */
+  private updateTunnel(tunnel: NonNullable<StreamOptions["tunnel"]>, prevHead: number, loop: number, ribbon: number, time: number) {
+    const ringLength = Math.PI * 2 * tunnel.radius;
+    const uOf = (d: number) => ((((d - this.inserted) / loop) % 1) + 1) % 1;
+
+    if (!this.ring && time >= this.nextTunnel) {
+      const before = uOf(prevHead);
+      const now = uOf(this.head);
+      const crossed = before <= now ? before < this.tunnelAt && this.tunnelAt <= now : this.tunnelAt > before || this.tunnelAt <= now;
+      if (crossed) this.ring = { start: this.head - (((now - this.tunnelAt) % 1) + 1) % 1 * loop };
+    }
+    if (this.ring && this.head - ribbon * 1.05 > this.ring.start + ringLength) {
+      this.inserted += ringLength;
+      this.ring = null;
+      this.nextTunnel = time + tunnel.every;
+    }
+    if (!this.ring) return;
+
+    // Ring frame: it leaves the path along the path's direction, curls down (and back into
+    // depth by `dive`), and returns to the same point along the same direction.
+    this.curve.getPointAt(this.tunnelAt, this.entry);
+    this.curve.getTangentAt(this.tunnelAt, this.entryTan);
+    const down = this.ringOut.copy(UP).addScaledVector(this.entryTan, -UP.dot(this.entryTan)).normalize().negate();
+    const back = this.p.crossVectors(this.entryTan, down);
+    if (back.z > 0) back.negate(); // tip away from the camera
+    down.multiplyScalar(Math.cos(tunnel.dive)).addScaledVector(back, Math.sin(tunnel.dive)).normalize();
+  }
+
+  /**
+   * Position and direction on the track at distance d, written to pos and tan.
+   * @returns how deep inside the ring this point is (0 on the path, 1 well inside).
+   */
+  private trackAt(d: number, loop: number, pos: THREE.Vector3, tan: THREE.Vector3) {
+    const tunnel = this.opts.tunnel;
+    if (tunnel && this.ring) {
+      const ringLength = Math.PI * 2 * tunnel.radius;
+      const into = d - this.ring.start;
+      if (into >= 0 && into < ringLength) {
+        const a = into / tunnel.radius;
+        const R = tunnel.radius;
+        pos
+          .copy(this.entry)
+          .addScaledVector(this.ringOut, R * (1 - Math.cos(a)))
+          .addScaledVector(this.entryTan, R * Math.sin(a));
+        tan.copy(this.entryTan).multiplyScalar(Math.cos(a)).addScaledVector(this.ringOut, Math.sin(a)).normalize();
+        return Math.min(1, into / 3, (ringLength - into) / 3);
+      }
+      if (into >= ringLength) d -= ringLength;
+    }
+    const u = ((((d - this.inserted) / loop) % 1) + 1) % 1;
+    this.curve.getPointAt(u, pos);
+    this.curve.getTangentAt(u, tan);
+    return 0;
   }
 }
