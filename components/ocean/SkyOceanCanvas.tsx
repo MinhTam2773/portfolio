@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { createAtmosphere } from "./atmosphere";
+import type { CreatureModel } from "./creatureMaterial";
 import { Gliders, type GliderOptions } from "./gliders";
 import { Stream, type StreamOptions } from "./stream";
 
@@ -27,7 +28,7 @@ const SILVER_STREAM: StreamOptions = {
   length: 0.32,
   thickness: 1.2,
   speed: 0.028,
-  look: { back: "#22334f", belly: "#9fb0c8", bendSpeed: 9, bendAmount: 0.12 },
+  look: { bendSpeed: 9, bendAmount: 0.12 },
   vortex: { center: v(0, 0.5, -2), radius: 5.5, turns: 2.2, cycle: 32, from: 18, to: 28 },
 };
 
@@ -39,7 +40,7 @@ const GOLDEN_STREAM: StreamOptions = {
   length: 0.45,
   thickness: 0.7,
   speed: 0.045,
-  look: { back: "#b9781c", belly: "#ffe2a0", rim: "#fff0c8", bendSpeed: 11, bendAmount: 0.13 },
+  look: { rim: "#fff0c8", bendSpeed: 11, bendAmount: 0.13 },
 };
 
 const MANTAS: GliderOptions = {
@@ -51,24 +52,21 @@ const MANTAS: GliderOptions = {
   ],
   speed: 0.012,
   roll: 0.9,
-  look: { back: "#2a3550", belly: "#d9d2d0", split: 0, bendSpeed: 1.6, bendAmount: 0.25 },
+  look: { bendSpeed: 1.6, bendAmount: 0.25 },
 };
 
 // One whale, far back and hazy, crossing very slowly.
 const WHALES: GliderOptions = {
   kind: "whale",
-  scale: 3.2,
-  paths: [[v(-40, 9, -40), v(0, 11, -44), v(40, 8, -40), v(20, 6, -48), v(-20, 7, -48)]],
+  scale: 3.6,
+  paths: [[v(-38, 8, -32), v(0, 10, -36), v(38, 7, -32), v(20, 5, -42), v(-20, 6, -42)]],
   speed: 0.005,
   look: {
-    back: "#34425e",
-    belly: "#b9b6bb",
-    split: -0.05,
     bendSpeed: 0.8,
     bendAmount: 0.15,
     fogNear: 30,
     fogFar: 60,
-    fogMax: 0.8,
+    fogMax: 0.55,
   },
 };
 
@@ -130,19 +128,20 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
     resize();
 
     const loader = new GLTFLoader();
-    const geometryOf = async (url: string) => {
+    const modelOf = async (url: string): Promise<CreatureModel> => {
       const gltf = await loader.loadAsync(url);
       const mesh = gltf.scene.getObjectByProperty("isMesh", true) as THREE.Mesh | undefined;
-      if (!mesh) throw new Error(`No mesh in ${url}`);
-      return mesh.geometry;
+      const map = (mesh?.material as THREE.MeshStandardMaterial | undefined)?.map;
+      if (!mesh || !map) throw new Error(`No textured mesh in ${url}`);
+      return { geometry: mesh.geometry, map };
     };
 
-    Promise.all([geometryOf("/ocean/fish.glb"), geometryOf("/ocean/manta.glb"), geometryOf("/ocean/whale.glb")])
-      .then(([fish, manta, whale]) => {
+    Promise.all(["fish-silver", "fish-golden", "manta", "whale"].map((name) => modelOf(`/ocean/${name}.glb`)))
+      .then(([silver, golden, manta, whale]) => {
         if (disposed) return;
         streams.push(
-          new Stream(fish, { ...SILVER_STREAM, count: mobile ? 80 : SILVER_STREAM.count }),
-          new Stream(fish, GOLDEN_STREAM),
+          new Stream(silver, { ...SILVER_STREAM, count: mobile ? 80 : SILVER_STREAM.count }),
+          new Stream(golden, GOLDEN_STREAM),
         );
         gliders.push(new Gliders(whale, WHALES), new Gliders(manta, MANTAS));
         // Far to near, so the transparent-free scene still sorts cheaply.

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createCreatureMaterial, type CreatureKind, type CreatureLook } from "./creatureMaterial";
+import { createCreatureMaterial, type CreatureKind, type CreatureLook, type CreatureModel } from "./creatureMaterial";
 
 // Big, slow creatures (manta rays, whales). Each one glides along its own looping path.
 
@@ -30,14 +30,14 @@ export class Gliders {
   private readonly worldUp = new THREE.Vector3(0, 1, 0);
   private readonly matrix = new THREE.Matrix4();
 
-  constructor(geometry: THREE.BufferGeometry, opts: GliderOptions) {
+  constructor(model: CreatureModel, opts: GliderOptions) {
     this.opts = opts;
     const n = opts.paths.length;
     this.curves = opts.paths.map((points) => new THREE.CatmullRomCurve3(points, true, "centripetal"));
     this.progress = opts.paths.map((_, i) => i / n + Math.random() * 0.1);
-    this.material = createCreatureMaterial(opts.kind, opts.look);
+    this.material = createCreatureMaterial(opts.kind, model.map, opts.look);
 
-    const geo = geometry.clone();
+    const geo = model.geometry.clone();
     const phase = new Float32Array(n).map(() => Math.random() * Math.PI * 2);
     geo.setAttribute("aPhase", new THREE.InstancedBufferAttribute(phase, 1));
     this.mesh = new THREE.InstancedMesh(geo, this.material, n);

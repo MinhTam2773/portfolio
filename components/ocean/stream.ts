@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { createCreatureMaterial, type CreatureLook } from "./creatureMaterial";
+import { createCreatureMaterial, type CreatureLook, type CreatureModel } from "./creatureMaterial";
 
 // A school that moves like a river: every fish rides the same smooth looping path, packed
 // into a tube that swells and thins along its length. Fish keep their lane, so the
@@ -52,14 +52,14 @@ export class Stream {
   private readonly helix = new THREE.Vector3();
   private readonly matrix = new THREE.Matrix4();
 
-  constructor(geometry: THREE.BufferGeometry, opts: StreamOptions) {
+  constructor(model: CreatureModel, opts: StreamOptions) {
     this.opts = opts;
     const n = opts.count;
     this.base = opts.path.map((p) => p.clone());
     this.curve = new THREE.CatmullRomCurve3(opts.path.map((p) => p.clone()), true, "centripetal");
-    this.material = createCreatureMaterial("fish", opts.look);
+    this.material = createCreatureMaterial("fish", model.map, opts.look);
 
-    const geo = geometry.clone();
+    const geo = model.geometry.clone();
     const phase = new Float32Array(n);
     this.along = new Float32Array(n);
     this.laneA = new Float32Array(n);
