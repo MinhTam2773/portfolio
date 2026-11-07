@@ -8,6 +8,8 @@ import { useEffect, useRef } from "react";
 const SKY =
   "linear-gradient(180deg, #6c8cb8 0%, #87a1c6 32%, #a6b4cc 55%, #d4b8ae 76%, #eab598 88%, #e9a98c 100%)";
 
+const MOON = "url(/ocean/moon.webp) center / contain no-repeat";
+
 // Bottom of the hero: dusk falls through twilight violet into the site background below,
 // rather than straight to near-black (which turns the warm clouds muddy grey).
 const DUSK_FADE =
@@ -71,13 +73,24 @@ export default function SkyLayers({ className = "" }: { className?: string }) {
 
   return (
     <div aria-hidden className={`pointer-events-none overflow-hidden ${className}`} style={{ background: SKY }}>
-      {/* Normal blend (not screen), so the dark side of the half moon reads darker than the sky;
-          a little transparency lets the dusk air soften it. */}
-      <div ref={moonRef} className="absolute left-1/2 top-[16%] -translate-x-1/2 opacity-90 will-change-transform">
-        <div
-          className="h-[min(34vmin,300px)] aspect-square rotate-[16deg]"
-          style={{ background: "url(/ocean/moon.webp) center / contain no-repeat" }}
-        />
+      {/* The moon, far away: a faint airglow around it, its own detail softened, and a veil of
+          sky-coloured haze over the disc (masked to the moon's shape) so it sits behind the air.
+          Normal blend (not screen), so the dark side still reads darker than the sky. */}
+      <div ref={moonRef} className="absolute left-1/2 top-[16%] -translate-x-1/2 will-change-transform">
+        <div className="relative h-[min(25vmin,220px)] aspect-square rotate-[16deg]">
+          <div
+            className="absolute -inset-[60%] rounded-full"
+            style={{ background: "radial-gradient(circle, rgb(232 238 250 / 0.42) 20%, rgb(220 230 248 / 0.14) 38%, transparent 66%)" }}
+          />
+          <div
+            className="absolute inset-0 opacity-90"
+            style={{ background: MOON, filter: "blur(0.6px) brightness(1.12) contrast(0.78) saturate(0.8)" }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{ background: "rgb(172 190 220 / 0.3)", mask: MOON, WebkitMask: MOON }}
+          />
+        </div>
       </div>
 
       <div ref={farRef} className="absolute inset-x-0 top-[2%] opacity-80 will-change-transform">
