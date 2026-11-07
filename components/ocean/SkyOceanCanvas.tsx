@@ -62,7 +62,7 @@ const NEAR_MANTA: GliderOptions = {
   paths: [[v(-26, -4, -6), v(-8, -2.5, -4), v(10, -3.5, -6), v(26, -2, -9), v(8, -6, -12), v(-12, -5, -10)]],
   speed: 0.011,
   roll: 0.9,
-  look: { bendSpeed: 2.8, bendAmount: 0.25 },
+  look: { bendSpeed: 2.2, bendAmount: 0.38 },
 };
 
 const FAR_MANTA: GliderOptions = {
@@ -71,7 +71,7 @@ const FAR_MANTA: GliderOptions = {
   paths: [[v(24, 7, -22), v(6, 8.5, -20), v(-14, 7.5, -24), v(-28, 9, -26), v(-6, 10, -28), v(14, 8, -26)]],
   speed: 0.007,
   roll: 0.7,
-  look: { bendSpeed: 2.2, bendAmount: 0.25, fogNear: 25, fogFar: 50, fogMax: 0.5 },
+  look: { bendSpeed: 1.9, bendAmount: 0.38, fogNear: 25, fogFar: 50, fogMax: 0.5 },
 };
 
 // One whale, high above the name, far back and hazy, crossing very slowly.
@@ -108,11 +108,14 @@ const PHONE_SILVER: StreamOptions = {
   tunnel: undefined,
 };
 
+// Smaller and further back than before (it filled a quarter of the screen and read heavy),
+// with a slower, deeper wing beat.
 const PHONE_MANTA: GliderOptions = {
   ...NEAR_MANTA,
-  scale: NEAR_MANTA.scale * 0.75,
-  paths: [[v(-8, -6.5, -3), v(0, -4.5, -4), v(8, -1.8, -5), v(12, -5, -8), v(-12, -8, -8)]],
+  scale: NEAR_MANTA.scale * 0.58,
+  paths: [[v(-9, -6.5, -7), v(0, -4.8, -8), v(9, -2.5, -9), v(13, -6, -12), v(-13, -8.5, -12)]],
   speed: NEAR_MANTA.speed * 0.75,
+  look: { bendSpeed: 1.9, bendAmount: 0.4 },
 };
 
 const PHONE_WHALE: GliderOptions = {
@@ -207,7 +210,7 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
         if (reduced) {
           for (let step = 0; step < 120; step++) {
             streams.forEach((s) => s.update(1 / 30, step / 30, null));
-            gliders.forEach((g) => g.update(1 / 30, step / 30));
+            gliders.forEach((g) => g.update(1 / 30));
           }
           render();
         }
@@ -261,7 +264,7 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
       );
       camera.lookAt(0, 0, SCHOOL_Z);
       streams.forEach((s) => s.update(dt, time, hasPointer ? pointer : null));
-      gliders.forEach((g) => g.update(dt, time));
+      gliders.forEach((g) => g.update(dt));
       atmosphere.update(time);
       render();
       raf = requestAnimationFrame(frame);

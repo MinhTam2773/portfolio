@@ -1,10 +1,15 @@
 import * as THREE from "three";
 
 // One shader for every creature. Colour comes from the model's own painted texture.
-// Each kind bends differently:
-//   fish  — tail swishes side to side
-//   manta — wing tips flap up and down
-//   whale — tail flukes beat up and down
+// Each kind swims differently (all smooth, periodic functions; no piecewise strokes):
+//   fish  — a wave runs down the body from head to tail, growing toward the tail; the head
+//           yaws a little against it and the fins trail softly behind
+//   manta — a wave rolls out along each wing to a curling tip, easing into glides now and
+//           then; the body heaves and pitches against the beat
+//   whale — a slow wave runs back to the flukes; the head nods against it
+// The swim phase (aSwim) is advanced on the CPU from distance travelled, so a creature that
+// speeds up beats faster. aBend is the path's curvature (sideways, up) in model units; the
+// spine arcs along it.
 // Lighting: a warm sun from the upper right, a warm rim around the silhouette, and haze
 // toward the sky colour with distance.
 
@@ -13,10 +18,12 @@ export type CreatureKind = "fish" | "manta" | "whale";
 /** A loaded creature model: its mesh and its painted colour texture. */
 export type CreatureModel = { geometry: THREE.BufferGeometry; map: THREE.Texture };
 
+/** Swim phases wrap here: a whole number of beats and of the manta's 4-beat glide cycle. */
+export const SWIM_WRAP = Math.PI * 8;
+
 const VERT = /* glsl */ `
-attribute float aPhase;
-uniform float uTime;
-uniform float uBendSpeed;
+attribute float aSwim;
+attribute vec2 aBend;
 uniform float uBendAmount;
 varying vec2 vUv;
 varying vec3 vNormal;
@@ -25,35 +32,72 @@ varying float vDepth;
 
 void main() {
   vec3 p = position;
-  float t = uTime * uBendSpeed + aPhase;
+  vec3 n = normal;
+  float a = uBendAmount;
 
   #if defined(KIND_FISH)
-    // Model faces +X, nose at x = 0.5; "back" is 0 at the head and 1 at the tail tip.
-    float back = clamp((0.45 - p.x) / 1.25, 0.0, 1.0);
-    p.z += sin(t - p.x * 5.0) * uBendAmount * back * back;
+    // Model faces +X: nose at x = 0.5, tail tip at x = -0.8. "back" is 0 at the nose, 1 at the tip.
+    float back = clamp((0.5 - p.x) / 1.3, 0.0, 1.0);
+    // One body length per wave; the phase lags further back, so crests run nose to tail.
+    float k = 4.83;
+    float ph = aSwim - (0.5 - p.x) * k;
+    float env = pow(back, 1.8);
+    float side = a * env * sin(ph);
+    // The head yaws a little against the tail's swing (opposite to the tail tip's phase).
+    side -= a * 0.18 * (1.0 - back) * (1.0 - back) * sin(aSwim - 1.3 * k);
+    // Fins (the parts far above and below the spine) trail the body a beat behind.
+    float fin = smoothstep(0.1, 0.2, abs(p.y));
+    side += a * 0.45 * fin * (0.3 + back) * sin(ph - 1.2);
+    p.z += side;
+    // Sideways slope along the body, to turn the normals with the bend (keeps the sheen
+    // sliding over the flanks instead of staying painted on).
+    float slope = a * (env * k * cos(ph) - 1.385 * pow(back, 0.8) * sin(ph));
+    n.x -= slope * n.z;
   #elif defined(KIND_MANTA)
-    // Wings span Z (tips at ±1). A power stroke for 60% of the cycle, then a glide where
-    // the wings settle. Tips lag a little behind the body; the body heaves with the stroke.
+    // Wings span Z (tips at +-1), nose at x = 0.6. A wave rolls out from the body to the tips
+    // (phase lag across the span, a little from front to back), skewed so the downstroke is
+    // quicker than the upstroke. Every few beats the wings ease into a glide and back.
     float span = abs(p.z);
-    float cycle = fract(t / 6.2832 - span * 0.06);
-    float flap = cycle < 0.6 ? sin(cycle / 0.6 * 6.2832) : 0.1 * exp(-(cycle - 0.6) * 8.0);
-    p.y += flap * uBendAmount * span * span;
-    float body = fract(t / 6.2832);
-    p.y -= (body < 0.6 ? cos(body / 0.6 * 6.2832) : 1.0) * 0.04;
+    float tip = span * span;
+    float ph = aSwim - span * 1.4 + p.x * 0.5;
+    float beat = sin(ph + 0.35 * sin(ph));
+    float flapping = smoothstep(-0.45, 0.55, sin(aSwim * 0.25 + 1.3)); // 0 = gliding, every 4 beats
+    float amp = a * mix(0.3, 1.0, flapping);
+    float curl = smoothstep(0.55, 1.0, span); // the outer wing bends further, a beat later
+    p.y += amp * (tip * beat + 0.3 * curl * sin(ph - 0.9));
+    p.y += a * 0.25 * (1.0 - flapping) * tip; // wings held slightly raised in a glide
+    // Body heaves against the wings and pitches a little with each beat.
+    float core = 1.0 - smoothstep(0.0, 0.6, span);
+    p.y -= core * amp * (0.14 * sin(aSwim) - 0.1 * p.x * cos(aSwim));
+    float slope = amp * (2.0 * span * beat - 1.4 * tip * cos(ph));
+    n.z -= slope * sign(p.z) * n.y;
   #elif defined(KIND_WHALE)
-    // Model x runs from the tail (-1.75) to the snout (+1.0). The wave starts behind the
-    // pectoral fins and grows toward the flukes; the head nods against each stroke.
+    // Model x runs from the flukes (-1.75) to the snout (+1.0). The wave starts behind the
+    // flippers and grows toward the flukes, which flex a little later still; the head nods
+    // gently against each stroke.
     float back = clamp((0.45 - p.x) / 2.2, 0.0, 1.0);
-    p.y += sin(t - p.x * 1.6) * uBendAmount * back * back;
+    float ph = aSwim - (1.0 - p.x) * 1.8;
+    float env = pow(back, 1.8);
+    float fluke = smoothstep(0.7, 1.0, back);
+    p.y += a * (env * sin(ph) + 0.25 * fluke * sin(ph - 0.8));
     float front = clamp((p.x - 0.3) / 0.7, 0.0, 1.0);
-    p.y -= sin(t) * 0.04 * front;
+    p.y -= a * 0.15 * front * sin(aSwim + 0.6);
+    float slope = a * env * 1.8 * cos(ph);
+    n.x -= slope * n.y;
   #endif
+
+  // The spine arcs along the path's curve: points ahead of and behind the centre both lean
+  // toward the inside of the turn.
+  float arc = 0.5 * p.x * p.x;
+  p.z += aBend.x * arc;
+  p.y += aBend.y * arc;
+  n.x -= aBend.x * p.x * n.z + aBend.y * p.x * n.y;
 
   mat4 model = modelMatrix * instanceMatrix; // every creature group is an InstancedMesh
   vec4 world = model * vec4(p, 1.0);
   vec4 mv = viewMatrix * world;
   vUv = uv;
-  vNormal = normalize(mat3(model) * normal);
+  vNormal = normalize(mat3(model) * n);
   vView = normalize(cameraPosition - world.xyz);
   vDepth = -mv.z;
   gl_Position = projectionMatrix * mv;
@@ -124,7 +168,9 @@ export const resolution = { value: new THREE.Vector2(1, 1) };
 
 export type CreatureLook = {
   rim?: string;
+  /** Swim beat at cruising speed, in radians per second (faster when the creature speeds up). */
   bendSpeed: number;
+  /** How far the body bends with each beat, in model units. */
   bendAmount: number;
   fogNear?: number;
   fogFar?: number;
@@ -141,8 +187,6 @@ export function createCreatureMaterial(kind: CreatureKind, map: THREE.Texture, l
     side: THREE.DoubleSide,
     defines: { [`KIND_${kind.toUpperCase()}`]: "" },
     uniforms: {
-      uTime: { value: 0 },
-      uBendSpeed: { value: look.bendSpeed },
       uBendAmount: { value: look.bendAmount },
       uMap: { value: map },
       uResolution: resolution,
