@@ -15,12 +15,12 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 
 function RisingLine({ text, delay, ready, className = "" }: { text: string; delay: number; ready: boolean; className?: string }) {
   return (
-    <span className={`block overflow-hidden pb-[0.06em] ${className}`}>
+    <span className={`-mx-[0.12em] -mb-[0.24em] -mt-[0.1em] block overflow-hidden whitespace-nowrap px-[0.12em] pb-[0.3em] pt-[0.1em] ${className}`}>
       {text.split("").map((char, i) => (
         <motion.span
           key={i}
           className="inline-block"
-          initial={{ y: "110%", rotate: 6 }}
+          initial={{ y: "150%", rotate: 6 }}
           animate={ready ? { y: 0, rotate: 0 } : undefined}
           transition={{ duration: 1.1, delay: delay + i * 0.045, ease: EASE }}
         >
@@ -78,14 +78,14 @@ const Hero = () => {
         </motion.div>
 
         {/* Name */}
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-4 pb-[6vh] text-center text-[#f6f1ec] [text-shadow:0_2px_30px_rgb(60_70_110/0.35)]">
-          <h1 className="font-serif text-[clamp(3.5rem,11vw,10rem)] leading-[0.85] tracking-[-0.02em]">
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-4 pb-[6vh] text-center text-[#f6f1ec]">
+          <h1 className="font-serif text-[min(14.3vw,clamp(3.5rem,11vw,10rem))] leading-[0.85] tracking-[-0.02em]">
             <span className="sr-only">Minh Tam Nguyen</span>
             <span aria-hidden>
               <RisingLine text="Minh Tam Nguyen" delay={0.15} ready={ready} />
             </span>
           </h1>
-          <motion.p {...fadeUp(0.9)} className="mt-5 text-sm uppercase tracking-[0.3em] text-[#f6f1ec]/85 md:text-base">
+          <motion.p {...fadeUp(0.9)} className="mt-5 text-sm uppercase tracking-[0.3em] text-[#f6f1ec]/85 [text-shadow:0_2px_30px_rgb(60_70_110/0.35)] md:text-base">
             Software &amp; AI Developer
           </motion.p>
         </div>
