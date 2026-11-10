@@ -1,0 +1,22 @@
+Model:  openai/gpt-image-2.5/flare/text-to-image
+Input:  {
+  "prompt": "A pale waxing half moon seen in the early evening sky, painterly hand-painted anime film background style with soft cel-like shading and soft edges, subtle crater detail, cool off-white with a faint blue-lavender tint and a soft warm peach edge on the lit right side. Centered and fully visible with margin around it, isolated on a fully transparent background: no stars, no clouds, no halo ring, no text.",
+  "image_size": {
+    "width": 1024,
+    "height": 1024
+  },
+  "quality": "high",
+  "output_format": "png",
+  "background": "transparent",
+  "num_images": 1
+}
+Save to: art/ocean/sky/moon.png
+Spend credits on this generation? (y/N) Submitted 01a1b392-73ab-7b22-af6d-bc6e97cd30d0
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  COMPLETED
+Saved art/ocean/sky/moon.png
+Output URL: https://v3b.fal.media/files/b/0ab172c0/lqsRSMnO5Sb-e1RzJ9R_L_NU328VmO.png

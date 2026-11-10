@@ -1,0 +1,21 @@
+Model:  openai/gpt-image-2.5/flare/text-to-image
+Input:  {
+  "prompt": "A wide horizontal band of distant, flatter, wispy cloud banks at sunset, painterly hand-painted anime film background style with soft cel-like shading and soft edges. Pale peach and lilac, hazy and low contrast, thin layers spread across the middle of the frame with open gaps; the left and right edges are empty sky so the band can repeat. Clouds only, isolated on a fully transparent background: no sky colour, no sun, no moon, no ground, no birds, no text.",
+  "image_size": {
+    "width": 2560,
+    "height": 1088
+  },
+  "quality": "high",
+  "output_format": "png",
+  "background": "transparent",
+  "num_images": 1
+}
+Save to: art/ocean/sky/clouds-far.png
+Spend credits on this generation? (y/N) Submitted 01a1b392-73b8-7ee0-9210-13e80ca53ec1
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  COMPLETED
+Saved art/ocean/sky/clouds-far.png
+Output URL: https://v3b.fal.media/files/b/0ab172c0/wx99ERqzmx9LStqjjGE2N_GnyGm9Iy.png

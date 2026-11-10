@@ -1,0 +1,22 @@
+Model:  openai/gpt-image-2.5/flare/text-to-image
+Input:  {
+  "prompt": "The very top edge is smooth clear warm peach sky (#efc4a6). Going down, the sky slowly deepens from apricot to soft rose pink, then dusty mauve in the lower quarter, then a gentle dusk violet in the last tenth. Large soft clouds at both edges catch the last pink and gold light. A small school of golden fish swims through the air near the left edge and a small hazy manta ray glides near the right edge. Only in the lowest tenth do the first few tiny stars appear. The very bottom edge is a smooth dusk violet (#3d3160), still luminous, never black. Very tall vertical background painting of a bright open sky for a website, painterly hand-painted anime film background style with soft cel-like shading and soft edges, matching a dreamy dusk scene with peach and apricot sunlit cloud tops and lavender-grey shadowed undersides. The centre 65% of the width stays open, clear, smooth sky with only the faintest thin wisps, so text placed on top stays readable; billowing clouds and creatures sit near the left and right edges and vary in size all the way down. It stays bright and luminous. No text, no logos, no people, no birds, no moon, no sun disc, no ground, no borders.",
+  "image_size": {
+    "width": 1280,
+    "height": 3840
+  },
+  "quality": "high",
+  "output_format": "png",
+  "num_images": 1
+}
+Save to: art/ocean/page/sky-bottom.png
+Spend credits on this generation? (y/N) Submitted 01a1bce6-5d66-7820-a499-4a6fc6caf0e5
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  COMPLETED
+Saved art/ocean/page/sky-bottom.png
+Output URL: https://v3b.fal.media/files/b/0ab1afe1/HGar6CaX_eljZTGAvBC-G_Ip9qnOsC.png

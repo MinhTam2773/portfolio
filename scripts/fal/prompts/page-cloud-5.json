@@ -1,0 +1,11 @@
+{
+  "prompt": "A single medium cumulus cloud at sunset, leaning to one side with an uneven lumpy crown, painterly hand-painted anime film background style with soft cel-like shading, visible soft brushwork and soft frayed wispy edges. Peach and apricot sunlit tops with golden highlights, dusty rose midtones, lavender-grey and mauve shadowed undersides. The base of the cloud thins out and dissolves softly. Centred in the frame with empty space on every side, nothing touching the edges. Cloud only, isolated on a fully transparent background: no sky colour, no sun, no moon, no ground, no birds, no text.",
+  "image_size": {
+    "width": 1536,
+    "height": 1024
+  },
+  "quality": "high",
+  "output_format": "png",
+  "background": "transparent",
+  "num_images": 1
+}

@@ -1,0 +1,30 @@
+Model:  openai/gpt-image-2.5/flare/edit
+Input:  {
+  "prompt": "This is a painted waxing half moon: the right half is lit, the left half is missing. Complete the moon into one full round disc. Keep the lit right half the same painting, same colors and craters. Paint the unlit left half as the dark side of the moon, faintly visible by earthshine: a dim, cool slate blue-grey, much darker than the lit side, with very soft faint maria and crater shapes. The terminator between light and dark is a soft, slightly irregular gradual shadow edge following the curve of the sphere, not a straight cut. Same painterly hand-painted anime film background style, soft cel-like shading, soft edges. Isolated on a fully transparent background: no stars, no clouds, no halo, no text.",
+  "image_urls": [
+    "https://v3b.fal.media/files/b/0ab172c0/lqsRSMnO5Sb-e1RzJ9R_L_NU328VmO.png"
+  ],
+  "image_size": {
+    "width": 1024,
+    "height": 1024
+  },
+  "quality": "high",
+  "background": "transparent",
+  "output_format": "png",
+  "num_images": 2
+}
+Save to: art/ocean/sky/moon-darkside-1.png
+Spend credits on this generation? (y/N) Submitted 01a1b427-73d7-7af1-9685-b39cdbacc924
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  COMPLETED
+Saved art/ocean/sky/moon-darkside-1.png
+Output URL: https://v3b.fal.media/files/b/0ab17691/PBvXc3TIiZwo2tRcS8Ch9_b1tvLkt2.png
+Output URL: https://v3b.fal.media/files/b/0ab17691/wR5qfu55D2m2Aetxjca6t_9r8EfDXI.png

@@ -1,0 +1,21 @@
+Model:  openai/gpt-image-2.5/flare/text-to-image
+Input:  {
+  "prompt": "The very top edge is a smooth soft band of pale lavender-peach mist (#d8bcc0). Below it the sky opens into luminous pale periwinkle blue, slowly warming as it goes down into pale apricot. Soft cumulus clouds float at both edges. A small distant whale drifts through the air near the right edge, a slender ribbon of tiny silver fish curves through the air near the left edge, and a small manta ray glides further down near the right edge, all painted softly and hazy with distance. The very bottom edge is smooth clear warm peach sky (#efc4a6). Very tall vertical background painting of a bright open sky for a website, painterly hand-painted anime film background style with soft cel-like shading and soft edges, matching a dreamy dusk scene with peach and apricot sunlit cloud tops and lavender-grey shadowed undersides. The centre 65% of the width stays open, clear, smooth sky with only the faintest thin wisps, so text placed on top stays readable; billowing clouds and creatures sit near the left and right edges and vary in size all the way down. It stays bright and luminous. No text, no logos, no people, no birds, no moon, no sun disc, no ground, no borders.",
+  "image_size": {
+    "width": 1280,
+    "height": 3840
+  },
+  "quality": "high",
+  "output_format": "png",
+  "num_images": 1
+}
+Save to: art/ocean/page/sky-top.png
+Spend credits on this generation? (y/N) Submitted 01a1bce6-5d72-7a92-b713-426057fdce81
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  COMPLETED
+Saved art/ocean/page/sky-top.png
+Output URL: https://v3b.fal.media/files/b/0ab1afe1/oCHASp1aEkBoCVt9VapYi_GBWcooP4.png

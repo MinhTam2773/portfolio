@@ -1,0 +1,21 @@
+Model:  openai/gpt-image-2.5/flare/text-to-image
+Input:  {
+  "prompt": "A view descending from a dusk sky into a night sky that is also a deep ocean. The very top edge is solid near-black violet (#0e0c18). Below it, a few thin dark violet cloud wisps lit faintly by moonlight drift at the far left and right edges, with sparse tiny stars. Lower down, faint pale light shafts slant in from above, one distant dark whale silhouette very small near the right edge, a few tiny far-off fish as faint silver flecks near the left edge. The colour deepens steadily from violet to deep indigo blue. The very bottom edge is solid deep indigo (#0b1024). Very tall vertical background painting for a website, painterly hand-painted anime film background style with soft edges and soft gradients, no hard lines. It must stay very dark and calm through the centre 70% of the width so that white text placed on top stays readable; any detail sits near the left and right edges and is faint and low contrast. No text, no logos, no people, no borders, no planets, no moon.",
+  "image_size": {
+    "width": 1280,
+    "height": 3840
+  },
+  "quality": "high",
+  "output_format": "png",
+  "num_images": 1
+}
+Save to: art/ocean/page/bg-top.png
+Spend credits on this generation? (y/N) Submitted 01a1bce2-7c40-7a13-8bc7-1f833683abd9
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  COMPLETED
+Saved art/ocean/page/bg-top.png
+Output URL: https://v3b.fal.media/files/b/0ab1afc8/V-gqY6mS-V66pKMeDfruW_eB8BKZuA.png

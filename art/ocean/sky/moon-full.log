@@ -1,0 +1,22 @@
+Model:  openai/gpt-image-2.5/flare/text-to-image
+Input:  {
+  "prompt": "A pale full moon seen in the early evening sky, the whole round disc visible, painterly hand-painted anime film background style with soft cel-like shading and soft edges, subtle crater detail and soft grey maria, cool off-white with a faint blue-lavender tint and a soft warm peach glow along the lower right edge. Centered and fully visible with margin around it, isolated on a fully transparent background: no stars, no clouds, no halo ring, no text.",
+  "image_size": {
+    "width": 1024,
+    "height": 1024
+  },
+  "quality": "high",
+  "output_format": "png",
+  "background": "transparent",
+  "num_images": 1
+}
+Save to: art/ocean/sky/moon-full.png
+Spend credits on this generation? (y/N) Submitted 01a1b41f-1c3c-72e0-a858-8dfaae8e80ea
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  COMPLETED
+Saved art/ocean/sky/moon-full.png

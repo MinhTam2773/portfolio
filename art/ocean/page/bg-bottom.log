@@ -1,0 +1,22 @@
+Model:  openai/gpt-image-2.5/flare/text-to-image
+Input:  {
+  "prompt": "A view continuing down through deep night ocean. The very top edge is solid deep indigo (#0b1024). The colour deepens to midnight blue-black. Soft bioluminescent plankton specks drift sparsely, two or three small translucent jellyfish glowing faintly in pale teal near the far left and right edges, a thin school of tiny silver fish as a faint curved streak near one edge. Toward the very bottom the darkness warms: a low, soft ember orange glow rises from below across the full width, like a hidden sunrise under the sea, very subdued. The very bottom edge is a dark warm near-black (#140c0a). Very tall vertical background painting for a website, painterly hand-painted anime film background style with soft edges and soft gradients, no hard lines. It must stay very dark and calm through the centre 70% of the width so that white text placed on top stays readable; any detail sits near the left and right edges and is faint and low contrast. No text, no logos, no people, no borders, no planets, no moon.",
+  "image_size": {
+    "width": 1280,
+    "height": 3840
+  },
+  "quality": "high",
+  "output_format": "png",
+  "num_images": 1
+}
+Save to: art/ocean/page/bg-bottom.png
+Spend credits on this generation? (y/N) Submitted 01a1bce2-7c40-7953-a702-71835c7d9119
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  IN_PROGRESS
+  COMPLETED
+Saved art/ocean/page/bg-bottom.png
+Output URL: https://v3b.fal.media/files/b/0ab1afc8/h5JnmVvdBXFqgark4t9_R_gLYDHFwW.png
