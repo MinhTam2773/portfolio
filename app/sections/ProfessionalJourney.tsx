@@ -1,8 +1,8 @@
 // components/ProfessionalJourney.tsx
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { useRef, useState, type RefObject } from "react";
+import { motion, useMotionValueEvent, useScroll, useSpring, type MotionValue } from "framer-motion";
 import SectionHeader from "@/components/fx/SectionHeader";
 
 const experiences = [
@@ -49,6 +49,25 @@ const experiences = [
   },
 ];
 
+/** Solid white once the drawn line has reached it, an empty outline until then. */
+function TimelineDot({ fill, trackRef }: { fill: MotionValue<number>; trackRef: RefObject<HTMLDivElement | null> }) {
+  const dotRef = useRef<HTMLSpanElement>(null);
+  const [passed, setPassed] = useState(false);
+
+  useMotionValueEvent(fill, "change", (progress) => {
+    const dot = dotRef.current?.getBoundingClientRect();
+    const track = trackRef.current?.getBoundingClientRect();
+    if (dot && track) setPassed(dot.top + dot.height / 2 - track.top <= progress * track.height);
+  });
+
+  return (
+    <span
+      ref={dotRef}
+      className={`absolute left-0 top-1 h-[11px] w-[11px] rotate-45 border border-white transition-colors duration-300 md:left-1/4 md:top-4 ${passed ? "bg-white" : "bg-transparent"}`}
+    />
+  );
+}
+
 export default function ProfessionalJourney() {
   const trackRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start 75%", "end 60%"] });
@@ -56,34 +75,28 @@ export default function ProfessionalJourney() {
 
   return (
     <section id="experience" className="scroll-mt-24">
-      <SectionHeader index={3} total={4} title="Field" emphasis="Log" kicker="Experience · most recent entry first" />
+      <SectionHeader title="Work" emphasis="Experience" />
 
       <div ref={trackRef} className="relative">
-        {/* Survey line: drawn in orange as you read down it */}
-        <div className="absolute bottom-0 left-[5px] top-0 w-px bg-border md:left-[calc(25%+5px)]" />
+        {/* Timeline: drawn as you read down it */}
         <motion.div
           className="absolute bottom-0 left-[5px] top-0 w-px origin-top bg-primary md:left-[calc(25%+5px)]"
           style={{ scaleY: fill }}
         />
 
         <div className="space-y-24">
-          {experiences.map((exp, i) => (
-            <article key={exp.id} className="relative grid grid-cols-1 gap-6 pl-10 md:grid-cols-4 md:gap-0 md:pl-0">
+          {experiences.map((exp, index) => (
+            <article key={exp.id} className="relative grid grid-cols-1 gap-6 pl-6 md:grid-cols-4 md:gap-0 md:pl-0">
               <div className="annot space-y-2 md:pr-12 md:pt-3 md:text-right">
                 <p className="text-foreground">{exp.dates}</p>
-                <p>
-                  Entry {String(i + 1).padStart(2, "0")} · {exp.badge}
-                </p>
+                <p>{exp.badge}</p>
               </div>
 
-              {/* Station marker */}
-              <motion.span
-                className="absolute left-0 top-1 h-[11px] w-[11px] rotate-45 border border-primary bg-background md:left-1/4 md:top-4"
-                initial={{ backgroundColor: "hsl(var(--background))" }}
-                whileInView={{ backgroundColor: "hsl(var(--primary))" }}
-                viewport={{ margin: "-55% 0px -40% 0px" }}
-                transition={{ duration: 0.3 }}
+              {/* The faint line runs from this square to the next, so the empty squares stay empty. */}
+              <div
+                className={`absolute left-[5px] top-[18px] w-px bg-border md:left-[calc(25%+5px)] md:top-[30px] ${index < experiences.length - 1 ? "-bottom-[97px] md:-bottom-[109px]" : "bottom-0"}`}
               />
+              <TimelineDot fill={fill} trackRef={trackRef} />
 
               <div className="md:col-span-3 md:pl-14">
                 <h3 className="font-serif text-[clamp(2.25rem,4.5vw,3.75rem)] leading-none tracking-[-0.015em]">{exp.title}</h3>
@@ -93,7 +106,7 @@ export default function ProfessionalJourney() {
                   {exp.bullets.map((bullet, bulletIndex) => (
                     <motion.li
                       key={bulletIndex}
-                      className="grid grid-cols-[2rem_1fr] leading-relaxed text-foreground/85"
+                      className="grid grid-cols-[1.25rem_1fr] leading-relaxed text-foreground md:grid-cols-[2rem_1fr]"
                       initial={{ opacity: 0, x: -12 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true, margin: "-10% 0px" }}

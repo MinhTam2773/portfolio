@@ -6,7 +6,6 @@ import { Footer } from "@/components/Footer";
 import { ChatWidget } from "@/components/ChatWidget";
 import ConvexClientProvider from "@/components/ConvexClientProvider";
 import FxLayer from "@/components/fx/FxLayer";
-import { BOOT_SCRIPT } from "@/components/fx/boot";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 const instrumentSerif = Instrument_Serif({
@@ -29,9 +28,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: BOOT_SCRIPT }} />
-      </head>
       <body className={`${geist.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable} font-sans`}>
         {/* Main content above background */}
         <div className="relative z-10">

@@ -3,12 +3,7 @@ import { ArrowUp, ArrowUpRight } from "lucide-react";
 export function Footer() {
   return (
     <footer className="relative mt-40 overflow-hidden border-t border-border">
-      <div className="container-custom pt-20 pb-10">
-        <p className="annot mb-8 flex items-center gap-3">
-          <span className="beacon inline-block h-2 w-2 bg-primary" />
-          End of survey · open to conversations
-        </p>
-
+      <div className="container-custom pt-20 pb-30 md:pb-10">
         <a
           href="mailto:tamnguyen277353@gmail.com"
           data-cursor="WRITE TO ME"
@@ -42,10 +37,9 @@ export function Footer() {
         </div>
 
         <div className="annot mt-16 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Minh Tam Nguyen · Surveyed in Calgary, 51.04°N</p>
-          <p className="hidden text-foreground/30 md:block">Psst — type “fire”</p>
-          <a href="#" data-cursor="TO SUMMIT" className="inline-flex items-center gap-2 text-foreground transition-colors hover:text-primary">
-            Back to summit <ArrowUp className="h-3.5 w-3.5" />
+          <p>© {new Date().getFullYear()} Minh Tam Nguyen · Calgary, Alberta</p>
+          <a href="#" data-cursor="TOP" className="inline-flex items-center gap-2 text-foreground transition-colors hover:text-primary">
+            Back to top <ArrowUp className="h-3.5 w-3.5" />
           </a>
         </div>
       </div>

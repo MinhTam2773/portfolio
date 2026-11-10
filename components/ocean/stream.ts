@@ -24,6 +24,8 @@ export type StreamOptions = {
   /** Loops per second. */
   speed: number;
   look: CreatureLook;
+  /** How much the path breathes, 0–1 (default 1). */
+  sway?: number;
   tunnel?: {
     /** The ribbon peels into the ring at the point on the path closest to this. */
     near: THREE.Vector3;
@@ -53,7 +55,6 @@ export class Stream {
   private readonly laneR: Float32Array; // lane distance from the tube's centre
   private readonly surge: Float32Array; // phase of each fish's small back-and-forth
   private readonly size: Float32Array;
-  private readonly push: Float32Array; // cursor displacement, eases back to 0
   private readonly forward: Float32Array; // smoothed heading per fish
   private readonly sideways: Float32Array; // each fish's own "right", carried along frame to frame
   private readonly beat: Float32Array; // each fish's own beat rate (about +-15%)
@@ -116,7 +117,6 @@ export class Stream {
     this.laneR = new Float32Array(n);
     this.surge = new Float32Array(n);
     this.size = new Float32Array(n);
-    this.push = new Float32Array(n * 3);
     this.forward = new Float32Array(n * 3);
     this.sideways = new Float32Array(n * 3);
     this.beat = new Float32Array(n);
@@ -145,9 +145,8 @@ export class Stream {
     this.mesh.frustumCulled = false;
   }
 
-  /** @param pointer where the cursor meets the scene, or null when it's away. */
-  update(dt: number, time: number, pointer: THREE.Vector3 | null) {
-    const { count: n, length, thickness, speed, tunnel } = this.opts;
+  update(dt: number, time: number) {
+    const { count: n, length, thickness, speed, tunnel, sway = 1 } = this.opts;
 
     // The path breathes slowly so the loop never repeats exactly. The sway is a smooth field
     // over space, so neighbouring points move together and never pinch the path into a kink.
@@ -155,8 +154,8 @@ export class Stream {
       const b = this.base[k];
       p.set(
         b.x * this.widthScale,
-        b.y + Math.sin(time * 0.11 + b.x * 0.17 + b.z * 0.1) * 1.2,
-        b.z + Math.sin(time * 0.09 + b.x * 0.13 - b.y * 0.2) * 1.5,
+        b.y + Math.sin(time * 0.11 + b.x * 0.17 + b.z * 0.1) * 1.2 * sway,
+        b.z + Math.sin(time * 0.09 + b.x * 0.13 - b.y * 0.2) * 1.5 * sway,
       );
     });
     this.curve.updateArcLengths();
@@ -171,7 +170,6 @@ export class Stream {
       if (this.ring) this.ring.start -= 1;
     }
 
-    const ease = Math.exp(-dt * 1.5);
     const turn = this.started ? 1 - Math.exp(-dt * 14) : 1; // heading smoothing
     const level = 1 - Math.exp(-dt * 2); // how fast a fish rights itself after a steep climb
     const settle = 1 - Math.exp(-dt * 4); // smoothing for bank, bend and pace
@@ -228,24 +226,8 @@ export class Stream {
       const ang = this.laneA[i];
       this.p.addScaledVector(this.right, Math.cos(ang) * r).addScaledVector(this.up, Math.sin(ang) * r);
 
-      // Fish part around the cursor and drift back into their lane.
-      this.push[i3] *= ease;
-      this.push[i3 + 1] *= ease;
-      if (pointer) {
-        const dx = this.p.x + this.push[i3] - pointer.x;
-        const dy = this.p.y + this.push[i3 + 1] - pointer.y;
-        const d2 = dx * dx + dy * dy;
-        if (d2 < 9 && d2 > 1e-4) {
-          const k = (((9 - d2) / 9) * 6 * dt) / Math.sqrt(d2);
-          this.push[i3] += dx * k;
-          this.push[i3 + 1] += dy * k;
-        }
-      }
-      this.p.x += this.push[i3];
-      this.p.y += this.push[i3 + 1];
-
-      // Swim beat follows actual speed: fish surging ahead or darting from the cursor beat
-      // faster, ones drifting back beat slower.
+      // Swim beat follows actual speed: fish surging ahead beat faster, ones drifting back
+      // beat slower.
       if (this.started) {
         const v = Math.hypot(this.p.x - this.last[i3], this.p.y - this.last[i3 + 1], this.p.z - this.last[i3 + 2]) / dt;
         this.pace[i] += (THREE.MathUtils.clamp(v / cruise, 0.6, 2.5) - this.pace[i]) * settle;

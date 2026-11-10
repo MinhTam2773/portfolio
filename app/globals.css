@@ -110,21 +110,6 @@ body {
   100% { background-position: 0 0; }
 }
 
-/* ─── Custom reticle cursor (fine pointers only) ─── */
-html.has-reticle,
-html.has-reticle * {
-  cursor: none !important;
-}
-
-html.has-reticle :is(input, textarea, select, [contenteditable="true"]) {
-  cursor: text !important;
-}
-
-/* ─── Boot intro: hidden for returning visitors before first paint ─── */
-html.intro-seen .boot-overlay {
-  display: none;
-}
-
 /* ─── Contour line drawing ─── */
 .draw-path {
   stroke-dasharray: var(--len, 2000);
@@ -160,16 +145,6 @@ html.intro-seen .boot-overlay {
   to { transform: scaleY(1); }
 }
 
-/* ─── Blinking survey beacon ─── */
-@keyframes beacon {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.15; }
-}
-
-.beacon {
-  animation: beacon 1.1s steps(2, jump-none) infinite;
-}
-
 /* ─── Sky ocean: drifting cloud bands (each band is two identical halves, so -50% loops) ─── */
 @keyframes cloud-drift {
   from { transform: translate3d(0, 0, 0); }
@@ -200,7 +175,6 @@ html.intro-seen .boot-overlay {
 @media (prefers-reduced-motion: reduce) {
   .grain,
   .marquee-track,
-  .beacon,
   .cloud-drift {
     animation: none;
   }
@@ -208,5 +182,95 @@ html.intro-seen .boot-overlay {
   .draw-path {
     transition: none;
     stroke-dashoffset: 0;
+  }
+}
+
+/* ─── Home page: the long dusk sky. Project pages keep the dark theme, and so does the chat ─── */
+body:has(.sky-home) {
+  background: #3d3160; /* the painting's last colour, for overscroll past the footer */
+}
+
+body:has(.sky-home) .grain {
+  display: none;
+}
+
+body:has(.sky-home) :is(main, header, footer),
+body:has(.sky-home) .chat-widget {
+  --background: 230 42% 26%;
+  --foreground: 0 0% 100%;
+  --primary: 0 0% 100%;
+  --primary-foreground: 228 48% 17%;
+  --secondary: 0 0% 100% / 0.14;
+  --muted: 0 0% 100% / 0.14;
+  --muted-foreground: 0 0% 100%;
+  --border: 0 0% 100% / 0.35;
+  --ring: 0 0% 100%;
+  color: hsl(var(--foreground));
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+body:has(.sky-home) footer {
+  border-top-color: transparent;
+}
+
+/* White text on a bright sky needs a tight dark edge to stay readable. Kept small on purpose:
+   a wide shadow would show as a box around text inside the reveal masks. */
+body:has(.sky-home) :is(main, footer) {
+  text-shadow: 0 1px 3px rgb(34 40 90 / 0.55);
+}
+
+/* Small labels and secondary text also get a soft halo. None of them sit in a reveal mask. */
+body:has(.sky-home) :is(main, footer) :is(.annot, .font-mono, .text-muted-foreground) {
+  text-shadow: 0 1px 3px rgb(34 40 90 / 0.55), 0 1px 12px rgb(60 30 50 / 0.28);
+}
+
+/* The project details sit on the brightest part of the sky, in the page's smallest type. */
+body:has(.sky-home) main .project-meta :is(.annot, .font-mono) {
+  font-size: 0.75rem;
+  text-shadow: 0 1px 2px rgb(34 40 90 / 0.8), 0 0 10px rgb(34 40 90 / 0.45);
+}
+
+body:has(.sky-home) :is(main, header, footer, .chat-widget) :is(.annot, .font-mono) {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+/* This serif has small lowercase letters, so running text and labels are sized up to stay
+   readable. Headings keep their size. */
+body:has(.sky-home) :is(main, header, footer, .chat-widget) :is(p, li, dd, dt, .annot, .font-mono):not(.font-serif) {
+  font-size-adjust: 0.52;
+}
+
+.sky-home {
+  background: linear-gradient(180deg, rgb(233 169 140) 0%, rgb(233 169 142) 1.7%, rgb(231 170 148) 3.4%, rgb(228 171 162) 5.1%, rgb(221 172 178) 6.8%, rgb(210 175 197) 8.5%, rgb(196 178 214) 10.2%, rgb(178 180 228) 11.9%, rgb(161 181 237) 13.6%, rgb(152 182 242) 15.3%, rgb(150 182 243) 17%, rgb(170 193 240) 26%, rgb(225 203 197) 40%, rgb(252 188 152) 50%, rgb(244 155 147) 60%, rgb(218 137 159) 72%, rgb(214 146 168) 86%, rgb(170 110 152) 91%, rgb(105 84 140) 95%, rgb(63 59 115) 100%);
+}
+
+/* Single clouds: placed by PageSky, smaller on phones to fit the shorter bands between sections. */
+.sky-cloud {
+  --gutter: max(0px, (100vw - 1088px) / 2); /* margin beside the content column */
+  --band-cloud-scale: 1;
+  position: absolute;
+}
+
+.sky-cloud-art {
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: cloud-sway 60s ease-in-out infinite alternate;
+}
+
+@keyframes cloud-sway {
+  from { transform: translateX(-1.5%); }
+  to { transform: translateX(1.5%); }
+}
+
+@media (max-width: 767px) {
+  .sky-cloud {
+    --band-cloud-scale: 0.65;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky-cloud-art {
+    animation: none;
   }
 }

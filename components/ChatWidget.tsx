@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Maximize2, MessageCircle, Minimize2, Send, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import SoundToggle from "@/components/ocean/SoundToggle";
 
 type Message = {
   role: "user" | "assistant";
@@ -99,9 +100,6 @@ export function ChatWidget() {
       window.localStorage.removeItem(STORAGE_KEY);
     }
 
-    const isMobile = window.innerWidth < 768;
-    setIsOpen(!isMobile);
-
     if (!window.sessionStorage.getItem(SESSION_OPENED_KEY)) {
       window.sessionStorage.setItem(SESSION_OPENED_KEY, "true");
       openerTimeoutRef.current = window.setTimeout(() => {
@@ -174,6 +172,23 @@ export function ChatWidget() {
     }
   }
 
+  // Opens once, the first time your photo scrolls into view. Stays closed on phones, where
+  // the panel would cover the page, and wherever there's no photo.
+  useEffect(() => {
+    const photo = document.getElementById("about-photo");
+    if (!photo || window.innerWidth < 768) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        setIsOpen(true);
+      },
+      { threshold: 0.5 }
+    );
+    observer.observe(photo);
+    return () => observer.disconnect();
+  }, []);
+
   function closeChat() {
     setIsExpanded(false);
     setIsOpen(false);
@@ -194,7 +209,7 @@ export function ChatWidget() {
   }
 
   return (
-    <div className={`fixed z-[70] flex flex-col gap-3 ${isExpanded ? "inset-y-0 right-0" : "bottom-6 right-6 items-end"}`}>
+    <div className={`chat-widget fixed z-[70] flex flex-col gap-3 ${isExpanded ? "inset-y-0 right-0" : "bottom-6 right-6 items-end"}`}>
       {isExpanded && <div className="hidden w-[min(42rem,calc(100vw-2rem))] md:block" />}
       <AnimatePresence>
         {isOpen && (
@@ -203,13 +218,13 @@ export function ChatWidget() {
             animate={isExpanded ? { opacity: 1, x: 0 } : { opacity: 1, scale: 1, y: 0 }}
             exit={isExpanded ? { opacity: 0, x: 40 } : { opacity: 0, scale: 0.9, y: 12 }}
             transition={{ type: "spring", damping: 24, stiffness: 220 }}
-            className={`flex flex-col overflow-hidden border border-border/50 bg-background/90 shadow-2xl backdrop-blur-xl ${
+            className={`flex flex-col overflow-hidden border border-white/25 bg-[rgb(30_38_90/0.34)] shadow-2xl backdrop-blur-2xl backdrop-saturate-150 ${
               isExpanded
                 ? "h-screen w-screen rounded-none md:h-screen md:w-[min(42rem,calc(100vw-2rem))] md:rounded-l-[24px]"
                 : "h-[480px] w-[320px] rounded-[20px]"
             }`}
           >
-            <div className="flex items-center gap-3 border-b border-border/50 px-4 py-3">
+            <div className="flex items-center gap-3 border-b border-white/25 px-4 py-3">
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-semibold text-foreground">Tam&apos;s AI Assistant</p>
               </div>
@@ -243,7 +258,7 @@ export function ChatWidget() {
                     } ${
                       message.role === "user"
                         ? "rounded-br-md bg-primary text-primary-foreground"
-                        : "rounded-bl-md bg-muted text-white"
+                        : "rounded-bl-md bg-white/15 text-foreground"
                     }`}
                   >
                     {message.role === "assistant"
@@ -255,7 +270,7 @@ export function ChatWidget() {
 
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="rounded-2xl rounded-bl-md bg-muted px-3 py-3 text-white">
+                  <div className="rounded-2xl rounded-bl-md bg-white/15 px-3 py-3 text-foreground">
                     <div className="flex items-center gap-1.5">
                       <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60 [animation-delay:-0.3s]" />
                       <span className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground/60 [animation-delay:-0.15s]" />
@@ -274,7 +289,7 @@ export function ChatWidget() {
               <div ref={messagesEndRef} />
             </div>
 
-            <div className={`border-t border-border/50 p-3 ${isExpanded ? "md:p-4" : ""}`}>
+            <div className={`border-t border-white/25 p-3 ${isExpanded ? "md:p-4" : ""}`}>
               <div className="flex items-center gap-2">
                 <input
                   ref={inputRef}
@@ -282,7 +297,7 @@ export function ChatWidget() {
                   onChange={(event) => setInput(event.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Ask me anything about Tam..."
-                  className="h-10 flex-1 rounded-xl border border-border/50 bg-muted/40 px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary/50"
+                  className="h-10 flex-1 rounded-xl border border-white/25 bg-white/15 px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary/50"
                 />
                 <button
                   type="button"
@@ -299,16 +314,18 @@ export function ChatWidget() {
         )}
       </AnimatePresence>
 
-      {!isExpanded && (
+      {/* Stays mounted while expanded, so the music isn't restarted. */}
+      <div className={isExpanded ? "hidden" : "flex items-center gap-3"}>
+        <SoundToggle />
         <button
           type="button"
           onClick={toggleChat}
-          className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_10px_30px_rgba(255,90,31,0.35)] transition-transform hover:scale-105"
+          className="flex h-[52px] w-[52px] items-center justify-center rounded-full border border-white/30 bg-[rgb(30_38_90/0.38)] text-foreground shadow-[0_10px_30px_rgb(40_50_100/0.2)] backdrop-blur-xl backdrop-saturate-150 transition-transform hover:scale-105"
           aria-label={isOpen ? "Close chat" : "Open chat"}
         >
           <MessageCircle className="h-5 w-5" />
         </button>
-      )}
+      </div>
     </div>
   );
 }

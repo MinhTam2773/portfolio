@@ -19,7 +19,6 @@ const SCHOOL_Z = -2;
 const DESIGN_HALF_WIDTH = 17.7;
 
 const v = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
-const ZERO = new THREE.Vector2();
 
 // ── Desktop (laid out for 16:9; squeezed sideways on narrower desktop windows) ──
 
@@ -27,7 +26,7 @@ const ZERO = new THREE.Vector2();
 // over the moon, it peels into a ring that curls down and back behind the name, then
 // carries on along the same path. The off-screen ends turn wide and level (through depth,
 // not over the top), so the tube never folds or flips there.
-const SILVER_STREAM: StreamOptions = {
+export const SILVER_STREAM: StreamOptions = {
   count: 140,
   scale: 0.5,
   path: [
@@ -42,7 +41,7 @@ const SILVER_STREAM: StreamOptions = {
 };
 
 // A small golden school cruising level across the lower sky, among the clouds.
-const GOLDEN_STREAM: StreamOptions = {
+export const GOLDEN_STREAM: StreamOptions = {
   count: 24,
   scale: 0.7,
   path: [
@@ -56,7 +55,7 @@ const GOLDEN_STREAM: StreamOptions = {
 };
 
 // Two mantas at clearly different depths, sizes and speeds, so they never move in step.
-const NEAR_MANTA: GliderOptions = {
+export const NEAR_MANTA: GliderOptions = {
   kind: "manta",
   scale: 1.8,
   paths: [[v(-26, -4, -6), v(-8, -2.5, -4), v(10, -3.5, -6), v(26, -2, -9), v(8, -6, -12), v(-12, -5, -10)]],
@@ -209,7 +208,7 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
 
         if (reduced) {
           for (let step = 0; step < 120; step++) {
-            streams.forEach((s) => s.update(1 / 30, step / 30, null));
+            streams.forEach((s) => s.update(1 / 30, step / 30));
             gliders.forEach((g) => g.update(1 / 30));
           }
           render();
@@ -218,32 +217,6 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
       .catch(() => {
         // Models failed to load: the sky and atmosphere still show.
       });
-
-    // Cursor (or a finger while it's down) as a point on the school's plane.
-    const pointer = new THREE.Vector3();
-    const ndc = new THREE.Vector2();
-    const ray = new THREE.Raycaster();
-    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -SCHOOL_Z);
-    let hasPointer = false;
-    const parallax = new THREE.Vector2(); // eased toward the pointer, drives camera sway
-    const onPointerMove = (e: PointerEvent) => {
-      const rect = host.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
-        hasPointer = false;
-        return;
-      }
-      ndc.set((x / rect.width) * 2 - 1, -(y / rect.height) * 2 + 1);
-      ray.setFromCamera(ndc, camera);
-      hasPointer = ray.ray.intersectPlane(plane, pointer) !== null;
-    };
-    const onPointerLeave = () => {
-      hasPointer = false;
-    };
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    window.addEventListener("pointerup", onPointerLeave);
-    document.addEventListener("pointerleave", onPointerLeave);
 
     // Animation loop that only runs while the hero is on screen and the tab is visible.
     let raf = 0;
@@ -254,16 +227,15 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
       const dt = Math.min((now - last) / 1000, 1 / 30);
       last = now;
       time += dt;
-      // The camera breathes in a slow figure-eight and leans a little toward the cursor,
-      // so the scene feels like a space you're floating in rather than a video.
-      parallax.lerp(hasPointer ? ndc : ZERO, 0.04);
+      // The camera breathes in a slow figure-eight, so the scene feels like a space you're
+      // floating in rather than a video.
       camera.position.set(
-        Math.sin((time * Math.PI * 2) / 18) * 0.25 + parallax.x * 0.8,
-        Math.sin((time * Math.PI * 4) / 18) * 0.12 + parallax.y * 0.5,
+        Math.sin((time * Math.PI * 2) / 18) * 0.25,
+        Math.sin((time * Math.PI * 4) / 18) * 0.12,
         CAMERA_Z,
       );
       camera.lookAt(0, 0, SCHOOL_Z);
-      streams.forEach((s) => s.update(dt, time, hasPointer ? pointer : null));
+      streams.forEach((s) => s.update(dt, time));
       gliders.forEach((g) => g.update(dt));
       atmosphere.update(time);
       render();
@@ -287,24 +259,12 @@ export default function SkyOceanCanvas({ className = "" }: { className?: string 
     document.addEventListener("visibilitychange", sync);
     sync();
 
-    // Creatures fade out as the hero scrolls away, so none float over the dark sections below.
-    const onScroll = () => {
-      const t = Math.min(1, Math.max(0, (window.scrollY / host.clientHeight - 0.15) / 0.4));
-      renderer.domElement.style.opacity = String(1 - t * t * (3 - 2 * t));
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
       resizeObserver.disconnect();
       viewObserver.disconnect();
       document.removeEventListener("visibilitychange", sync);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerup", onPointerLeave);
-      document.removeEventListener("pointerleave", onPointerLeave);
       [...streams, ...gliders].forEach((c) => c.dispose());
       atmosphere.dispose();
       renderer.dispose();

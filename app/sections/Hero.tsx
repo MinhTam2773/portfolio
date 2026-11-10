@@ -1,19 +1,33 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { Mail } from "lucide-react";
 import Image from "next/image";
-import { useMutation, useQuery } from "convex/react";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import SkyLayers from "@/components/ocean/SkyLayers";
 import SkyOceanCanvas from "@/components/ocean/SkyOceanCanvas";
 import { useBootDone } from "@/components/fx/boot";
-import { sfx } from "@/components/fx/sound";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-function RisingLine({ text, delay, ready, className = "" }: { text: string; delay: number; ready: boolean; className?: string }) {
+// The hero stays on screen for the first 160svh of scrolling (the section is 260svh tall).
+// Past this fraction of that distance (15svh) the name swaps for the about content, and back again above it.
+const ABOUT_AT = 0.094;
+const HOLD_MS = 1600; // how long scrolling stops when the about content opens
+
+const PHOTO_HIDDEN = "inset(100% 0% 0% 0%)";
+const PHOTO_SHOWN = "inset(0% 0% 0% 0%)";
+
+const LINKS = [
+  { label: "GitHub", href: "https://github.com/MinhTam2773", Icon: FaGithub },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/minhtam-dev/", Icon: FaLinkedin },
+  { label: "Email", href: "mailto:tamnguyen277353@gmail.com", Icon: Mail },
+];
+
+function RisingLine({ text, delay, ready, wiped, className = "" }: { text: string; delay: number; ready: boolean; wiped: boolean; className?: string }) {
   return (
     <span className={`-mx-[0.12em] -mb-[0.24em] -mt-[0.1em] block overflow-hidden whitespace-nowrap px-[0.12em] pb-[0.3em] pt-[0.1em] ${className}`}>
       {text.split("").map((char, i) => (
@@ -21,8 +35,8 @@ function RisingLine({ text, delay, ready, className = "" }: { text: string; dela
           key={i}
           className="inline-block"
           initial={{ y: "150%", rotate: 6 }}
-          animate={ready ? { y: 0, rotate: 0 } : undefined}
-          transition={{ duration: 1.1, delay: delay + i * 0.045, ease: EASE }}
+          animate={wiped ? { y: "150%", rotate: 6 } : ready ? { y: 0, rotate: 0 } : undefined}
+          transition={wiped ? { duration: 0.7, delay: i * 0.02, ease: EASE } : { duration: 1.1, delay: delay + i * 0.045, ease: EASE }}
         >
           {char === " " ? " " : char}
         </motion.span>
@@ -32,11 +46,8 @@ function RisingLine({ text, delay, ready, className = "" }: { text: string; dela
 }
 
 const Hero = () => {
-  const stats = useQuery(api.stats.get);
   const incrementView = useMutation(api.stats.incrementView);
-  const incrementLike = useMutation(api.stats.incrementLike);
   const ready = useBootDone();
-  const [pins, setPins] = useState<number[]>([]);
 
   useEffect(() => {
     const viewSessionKey = "portfolio:view-counted";
@@ -49,14 +60,31 @@ const Hero = () => {
     void incrementView();
   }, [incrementView]);
 
-  const views = stats?.views ?? 0;
-  const likes = stats?.likes ?? 0;
+  const sceneRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sceneRef, offset: ["start start", "end end"] });
+  const [about, setAbout] = useState(false);
+  useMotionValueEvent(scrollYProgress, "change", (p) => setAbout(p > ABOUT_AT));
 
-  const like = () => {
-    sfx.ping(1.5);
-    setPins((current) => [...current.slice(-4), Date.now()]);
-    void incrementLike();
-  };
+  // The setpoint: when the about content opens, wheel and touch scrolling stop until it has
+  // finished appearing, so a fast scroll can't carry the page past it. Scrolling back up with
+  // the wheel still works, and nav links aren't affected.
+  useEffect(() => {
+    if (!about || scrollYProgress.get() >= 1) return;
+    const stop = (event: Event) => {
+      if (event.cancelable && !(event instanceof WheelEvent && event.deltaY < 0)) event.preventDefault();
+    };
+    const release = () => {
+      window.removeEventListener("wheel", stop);
+      window.removeEventListener("touchmove", stop);
+    };
+    window.addEventListener("wheel", stop, { passive: false });
+    window.addEventListener("touchmove", stop, { passive: false });
+    const timer = setTimeout(release, HOLD_MS);
+    return () => {
+      clearTimeout(timer);
+      release();
+    };
+  }, [about, scrollYProgress]);
 
   const fadeUp = (delay: number) => ({
     initial: { opacity: 0, y: 16 },
@@ -64,158 +92,109 @@ const Hero = () => {
     transition: { duration: 0.9, delay, ease: EASE },
   });
 
+  // Plays in order on the way in; everything leaves together on the way back.
+  const reveal = (delay: number) => ({ duration: about ? 0.8 : 0.3, delay: about ? delay : 0, ease: EASE });
+
   return (
-    <>
-      <section className="relative h-[100svh] min-h-[640px] w-full overflow-hidden">
+    <section ref={sceneRef} id="hero" className="relative h-[260svh]">
+      {/* Where the scroll cue lands, and where tabbing to a link goes: just past ABOUT_AT. */}
+      <div id="field-notes" aria-hidden className="absolute top-[30svh]" />
+      {/* Enters the screen at that same point, which is what opens the chat (see ChatWidget). */}
+      <div id="about-photo" aria-hidden className="absolute top-[130svh] h-px w-px" />
+
+      <div className="sticky top-0 h-[100svh] min-h-[640px] w-full overflow-hidden">
         <motion.div
           className="absolute inset-0"
           initial={{ opacity: 0, scale: 1.04 }}
           animate={ready ? { opacity: 1, scale: 1 } : undefined}
           transition={{ duration: 2.2, ease: EASE }}
         >
-          <SkyLayers className="absolute inset-0" />
-          <SkyOceanCanvas className="absolute inset-0" />
+          <SkyLayers className="absolute inset-0" hideMoon={about} />
+          <SkyOceanCanvas className="absolute inset-0 [mask-image:linear-gradient(180deg,#000_93%,transparent)]" />
         </motion.div>
 
         {/* Name */}
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-4 pb-[6vh] text-center text-[#f6f1ec]">
-          <h1 className="font-serif text-[min(14.3vw,clamp(3.5rem,11vw,10rem))] leading-[0.85] tracking-[-0.02em]">
+          <h1 className="[text-shadow:none] font-serif text-[min(14.3vw,clamp(3.5rem,11vw,10rem))] leading-[0.85] tracking-[-0.02em]">
             <span className="sr-only">Minh Tam Nguyen</span>
             <span aria-hidden>
-              <RisingLine text="Minh Tam Nguyen" delay={0.15} ready={ready} />
+              <RisingLine text="Minh Tam Nguyen" delay={0.15} ready={ready} wiped={about} />
             </span>
           </h1>
-          <motion.p {...fadeUp(0.9)} className="mt-5 text-sm uppercase tracking-[0.3em] text-[#f6f1ec]/85 [text-shadow:0_2px_30px_rgb(60_70_110/0.35)] md:text-base">
-            Software &amp; AI Developer
+          <motion.div initial={false} animate={{ opacity: about ? 0 : 1 }} transition={{ duration: 0.3 }}>
+            <motion.p {...fadeUp(0.9)} className="mt-5 text-sm uppercase tracking-[0.3em] text-[#f6f1ec]/85 [text-shadow:0_2px_30px_rgb(60_70_110/0.35)] md:text-base">
+              Software &amp; AI Developer
+            </motion.p>
+          </motion.div>
+        </div>
+
+        {/* About: appears once the name has gone */}
+        <div
+          onFocus={() => {
+            if (!about) document.getElementById("field-notes")?.scrollIntoView();
+          }}
+          className={`absolute inset-0 flex flex-col items-center justify-center px-6 pb-[4vh] text-center text-[#f6f1ec] ${about ? "" : "pointer-events-none"}`}
+        >
+          <motion.div
+            initial={false}
+            animate={{ clipPath: about ? PHOTO_SHOWN : PHOTO_HIDDEN }}
+            transition={reveal(0.35)}
+            className="relative aspect-square w-[clamp(11rem,30svh,19rem)] overflow-hidden rounded-full"
+          >
+            <Image
+              className="origin-[39.8%_50%] scale-[1.2] object-cover object-[50%_43.4%]"
+              fill
+              sizes="(min-width: 768px) 480px, 400px"
+              src={"/image.jpg"}
+              alt="Minh Tam Nguyen - Software Developer"
+              priority
+            />
+          </motion.div>
+
+          <motion.p
+            initial={false}
+            animate={{ opacity: about ? 1 : 0, y: about ? 0 : 24 }}
+            transition={reveal(0.65)}
+            className="mt-7 max-w-xl font-serif text-[clamp(1.5rem,2.4vw,2.1rem)] leading-[1.15] [text-shadow:0_1px_3px_rgb(34_40_90/0.55),0_1px_12px_rgb(60_30_50/0.28)]"
+          >
+            Software Development graduate from SAIT with a <span className="italic">4.0 GPA</span> and a habit of building things that{" "}
+            <span className="italic">actually work.</span>
           </motion.p>
+
+          <motion.div initial={false} animate={{ opacity: about ? 1 : 0, y: about ? 0 : 16 }} transition={reveal(0.85)} className="mt-7 flex items-center gap-4">
+            {LINKS.map(({ label, href, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                aria-label={label}
+                target={href.startsWith("http") ? "_blank" : undefined}
+                rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                className="flex h-12 w-12 items-center justify-center rounded-full border border-white/50 transition-colors hover:bg-white/20"
+              >
+                <Icon className="h-5 w-5" />
+              </a>
+            ))}
+          </motion.div>
         </div>
 
         {/* Scroll cue */}
-        <motion.a
-          {...fadeUp(1.3)}
-          href="#field-notes"
-          aria-label="Scroll down"
-          data-cursor="DESCEND"
-          className="absolute bottom-8 left-1/2 block h-12 w-px -translate-x-1/2 overflow-hidden bg-white/25"
-        >
-          <motion.span
-            className="absolute left-0 top-0 block h-4 w-px bg-white"
-            animate={{ y: ["-100%", "320%"] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </motion.a>
-      </section>
-
-      {/* Field notes: who's behind the survey */}
-      <section id="field-notes" className="container-custom scroll-mt-20 py-24 md:py-32">
-        <div className="grid grid-cols-1 gap-14 md:grid-cols-12 md:gap-10">
-          {/* Subject card */}
-          <div className="md:col-span-4">
-            <figure className="group relative">
-              <div className="relative aspect-[4/5] overflow-hidden bg-secondary">
-                <Image
-                  className="object-cover grayscale contrast-125 transition-all duration-700 group-hover:scale-[1.03] group-hover:grayscale-0 group-hover:contrast-100"
-                  fill
-                  sizes="(min-width: 768px) 30vw, 100vw"
-                  src={"/image.jpg"}
-                  alt="Minh Tam Nguyen - Software Developer"
-                  priority
-                />
-                <div className="absolute inset-0 bg-primary mix-blend-multiply opacity-35 transition-opacity duration-700 group-hover:opacity-0" />
-                {/* Crop marks */}
-                {["left-2 top-2 border-l border-t", "right-2 top-2 border-r border-t", "left-2 bottom-2 border-l border-b", "right-2 bottom-2 border-r border-b"].map((pos) => (
-                  <span key={pos} className={`absolute h-4 w-4 border-foreground/80 ${pos}`} />
-                ))}
-              </div>
-              <figcaption className="annot mt-3 flex justify-between">
-                <span>Subject · M. T. Nguyen</span>
-                <span>Fig. 01</span>
-              </figcaption>
-            </figure>
-
-            <div className="mt-6 grid grid-cols-2 border border-border">
-              <button
-                type="button"
-                onClick={like}
-                data-cursor="LEAVE A PIN"
-                className="relative border-r border-border p-4 text-left transition-colors hover:bg-primary/10"
-                aria-label="Like this portfolio"
-              >
-                <p className="annot">Pins dropped</p>
-                <p className="mt-1 font-serif text-4xl text-primary">{likes.toLocaleString("en-CA")}</p>
-                <AnimatePresence>
-                  {pins.map((id) => (
-                    <motion.span
-                      key={id}
-                      className="pointer-events-none absolute right-4 top-4 font-mono text-xs text-primary"
-                      initial={{ opacity: 1, y: 0 }}
-                      animate={{ opacity: 0, y: -36 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 1.1, ease: "easeOut" }}
-                      onAnimationComplete={() => setPins((current) => current.filter((pin) => pin !== id))}
-                    >
-                      +1 ▲
-                    </motion.span>
-                  ))}
-                </AnimatePresence>
-              </button>
-              <div className="p-4">
-                <p className="annot">Visitors logged</p>
-                <p className="mt-1 font-serif text-4xl">{views.toLocaleString("en-CA")}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Notes */}
-          <div className="md:col-span-8 md:pl-6">
-            <p className="annot mb-8">Field notes</p>
-            <p className="font-serif text-[clamp(1.9rem,3.6vw,3.25rem)] leading-[1.08] tracking-[-0.01em]">
-              Software Development graduate from SAIT with a{" "}
-              <span className="italic text-primary">4.0 GPA</span> and a habit of building things that{" "}
-              <span className="italic">actually work.</span>
-            </p>
-            <p className="mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              I&apos;m currently a Power Platform &amp; AI Solutions Developer at Intelbyte Corp in Calgary, where I help turn
-              business processes into low-code and AI solutions under senior guidance. Outside work, I keep exploring applied AI
-              engineering, especially RAG systems, agents, and retrieval pipelines.
-            </p>
-
-            <dl className="mt-12 divide-y divide-border border-y border-border font-mono text-sm">
-              {[
-                { label: "Loc", value: "Calgary, Alberta, Canada" },
-                { label: "Mail", value: "tamnguyen277353@gmail.com", href: "mailto:tamnguyen277353@gmail.com" },
-                { label: "Tel", value: "(403) 465-3488", href: "tel:+14034653488" },
-                { label: "GitHub", value: "github.com/MinhTam2773", href: "https://github.com/MinhTam2773" },
-                { label: "LinkedIn", value: "in/minhtam-dev", href: "https://www.linkedin.com/in/minhtam-dev/" },
-              ].map(({ label, value, href }) => (
-                <div key={label} className="group flex items-center justify-between gap-4 py-3.5">
-                  <dt className="annot w-24 shrink-0">{label}</dt>
-                  <dd className="flex-1 truncate text-foreground">
-                    {href ? (
-                      <a
-                        href={href}
-                        target={href.startsWith("http") ? "_blank" : undefined}
-                        rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-                        className="inline-flex items-center gap-2 transition-colors hover:text-primary"
-                      >
-                        {value}
-                        {href.startsWith("http") ? (
-                          <ArrowUpRight className="h-3.5 w-3.5 opacity-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:opacity-100" />
-                        ) : (
-                          <ArrowDownRight className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
-                        )}
-                      </a>
-                    ) : (
-                      value
-                    )}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </div>
-      </section>
-    </>
+        <motion.div initial={false} animate={{ opacity: about ? 0 : 1 }} transition={{ duration: 0.3 }}>
+          <motion.a
+            {...fadeUp(1.3)}
+            href="#field-notes"
+            aria-label="Scroll down"
+            data-cursor="SCROLL"
+            className="absolute bottom-8 left-1/2 block h-12 w-px -translate-x-1/2 overflow-hidden bg-white/25"
+          >
+            <motion.span
+              className="absolute left-0 top-0 block h-4 w-px bg-white"
+              animate={{ y: ["-100%", "320%"] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </motion.a>
+        </motion.div>
+      </div>
+    </section>
   );
 };
 

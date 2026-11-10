@@ -13,7 +13,7 @@ import * as THREE from "three";
 // Lighting: a warm sun from the upper right, a warm rim around the silhouette, and haze
 // toward the sky colour with distance.
 
-export type CreatureKind = "fish" | "manta" | "whale";
+export type CreatureKind = "fish" | "manta" | "whale" | "jelly" | "turtle";
 
 /** A loaded creature model: its mesh and its painted colour texture. */
 export type CreatureModel = { geometry: THREE.BufferGeometry; map: THREE.Texture };
@@ -84,6 +84,23 @@ void main() {
     p.y -= a * 0.15 * front * sin(aSwim + 0.6);
     float slope = a * env * 1.8 * cos(ph);
     n.x -= slope * n.y;
+  #elif defined(KIND_JELLY)
+    // Bell at +X squeezes and relaxes; the tentacles behind it sway a beat later.
+    float bell = smoothstep(-0.05, 0.25, p.x);
+    float squeeze = sin(aSwim);
+    p.yz *= 1.0 - a * 0.9 * squeeze * bell;
+    p.x += a * 0.5 * squeeze * bell;
+    float tail = clamp(-p.x / 1.5, 0.0, 1.0);
+    p.y += a * 0.7 * tail * sin(aSwim * 0.75 + p.x * 3.0);
+    p.z += a * 0.7 * tail * cos(aSwim * 0.75 + p.x * 2.4);
+  #elif defined(KIND_TURTLE)
+    // Front flippers row in long strokes, rear ones follow gently; the head nods a little.
+    float reach = smoothstep(0.35, 1.2, abs(p.z));
+    float front = smoothstep(-0.15, 0.25, p.x);
+    float ph = aSwim - abs(p.z) * 0.9;
+    p.y += a * mix(0.3, 1.0, front) * reach * sin(ph + 0.35 * sin(ph));
+    p.x -= a * 0.5 * front * reach * cos(ph);
+    p.y += a * 0.15 * smoothstep(0.75, 1.0, p.x) * sin(aSwim + 1.0);
   #endif
 
   // The spine arcs along the path's curve: points ahead of and behind the centre both lean
@@ -121,6 +138,7 @@ uniform float uFogNear;
 uniform float uFogFar;
 uniform float uFogMax;
 uniform float uMinLight;
+uniform float uAlpha;
 varying vec2 vUv;
 varying vec3 vNormal;
 varying vec3 vView;
@@ -158,7 +176,7 @@ void main() {
   col = max(col, mix(vec3(skyLum), sky, 0.25) * uMinLight);
   col = mix(col, sky, smoothstep(uFogNear, uFogFar, vDepth) * uFogMax);
 
-  gl_FragColor = vec4(col, 1.0);
+  gl_FragColor = vec4(col, uAlpha);
   #include <colorspace_fragment>
 }
 `;
@@ -178,6 +196,8 @@ export type CreatureLook = {
   fogMax?: number;
   /** Floor on brightness as a share of the sky behind (0 = none). */
   minLight?: number;
+  /** Below 1 for see-through creatures. */
+  alpha?: number;
 };
 
 export function createCreatureMaterial(kind: CreatureKind, map: THREE.Texture, look: CreatureLook) {
@@ -185,6 +205,8 @@ export function createCreatureMaterial(kind: CreatureKind, map: THREE.Texture, l
     vertexShader: VERT,
     fragmentShader: FRAG,
     side: THREE.DoubleSide,
+    transparent: look.alpha !== undefined,
+    depthWrite: look.alpha === undefined,
     defines: { [`KIND_${kind.toUpperCase()}`]: "" },
     uniforms: {
       uBendAmount: { value: look.bendAmount },
@@ -205,6 +227,7 @@ export function createCreatureMaterial(kind: CreatureKind, map: THREE.Texture, l
       uFogFar: { value: look.fogFar ?? 42 },
       uFogMax: { value: look.fogMax ?? 0.6 },
       uMinLight: { value: look.minLight ?? 0 },
+      uAlpha: { value: look.alpha ?? 1 },
     },
   });
 }

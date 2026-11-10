@@ -2,9 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 
-// Whether the intro boot sequence has finished, so the hero can time its entrance.
-// An inline script in <head> marks <html class="intro-seen"> when the intro was already
-// seen this session (or motion is reduced), so CSS hides it before the first paint.
+// Whether the page has started, so the hero can time its entrance.
 
 let done = false;
 const listeners = new Set<() => void>();
@@ -21,9 +19,7 @@ export function useBootDone() {
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
-    () => done || document.documentElement.classList.contains("intro-seen"),
+    () => done,
     () => false,
   );
 }
-
-export const BOOT_SCRIPT = `try{var m=window.matchMedia("(prefers-reduced-motion: reduce)").matches;if(m||sessionStorage.getItem("survey:booted")){document.documentElement.classList.add("intro-seen")}}catch(e){document.documentElement.classList.add("intro-seen")}`;

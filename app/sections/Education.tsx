@@ -5,22 +5,9 @@ import { motion, useInView } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import SectionHeader from "@/components/fx/SectionHeader";
 
-const COURSEWORK = [
-  "Advanced Data Structures",
-  "Software Architecture",
-  "Database Systems",
-  "Web Development",
-  "Mobile App Development",
-  "Cloud Computing",
-  "Agile Methodologies",
-  "Security Fundamentals",
-];
-
 const AWARDS = [
   {
-    marker: "A",
     title: "Alvin and Mona Libin Foundation Award for Capstone Excellence",
-    tag: "SAIT Award",
     body: "Recognized for capstone excellence in software development, highlighting technical execution, team delivery, and real-world project impact.",
     link: {
       label: "LinkedIn Post",
@@ -28,9 +15,7 @@ const AWARDS = [
     },
   },
   {
-    marker: "B",
     title: "2nd at SAIT MegaHack Hackathon",
-    tag: "VibeMap",
     body: "VibeMap reimagines community mapping through an empathy-driven lens. Users share emotional impressions using emojis, which are aggregated into soft heatmaps that reveal collective energy patterns, helping people discover places that resonate with them.",
     link: { label: "DevPost", href: "https://devpost.com/software/vibemap-r89y5l" },
   },
@@ -80,45 +65,25 @@ function GpaContour() {
 export default function Education() {
   return (
     <section id="education" className="scroll-mt-24">
-      <SectionHeader index={1} total={4} title="Education &" emphasis="Awards" kicker="Where the instruments were calibrated" />
+      <SectionHeader title="Education &" emphasis="Awards" />
 
       <div className="grid grid-cols-1 gap-16 md:grid-cols-12">
         <div className="md:col-span-5">
           <GpaContour />
         </div>
 
-        <div className="md:col-span-7">
+        <div className="md:col-span-7 md:self-center">
           <p className="annot">Sep 2024 — Apr 2026</p>
           <h3 className="mt-3 font-serif text-4xl leading-tight md:text-5xl">Software Development Diploma</h3>
           <p className="mt-2 text-muted-foreground">Southern Alberta Institute of Technology (SAIT)</p>
-
-          <p className="annot mt-10 mb-4">Relevant coursework</p>
-          <ul className="grid grid-cols-1 border-t border-border sm:grid-cols-2">
-            {COURSEWORK.map((course, i) => (
-              <li
-                key={course}
-                className="group flex items-baseline gap-4 border-b border-border py-3 transition-colors hover:text-primary sm:odd:border-r sm:odd:pr-4 sm:even:pl-4"
-              >
-                <span className="font-mono text-[10px] text-muted-foreground group-hover:text-primary">{String(i + 1).padStart(2, "0")}</span>
-                {course}
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
 
       <div className="mt-24">
-        <p className="annot mb-6">Markers placed</p>
-        <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-2">
+        <div className="grid grid-cols-1 md:grid-cols-2">
           {AWARDS.map((award) => (
-            <article key={award.title} className="group relative flex flex-col bg-background p-7 transition-colors hover:bg-secondary md:p-9">
-              <div className="flex items-start justify-between gap-6">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-primary font-mono text-sm text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  {award.marker}
-                </span>
-                <span className="annot">{award.tag}</span>
-              </div>
-              <h3 className="mt-8 font-serif text-3xl leading-[1.1]">{award.title}</h3>
+            <article key={award.title} className="group relative flex flex-col p-7 transition-colors hover:bg-secondary md:p-9">
+              <h3 className="font-serif text-2xl leading-[1.1] md:text-3xl">{award.title}</h3>
               <p className="mt-4 flex-1 leading-relaxed text-muted-foreground">{award.body}</p>
               <a
                 href={award.link.href}

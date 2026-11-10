@@ -60,13 +60,13 @@ export default function TechArsenal() {
 
   return (
     <section id="tech" className="scroll-mt-24">
-      <SectionHeader index={4} total={4} title="Tech" emphasis="Arsenal" kicker="Instruments in the field kit" />
+      <SectionHeader title="Tech" emphasis="Arsenal" />
 
       <div className="-mx-4 space-y-2 sm:-mx-6 lg:-mx-8">
         {rows.map((row, rowIndex) => (
           <div
             key={rowIndex}
-            className="marquee overflow-hidden border-y border-border [mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]"
+            className="marquee overflow-hidden border-y border-border [mask-image:linear-gradient(90deg,transparent,black_24px,black_calc(100%-24px),transparent)] md:[mask-image:linear-gradient(90deg,transparent,black_8%,black_92%,transparent)]"
           >
             <div
               className={`marquee-track flex w-max ${rowIndex === 1 ? "reverse" : ""}`}
@@ -78,11 +78,11 @@ export default function TechArsenal() {
                     <li
                       key={name}
                       data-cursor={name.toUpperCase()}
-                      className="group flex items-center gap-4 border-r border-border px-8 py-6"
+                      className="group flex items-center gap-3 border-r border-border px-5 py-4 sm:gap-4 sm:px-8 sm:py-6"
                       style={{ ["--brand" as string]: color }}
                     >
-                      <Icon className="h-7 w-7 text-muted-foreground transition-colors duration-300 group-hover:text-[var(--brand)]" />
-                      <span className="whitespace-nowrap font-serif text-4xl tracking-[-0.01em] transition-colors duration-300 group-hover:italic group-hover:text-primary md:text-5xl">
+                      <Icon className="h-5 w-5 text-muted-foreground transition-colors duration-300 group-hover:text-[var(--brand)] sm:h-7 sm:w-7" />
+                      <span className="whitespace-nowrap font-serif text-[1.575rem] tracking-[-0.01em] transition-colors duration-300 group-hover:italic group-hover:text-primary sm:text-4xl md:text-5xl">
                         {name}
                       </span>
                     </li>
@@ -93,8 +93,6 @@ export default function TechArsenal() {
           </div>
         ))}
       </div>
-
-      <p className="annot mt-6 text-right">Hover to hold a row · {techIcons.length} instruments</p>
     </section>
   );
 }

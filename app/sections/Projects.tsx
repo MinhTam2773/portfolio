@@ -71,7 +71,7 @@ export default function Projects() {
 
   return (
     <section id="projects" className="scroll-mt-24">
-      <SectionHeader index={2} total={4} title="Selected" emphasis="Projects" kicker="Sites surveyed, built, and shipped" />
+      <SectionHeader title="Selected" emphasis="Projects" />
 
       <FloatingPreview active={active} />
 
@@ -109,10 +109,10 @@ export default function Projects() {
                       <span className="annot ml-4 inline-block align-middle text-primary">2nd place hackathon</span>
                     )}
                   </h3>
-                  <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground line-clamp-3">{project.shortDescription}</p>
+                  <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground md:line-clamp-3">{project.shortDescription}</p>
                 </div>
 
-                <div className="col-span-12 flex flex-col justify-between gap-6 md:col-span-4 md:items-end md:text-right">
+                <div className="project-meta col-span-12 flex flex-col justify-between gap-6 md:col-span-4 md:items-end md:text-right">
                   <div className="annot space-y-1">
                     <p className="text-foreground">{project.role}</p>
                     <p>{project.timeline}</p>
