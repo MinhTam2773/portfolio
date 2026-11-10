@@ -2,7 +2,7 @@
 
     blender -b --factory-startup --python scripts/blender/clean_model.py -- <in.glb> <out.glb> <kind>
 
-kind is one of fish | whale | manta (see SPECS). Steps: join meshes, turn it to face +X
+kind is one of fish | whale | manta | jelly | turtle (see SPECS). Steps: join meshes, turn it to face +X
 with +Z up (glTF +Y up), fit it to the size the web shader's swim animation expects,
 decimate, shrink the texture, export with a JPEG texture.
 """
@@ -14,11 +14,14 @@ import bpy
 from mathutils import Matrix, Vector
 
 # turn_z: degrees around up to make the head point +X (from inspect_model.py renders).
+# turn_y: degrees around Y, to lay a model on its side (a jellyfish's bell points up).
 # length/span: fitted size. front: x of the nose. tris: decimate target. tex: texture px.
 SPECS = {
     "fish": dict(turn_z=0, length=1.3, front=0.5, tris=1500, tex=512),
     "whale": dict(turn_z=90, length=2.75, front=1.0, tris=6000, tex=1024),
     "manta": dict(turn_z=90, span=2.0, front=0.6, tris=5000, tex=1024),
+    "jelly": dict(turn_z=0, turn_y=90, length=2.05, front=0.5, tris=3000, tex=512),
+    "turtle": dict(turn_z=90, span=3.1, front=1.28, tris=5000, tex=1024),
 }
 
 src, dst, kind = sys.argv[sys.argv.index("--") + 1 :][:3]
@@ -39,6 +42,7 @@ bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
 
 mesh = obj.data
 mesh.transform(Matrix.Rotation(math.radians(spec["turn_z"]), 4, "Z"))
+mesh.transform(Matrix.Rotation(math.radians(spec.get("turn_y", 0)), 4, "Y"))
 
 
 def bounds():

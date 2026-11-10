@@ -1,0 +1,8 @@
+{
+  "prompt": "A single jellyfish, original stylized design, painterly hand-painted game-art style with soft cel-like shading and clean readable shapes, gentle warm peach rim light from the upper right. Whole body visible and centered with margin around it. Plain flat light grey background, no ground, no shadow, no water, no bubbles, no other creatures, no text. Solid opaque body, not transparent. Smooth rounded dome-shaped bell at the top in pearly lilac-pink, fading to warm peach at the scalloped rim, a soft pale pattern on the dome. Below it, a compact bundle of about eight thick soft ribbon-like tentacles hanging straight down, wide and chunky, gently wavy, touching each other along their length, in pale pink and cream, about one and a half times as long as the bell is tall. Straight side view, bell at the top, tentacles at the bottom.",
+  "image_size": "portrait_4_3",
+  "quality": "high",
+  "output_format": "png",
+  "background": "opaque",
+  "num_images": 1
+}

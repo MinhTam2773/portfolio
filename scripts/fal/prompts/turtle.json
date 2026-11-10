@@ -1,0 +1,8 @@
+{
+  "prompt": "A single sea turtle swimming, original stylized design, painterly hand-painted game-art style with soft cel-like shading and clean readable shapes, gentle warm peach rim light from the upper right. Whole body visible and centered with margin around it. Plain flat light grey background, no ground, no shadow, no water, no bubbles, no other creatures, no text. Sage-green domed shell with large simple pale scutes, cream underside showing at the shell edge, soft olive skin with pale speckles, small rounded head. Two long broad front flippers spread straight out to the sides like wings, two short rear flippers, all clearly separated from the shell. Three-quarter top-down view.",
+  "image_size": "landscape_4_3",
+  "quality": "high",
+  "output_format": "png",
+  "background": "opaque",
+  "num_images": 1
+}

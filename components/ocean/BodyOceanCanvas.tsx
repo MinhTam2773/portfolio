@@ -7,7 +7,6 @@ import { resolution, type CreatureModel } from "./creatureMaterial";
 import { Gliders, type GliderOptions } from "./gliders";
 import { GOLDEN_STREAM, NEAR_MANTA, SILVER_STREAM } from "./SkyOceanCanvas";
 import { gapMiddle } from "./pageGaps";
-import { jellyModel, turtleModel } from "./standIns";
 import { Stream, type StreamOptions } from "./stream";
 
 // Sea creatures swimming through the sky behind the page content, below the hero: schools of
@@ -53,16 +52,18 @@ const SILVER: StreamOptions = { ...SILVER_STREAM, ...CALM, tunnel: undefined, co
 const GOLDEN: StreamOptions = { ...GOLDEN_STREAM, ...CALM, count: 24, look: { ...GOLDEN_STREAM.look, ...HAZE } };
 const JELLY: StreamOptions = {
   ...SILVER,
-  count: 20,
+  count: 10,
   scale: 0.85,
-  length: 0.2,
+  length: 0.32,
+  thickness: 1.8,
   speed: 0.011,
-  look: { rim: "#fff1fa", bendSpeed: 2.1, bendAmount: 0.22, minLight: 0.75, alpha: 0.8, ...HAZE },
+  look: { rim: "#fff1fa", bendSpeed: 2.1, bendAmount: 0.22, minLight: 0.45, ...HAZE },
 };
 /** In from past the left edge of the screen, a curve through the left margin, and back out. Short enough to fit on one screen. */
 const JELLY_MARGIN: StreamOptions = {
   ...JELLY,
-  count: 14,
+  count: 6,
+  length: 0.45,
   speed: 0.02,
   path: [v(-12, 7, -2), v(-7, 7, -2), v(-1.2, 5.5, -2), v(0.4, 0, -2), v(-1.2, -5.5, -2), v(-7, -7, -2), v(-12, -7, -2), v(-15, 0, -2)],
 };
@@ -98,7 +99,7 @@ const CHAPTERS: Chapter[] = [
   { gap: 2, members: [{ model: "turtle", glider: TURTLE }, { model: "golden", stream: GOLDEN }] },
   { gap: 3, members: [{ model: "whale", glider: WHALE }, { model: "silver", stream: { ...SILVER, count: 60, path: mirror(ACROSS) } }] },
   // Kept in the top half of the band, above the like and visitor counters in its middle. In pixels.
-  { gap: 4, shift: -120, members: [{ model: "manta", glider: { ...MANTA, paths: MANTA.paths.map(mirror) } }, { model: "jelly", stream: { ...JELLY, count: 14 } }] },
+  { gap: 4, shift: -120, members: [{ model: "manta", glider: { ...MANTA, paths: MANTA.paths.map(mirror) } }, { model: "jelly", stream: { ...JELLY, count: 7 } }] },
   { section: "education", side: 1, members: [{ model: "golden", stream: { ...GOLDEN, path: RIGHT_MARGIN } }] },
   { section: "education", side: -1, members: [{ model: "jelly", stream: JELLY_MARGIN }] },
   { section: "projects", side: 1, members: [{ model: "silver", stream: { ...SILVER, count: 40, path: RIGHT_MARGIN } }] },
@@ -178,10 +179,10 @@ export default function BodyOceanCanvas() {
       return { geometry: mesh.geometry, map };
     };
 
-    Promise.all(["fish-silver", "fish-golden", "manta", "whale"].map((name) => modelOf(`/ocean/${name}.glb`)))
-      .then(([silver, golden, manta, whale]) => {
+    Promise.all(["fish-silver", "fish-golden", "manta", "whale", "jelly", "turtle"].map((name) => modelOf(`/ocean/${name}.glb`)))
+      .then(([silver, golden, manta, whale, jelly, turtle]) => {
         if (disposed) return;
-        const models: Record<ModelName, CreatureModel> = { silver, golden, manta, whale, jelly: jellyModel(), turtle: turtleModel() };
+        const models: Record<ModelName, CreatureModel> = { silver, golden, manta, whale, jelly, turtle };
         // Phones have less room, so smaller groups of smaller creatures.
         const fewer = mobile ? 0.4 : 1;
         const smaller = mobile ? 0.7 : 1;
