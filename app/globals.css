@@ -244,6 +244,45 @@ body:has(.sky-home) :is(main, header, footer, .chat-widget) :is(p, li, dd, dt, .
   background: linear-gradient(180deg, rgb(233 169 140) 0%, rgb(233 169 142) 1.7%, rgb(231 170 148) 3.4%, rgb(228 171 162) 5.1%, rgb(221 172 178) 6.8%, rgb(210 175 197) 8.5%, rgb(196 178 214) 10.2%, rgb(178 180 228) 11.9%, rgb(161 181 237) 13.6%, rgb(152 182 242) 15.3%, rgb(150 182 243) 17%, rgb(170 193 240) 26%, rgb(225 203 197) 40%, rgb(252 188 152) 50%, rgb(244 155 147) 60%, rgb(218 137 159) 72%, rgb(214 146 168) 86%, rgb(170 110 152) 91%, rgb(105 84 140) 95%, rgb(63 59 115) 100%);
 }
 
+/* Liquid glass behind long text on the sky: nearly clear, a bright rim where light catches the
+   top-left edge, and the sky behind it a little blurred, darker and richer, like a thick lens.
+   The darkening is what keeps white body text readable: 0.55 is the lightest that measured
+   4.5:1 or better at the brightest spot behind the project list. */
+.sky-panel {
+  --glass-dim: 0.55;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.033) 38%, rgb(70 50 120 / 0.3));
+  /* Low saturation keeps the darkened peach plum rather than brown. */
+  backdrop-filter: blur(12px) saturate(1.15) brightness(var(--glass-dim));
+  box-shadow:
+    inset 1.5px 1.5px 0 rgb(255 255 255 / 0.55),
+    inset -1px -1px 0 rgb(255 255 255 / 0.14),
+    0 24px 48px -24px rgb(40 30 80 / 0.5);
+}
+
+/* Phones: no blur over the moving creatures. The tint alone has to do the darkening, so it is
+   stronger and even across the pane (measured 4.5:1 or better on the brightest peach). */
+@media (max-width: 767px) {
+  .sky-panel {
+    backdrop-filter: none;
+    background: linear-gradient(135deg, rgb(92 70 140 / 0.64), rgb(52 36 100 / 0.7));
+  }
+}
+
+/* Inside the glass, a light shadow is enough; the sky-wide one muddies small type. */
+body:has(.sky-home) main .sky-panel,
+body:has(.sky-home) main .sky-panel * {
+  text-shadow: 0 1px 2px rgb(30 20 60 / 0.3);
+}
+
+/* Running text and labels inside the glass use the sans, which holds up better at small sizes.
+   Headings keep the serif. */
+body:has(.sky-home) main .sky-panel :is(p, li, dd, dt, .annot, .font-mono):not(.font-serif) {
+  font-family: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 500;
+  font-size-adjust: none;
+}
+
 /* Single clouds: placed by PageSky, smaller on phones to fit the shorter bands between sections. */
 .sky-cloud {
   --gutter: max(0px, (100vw - 1088px) / 2); /* margin beside the content column */

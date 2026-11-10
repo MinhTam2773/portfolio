@@ -75,7 +75,7 @@ export default function Projects() {
 
       <FloatingPreview active={active} />
 
-      <ol className="border-t border-border" onPointerLeave={() => setActive(null)}>
+      <ol className="sky-panel px-5 md:px-8" onPointerLeave={() => setActive(null)}>
         {projects.map((project, i) => {
           const extraTech = project.techStack.length - 5;
           return (
@@ -86,10 +86,8 @@ export default function Projects() {
               viewport={{ once: true, margin: "-8% 0px" }}
               transition={{ duration: 0.8, delay: (i % 2) * 0.06, ease: [0.16, 1, 0.3, 1] }}
               onPointerEnter={() => setActive(i)}
-              className="group relative border-b border-border"
+              className="group relative border-b border-border last:border-b-0"
             >
-              {/* Hover wash sweeping in from the left */}
-              <span className="pointer-events-none absolute inset-0 origin-left scale-x-0 bg-secondary transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100" />
               <span className="pointer-events-none absolute left-0 top-0 h-full w-[2px] origin-top scale-y-0 bg-primary transition-transform duration-500 group-hover:scale-y-100" />
 
               <div className="relative grid grid-cols-12 gap-x-4 gap-y-4 py-8 md:py-10">

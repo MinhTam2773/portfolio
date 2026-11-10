@@ -64,7 +64,7 @@ export default function KeepExploringCarousel({ projects, currentSlug }: KeepExp
             <Link
               key={`${project.slug}-${idx}`}
               href={`/${project.slug}`}
-              className="group block rounded-xl border border-border/50 hover:border-primary/35 overflow-hidden transition-colors"
+              className="sky-panel group block rounded-xl overflow-hidden transition-colors"
             >
               <div className="relative w-full h-44 md:h-48">
                 <Image src={project.coverImage} alt={project.title} fill className="object-cover" />

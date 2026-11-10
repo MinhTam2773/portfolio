@@ -80,9 +80,9 @@ export default function Education() {
       </div>
 
       <div className="mt-24">
-        <div className="grid grid-cols-1 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {AWARDS.map((award) => (
-            <article key={award.title} className="group relative flex flex-col p-7 transition-colors hover:bg-secondary md:p-9">
+            <article key={award.title} className="sky-panel group relative flex flex-col p-7 md:p-9">
               <h3 className="font-serif text-2xl leading-[1.1] md:text-3xl">{award.title}</h3>
               <p className="mt-4 flex-1 leading-relaxed text-muted-foreground">{award.body}</p>
               <a

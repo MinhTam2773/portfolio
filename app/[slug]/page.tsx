@@ -9,6 +9,7 @@ import { PageTransition } from "@/components/PageTransition";
 import ProjectHeroCarousel from "@/components/ProjectHeroCarousel";
 import KeepExploringCarousel from "@/components/KeepExploringCarousel";
 import ProjectVideoButton from "@/components/ProjectVideoButton";
+import ProjectSky from "@/components/ocean/ProjectSky";
 import { projects } from "@/lib/projectsData";
 
 function getProjectBySlug(slug: string) {
@@ -90,8 +91,10 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
   const heroImages = await getHeroImagesForProject(project.slug, project.coverImage);
 
   return (
+    <>
+    <ProjectSky />
     <PageTransition>
-      <main className="container-custom py-12">
+      <main className="container-custom pb-12 pt-28">
         <Link
           href="/#projects"
           className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-8"
@@ -106,20 +109,24 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
 
             <article className="space-y-4">
               <h2 className="font-serif text-4xl md:text-5xl tracking-[-0.015em]">The Challenge</h2>
-              {project.problemStatement.map((paragraph, index) => (
-                <p key={`challenge-${index}`} className="text-muted-foreground leading-relaxed text-lg">
-                  {paragraph}
-                </p>
-              ))}
+              <div className="sky-panel space-y-4 rounded-xl p-6 md:p-8">
+                {project.problemStatement.map((paragraph, index) => (
+                  <p key={`challenge-${index}`} className="text-muted-foreground leading-relaxed text-lg">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </article>
 
             <article className="space-y-4">
               <h2 className="font-serif text-4xl md:text-5xl tracking-[-0.015em]">The Solution</h2>
-              {project.solution.map((paragraph, index) => (
-                <p key={`solution-${index}`} className="text-muted-foreground leading-relaxed text-lg">
-                  {paragraph}
-                </p>
-              ))}
+              <div className="sky-panel space-y-4 rounded-xl p-6 md:p-8">
+                {project.solution.map((paragraph, index) => (
+                  <p key={`solution-${index}`} className="text-muted-foreground leading-relaxed text-lg">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </article>
 
             {project.caseStudySections?.map((section) => (
@@ -129,7 +136,7 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
                   {section.items.map((item, index) => (
                     <div
                       key={`${section.title}-${item.title ?? index}`}
-                      className="rounded-xl border border-border/40 bg-background/50 p-5"
+                      className="sky-panel rounded-xl p-5"
                     >
                       {item.title && <h3 className="font-serif text-2xl mb-2">{item.title}</h3>}
                       <p className="text-muted-foreground leading-relaxed text-lg">{item.body}</p>
@@ -159,8 +166,8 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
             </section>
           </section>
 
-          <aside className="lg:sticky lg:top-8 lg:self-start">
-            <div className="rounded-xl border border-border/50 bg-background/60 backdrop-blur-sm p-6 space-y-6">
+          <aside className="lg:sticky lg:top-24 lg:self-start">
+            <div className="sky-panel rounded-xl p-6 space-y-6">
               <header className="space-y-3">
                 <h1 className="font-serif text-5xl leading-none tracking-[-0.02em]">{project.title}</h1>
                 <p className="text-muted-foreground">{project.shortDescription}</p>
@@ -245,5 +252,6 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
         </section>
       </main>
     </PageTransition>
+    </>
   );
 }

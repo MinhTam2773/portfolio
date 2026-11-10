@@ -102,7 +102,7 @@ export default function ProfessionalJourney() {
                 <h3 className="font-serif text-[clamp(2.25rem,4.5vw,3.75rem)] leading-none tracking-[-0.015em]">{exp.title}</h3>
                 <p className="mt-3 font-mono text-xs uppercase tracking-[0.14em] text-primary">{exp.subtitle}</p>
 
-                <ul className="mt-8 space-y-4">
+                <ul className="sky-panel mt-8 space-y-4 p-6 md:p-8">
                   {exp.bullets.map((bullet, bulletIndex) => (
                     <motion.li
                       key={bulletIndex}
