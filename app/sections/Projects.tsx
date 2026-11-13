@@ -57,10 +57,6 @@ function FloatingPreview({ active }: { active: number | null }) {
             className={`object-cover transition-[opacity,transform] duration-500 ${active === i ? "scale-100 opacity-100" : "scale-110 opacity-0"}`}
           />
         ))}
-        <div className="absolute inset-x-0 bottom-0 flex justify-between bg-background/85 px-3 py-1.5 font-mono text-[9px] tracking-[0.15em] text-foreground/80">
-          <span>SITE {active !== null ? String(active + 1).padStart(2, "0") : "--"}</span>
-          <span>{active !== null ? projects[active].title.toUpperCase() : ""}</span>
-        </div>
       </motion.div>
     </div>
   );
@@ -91,16 +87,12 @@ export default function Projects() {
               <span className="pointer-events-none absolute left-0 top-0 h-full w-[2px] origin-top scale-y-0 bg-primary transition-transform duration-500 group-hover:scale-y-100" />
 
               <div className="relative grid grid-cols-12 gap-x-4 gap-y-4 py-8 md:py-10">
-                <span className="col-span-12 font-mono text-xs text-muted-foreground transition-colors group-hover:text-primary md:col-span-1 md:pt-4">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-
                 {/* Inline cover on touch screens, where there's no hover preview */}
                 <div className="relative col-span-12 aspect-[16/9] overflow-hidden border border-border [@media(pointer:fine)]:hidden">
                   <Image src={project.coverImage} alt={project.title} fill sizes="100vw" className="object-cover" />
                 </div>
 
-                <div className="col-span-12 md:col-span-7">
+                <div className="col-span-12 md:col-span-8">
                   <h3 className="font-serif text-[clamp(2.6rem,6vw,5rem)] leading-[0.95] tracking-[-0.02em] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-3">
                     {project.title}
                     {project.title === "VibeMap" && (

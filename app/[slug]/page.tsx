@@ -166,7 +166,7 @@ export default async function ProjectDetailPage({ params }: RouteProps) {
             </section>
           </section>
 
-          <aside className="lg:sticky lg:top-24 lg:self-start">
+          <aside className="order-first lg:order-none lg:sticky lg:top-24 lg:self-start">
             <div className="sky-panel rounded-xl p-6 space-y-6">
               <header className="space-y-3">
                 <h1 className="font-serif text-5xl leading-none tracking-[-0.02em]">{project.title}</h1>
