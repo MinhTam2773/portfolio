@@ -2,36 +2,16 @@
 
 import { useSyncExternalStore } from "react";
 
-// Site music. It starts on its own unless the visitor muted it on an earlier visit.
-// Browsers block sound until the first click or key press, so when the first attempt
-// is blocked we start on that first gesture instead.
+// Site music. Muted on arrival; it only plays when the visitor presses the sound button.
 
 const SRC = "/audio/Diaphanous%20Dream.mp3";
-const MUTED_KEY = "skyocean:muted";
 const VOLUME = 0.45;
 
 let audio: HTMLAudioElement | null = null;
 let playing = false;
-let started = false;
 let fadeRaf = 0;
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((listener) => listener());
-
-function readMuted() {
-  try {
-    return localStorage.getItem(MUTED_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
-function writeMuted(muted: boolean) {
-  try {
-    localStorage.setItem(MUTED_KEY, muted ? "1" : "0");
-  } catch {
-    // Storage blocked: the choice just won't be remembered.
-  }
-}
 
 function element() {
   if (!audio) {
@@ -76,32 +56,9 @@ function stop() {
   });
 }
 
-/** Call once on page load. */
-export function startMusic() {
-  if (started || readMuted()) return;
-  started = true;
-  void play().then((ok) => {
-    if (ok) return;
-    const onGesture = (e: Event) => {
-      // The sound button handles its own click, so don't start-then-stop on it.
-      if ((e.target as Element | null)?.closest?.("[data-music-toggle]")) return;
-      window.removeEventListener("pointerdown", onGesture);
-      window.removeEventListener("keydown", onGesture);
-      if (!playing && !readMuted()) void play();
-    };
-    window.addEventListener("pointerdown", onGesture);
-    window.addEventListener("keydown", onGesture);
-  });
-}
-
 export function toggleMusic() {
-  if (playing) {
-    writeMuted(true);
-    stop();
-  } else {
-    writeMuted(false);
-    void play();
-  }
+  if (playing) stop();
+  else void play();
 }
 
 export function useMusicPlaying() {

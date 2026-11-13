@@ -1,21 +1,15 @@
 "use client";
 
 import { VolumeX } from "lucide-react";
-import { useEffect } from "react";
-import { startMusic, toggleMusic, useMusicPlaying } from "./music";
+import { toggleMusic, useMusicPlaying } from "./music";
 
-/** Music on/off: moving bars while it plays, a crossed-out speaker when muted. Also starts the music on page load. */
+/** Music on/off: moving bars while it plays, a crossed-out speaker when muted. Starts muted. */
 export default function SoundToggle() {
   const on = useMusicPlaying();
-
-  useEffect(() => {
-    startMusic();
-  }, []);
 
   return (
     <button
       type="button"
-      data-music-toggle
       onClick={toggleMusic}
       aria-pressed={on}
       aria-label={on ? "Mute music" : "Play music"}
