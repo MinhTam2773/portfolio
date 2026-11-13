@@ -11,6 +11,7 @@ type RateLimitEntry = {
 };
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_API_KEY_FALLBACK = process.env.GEMINI_API_KEY_FALLBACK;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 10;
 const rateLimitStore = new Map<string, RateLimitEntry>();
@@ -237,27 +238,34 @@ export async function POST(request: NextRequest) {
   }));
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          systemInstruction: {
-            parts: [{ text: SYSTEM_PROMPT }],
+    // Try the main key, then the fallback key (a different account) if the main one fails.
+    let response: Response | undefined;
+    for (const key of [GEMINI_API_KEY, GEMINI_API_KEY_FALLBACK]) {
+      if (!key) continue;
+      response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${key}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-          contents,
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 500,
-          },
-        }),
-      }
-    );
+          body: JSON.stringify({
+            systemInstruction: {
+              parts: [{ text: SYSTEM_PROMPT }],
+            },
+            contents,
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 500,
+            },
+          }),
+        }
+      );
+      if (response.ok) break;
+      console.error("Gemini API error", response.status, await response.text());
+    }
 
-    if (!response.ok) {
+    if (!response?.ok) {
       return NextResponse.json(
         { error: "The assistant is unavailable right now. Please try again." },
         { status: 502 }
@@ -284,7 +292,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ reply });
-  } catch {
+  } catch (error) {
+    console.error("Gemini request failed", error);
     return NextResponse.json(
       { error: "The assistant is unavailable right now. Please try again." },
       { status: 502 }
