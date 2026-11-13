@@ -84,9 +84,9 @@ export default function Projects() {
               onPointerEnter={() => setActive(i)}
               className="group relative border-b border-border last:border-b-0"
             >
-              <span className="pointer-events-none absolute left-0 top-0 h-full w-[2px] origin-top scale-y-0 bg-primary transition-transform duration-500 group-hover:scale-y-100" />
+              <span className="pointer-events-none absolute inset-y-8 left-0 w-[2px] origin-top md:inset-y-10 scale-y-0 bg-primary transition-transform duration-500 group-hover:scale-y-100" />
 
-              <div className="relative grid grid-cols-12 gap-x-4 gap-y-4 py-8 md:py-10">
+              <div className="relative grid grid-cols-12 gap-x-4 gap-y-4 py-8 md:py-10 md:pl-8">
                 {/* Inline cover on touch screens, where there's no hover preview */}
                 <div className="relative col-span-12 aspect-[16/9] overflow-hidden border border-border [@media(pointer:fine)]:hidden">
                   <Image src={project.coverImage} alt={project.title} fill sizes="100vw" className="object-cover" />

@@ -16,7 +16,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 // The hero stays on screen for the first 160svh of scrolling (the section is 260svh tall).
 // Past this fraction of that distance (15svh) the name swaps for the about content, and back again above it.
 const ABOUT_AT = 0.094;
-const HOLD_MS = 1600; // how long scrolling stops when the about content opens
+const HOLD_MS = 900; // how long scrolling stops when the about content opens
 
 const PHOTO_HIDDEN = "inset(100% 0% 0% 0%)";
 const PHOTO_SHOWN = "inset(0% 0% 0% 0%)";
@@ -93,7 +93,7 @@ const Hero = () => {
   });
 
   // Plays in order on the way in; everything leaves together on the way back.
-  const reveal = (delay: number) => ({ duration: about ? 0.8 : 0.3, delay: about ? delay : 0, ease: EASE });
+  const reveal = (delay: number) => ({ duration: about ? 0.5 : 0.3, delay: about ? delay : 0, ease: EASE });
 
   return (
     <section ref={sceneRef} id="hero" className="relative h-[260svh]">
@@ -138,7 +138,7 @@ const Hero = () => {
           <motion.div
             initial={false}
             animate={{ clipPath: about ? PHOTO_SHOWN : PHOTO_HIDDEN }}
-            transition={reveal(0.35)}
+            transition={reveal(0.15)}
             className="relative aspect-square w-[clamp(11rem,30svh,19rem)] overflow-hidden rounded-full"
           >
             <Image
@@ -154,14 +154,14 @@ const Hero = () => {
           <motion.p
             initial={false}
             animate={{ opacity: about ? 1 : 0, y: about ? 0 : 24 }}
-            transition={reveal(0.65)}
+            transition={reveal(0.3)}
             className="mt-7 max-w-xl font-serif text-[clamp(1.5rem,2.4vw,2.1rem)] leading-[1.15] [text-shadow:0_1px_3px_rgb(34_40_90/0.55),0_1px_12px_rgb(60_30_50/0.28)]"
           >
             Software Development graduate from SAIT with a <span className="italic">4.0 GPA</span> and a habit of building things that{" "}
             <span className="italic">actually work.</span>
           </motion.p>
 
-          <motion.div initial={false} animate={{ opacity: about ? 1 : 0, y: about ? 0 : 16 }} transition={reveal(0.85)} className="mt-7 flex items-center gap-4">
+          <motion.div initial={false} animate={{ opacity: about ? 1 : 0, y: about ? 0 : 16 }} transition={reveal(0.4)} className="mt-7 flex items-center gap-4">
             {LINKS.map(({ label, href, Icon }) => (
               <a
                 key={label}
