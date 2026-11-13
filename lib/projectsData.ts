@@ -85,6 +85,68 @@ export const projects: Project[] = [
     isProtected: true,
   },
   {
+    slug: "paranoidz",
+    title: "Paranoidz",
+    shortDescription:
+      "A headless e-commerce platform for a Vietnamese streetwear brand: a customer storefront at paranoidz.vn and an admin app for orders, stock, promo codes and nationwide shipping, built on Next.js and Supabase and running in production.",
+    problemStatement: [
+      "The brand sold through marketplaces like Shopee and had no store of its own. It needed its own store where customers can browse, order without an account and pay cash on delivery or by bank transfer, plus one place for the owner to run every order end to end.",
+    ],
+    solution: [
+      "Built with a teammate as a pnpm monorepo: two Next.js apps (storefront and admin) sharing one Supabase database. Catalog pages are server-rendered and cached for speed and SEO, search handles Vietnamese with or without accents, and anything that touches money, stock or vouchers runs only on the server.",
+    ],
+    caseStudySections: [
+      {
+        title: "What I Built",
+        items: [
+          {
+            title: "1. Server-Only Orders",
+            body: "Orders go through one atomic Postgres function that only the server can call. It re-reads prices from the database, applies vouchers, combos and flash sales, takes stock and writes the order in a single transaction, so the client's own totals are never trusted and two buyers can't take the last item.",
+          },
+          {
+            title: "2. Shipping Integration",
+            body: "I integrated the SPX Express shipping API into the admin: live shipping fees at checkout, bulk shipment creation with printable labels from the orders page, and status changes that check SPX first so stock and loyalty counters stay correct.",
+          },
+          {
+            title: "3. Admin and Data Access",
+            body: "The admin covers orders, customers, products, collections, bundles, promo codes, review moderation and an Excel export. Row Level Security keeps customer data scoped to its owner, and admin rights are checked on the server on every request.",
+          },
+        ],
+      },
+      {
+        title: "Testing & Delivery",
+        items: [
+          {
+            title: "End-to-End Coverage",
+            body: "A Playwright suite runs both apps against a local Supabase stack, including sign-up and password-reset emails, and a database smoke test checks the order math. Database changes ship as migrations, reviewed and tested locally before they reach production.",
+          },
+        ],
+      },
+    ],
+    coverImage: "/projects/paranoidz/paranoidz-1.webp",
+    galleryImages: [
+      "/projects/paranoidz/paranoidz-1.webp",
+      "/projects/paranoidz/paranoidz-2.webp",
+      "/projects/paranoidz/paranoidz-3.webp",
+    ],
+    techStack: [
+      "Next.js 16",
+      "React 19",
+      "TypeScript",
+      "Supabase",
+      "PostgreSQL",
+      "Tailwind CSS v4",
+      "Resend",
+      "Playwright",
+      "Vercel",
+    ],
+    role: "Lead Full Stack Developer",
+    timeline: "Jul 2026 - Present",
+    liveDemoUrl: "https://paranoidz.vn",
+    githubUrl: "https://github.com/MinhTam2773/Paranoidz",
+    isProtected: true,
+  },
+  {
     slug: "firewatch",
     title: "FIRE//WATCH",
     shortDescription:
@@ -148,6 +210,60 @@ export const projects: Project[] = [
     githubUrl: "https://github.com/SaladStik/Firewatch",
     videoUrl: "/projects/firewatch/firewatch-showcase.mp4",
     videoLabel: "Video showcase",
+  },
+  {
+    slug: "pengloo",
+    title: "Pengloo Party",
+    shortDescription:
+      "A cozy multiplayer 3D island where friends hang out as penguins: walk the town, dress up, chat with proximity voice, and play snowball fights, sled races, fishing and movie night together, right in the browser.",
+    problemStatement: [
+      "A lot of us grew up hanging out with friends in online worlds like Club Penguin. Those places are gone, and group chats and Discord servers are good for messaging but give you nowhere to actually be together.",
+    ],
+    solution: [
+      "Built at MRUHacks 2026 for the prompt \"Revitalize\" by a team of four, Pengloo Party brings that hangout back as an original game with its own art and characters. Players share one island, see each other's outfits, talk with proximity voice chat, and drop into activities together. It runs in the browser from a Godot web export.",
+    ],
+    caseStudySections: [
+      {
+        title: "What I Built",
+        items: [
+          {
+            title: "1. Multiplayer Outfits",
+            body: "I synced each player's wardrobe over the network: the look travels in the join message and the room roster, so every remote penguin is dressed the way its player chose, including on the Sled Hill run.",
+          },
+          {
+            title: "2. Filming Tools and Trailer",
+            body: "I added a Hide UI setting, follower bots and a filming host so we could record real gameplay, then cut the trailer and feature clips for the pitch from that footage instead of mockups.",
+          },
+          {
+            title: "3. The Pitch",
+            body: "I wrote the pitch script and built the closing-ceremony deck, with a QR code that took judges straight to the live game at pengloo.party.",
+          },
+        ],
+      },
+    ],
+    coverImage: "/projects/pengloo/pengloo-1.webp",
+    galleryImages: [
+      "/projects/pengloo/pengloo-1.webp",
+      "/projects/pengloo/pengloo-2.webp",
+      "/projects/pengloo/pengloo-3.webp",
+      "/projects/pengloo/pengloo-4.webp",
+    ],
+    techStack: [
+      "Godot 4",
+      "GDScript",
+      "Blender",
+      "WebSockets",
+      "WebRTC",
+      "Go",
+      "Docker",
+      "nginx",
+    ],
+    role: "Game Developer (Multiplayer & Pitch)",
+    timeline: "Oct 2026 · MRUHacks 2026",
+    liveDemoUrl: "https://pengloo.party",
+    githubUrl: "https://github.com/amadeusk1/mruhacks",
+    videoUrl: "/projects/pengloo/pengloo-showcase.mp4",
+    videoLabel: "Trailer",
   },
   {
     slug: "rezume",
@@ -261,77 +377,5 @@ export const projects: Project[] = [
     timeline: "24 hour hackathon",
     liveDemoUrl: "https://vibemap-app.vercel.app",
     githubUrl: "https://github.com/HanxxFeli/VibeMap",
-  },
-  {
-    slug: "b2b-ecommerce",
-    title: "B2B Ecommerce Mobile App",
-    shortDescription:
-      "A React Native (Expo) mobile application enabling wholesale buyers to browse products, place bulk orders, and track order history with a clean, intuitive interface.",
-    problemStatement: [
-      "Wholesale distributors needed a mobile-friendly ordering solution for their B2B clients, but existing platforms were either desktop-only or too complex for quick, on-the-go purchases.",
-      "Buyers wanted a simple way to reorder frequently purchased items, view product catalogs with real-time pricing, and check order status without logging into a full desktop system.",
-      "The goal was to build a lightweight, responsive mobile app that connects to an existing ecommerce backend via APIs, providing a seamless ordering experience for business customers.",
-    ],
-    solution: [
-      "Developed a cross-platform mobile application using React Native and Expo, allowing wholesale clients to place orders directly from their smartphones.",
-      "Integrated with the client's existing REST API to fetch product catalogs, pricing, and inventory data, ensuring real-time accuracy without building a new backend.",
-      "Implemented features such as bulk order entry, quick reorder from history, secure authentication, and order tracking—all within a streamlined mobile UI.",
-      "Designed reusable components and managed state with React hooks and Context API, ensuring smooth navigation and performance.",
-      "Delivered a responsive layout that adapts to both phones and tablets, making it easy for buyers to manage their accounts anytime, anywhere.",
-    ],
-    coverImage: "/projects/ecommerce.png",
-    galleryImages: ["/projects/ecommerce.png"],
-    techStack: [
-      "React Native",
-      "Expo",
-      "TypeScript",
-      "React Navigation",
-      "Context API",
-      "REST API Integration",
-      "Axios",
-      "AsyncStorage",
-    ],
-    role: "Frontend Mobile Developer",
-    timeline: "Dec 2025",
-    liveDemoUrl: "",
-    githubUrl: "https://github.com/MinhTam2773/Ecommerce",
-  },
-  {
-    slug: "sharie",
-    title: "Sharie",
-    shortDescription:
-      "A social audio sharing platform where users can upload, discover, and discuss audio content in real-time, combining elements of SoundCloud and modern messaging apps.",
-    problemStatement: [
-      "Audio content creators lacked a dedicated space to share their work and engage with listeners beyond static comments. Existing platforms separated content discovery from community interaction.",
-      "Listeners wanted to discuss tracks, ask questions, and connect with others in real-time while listening, but traditional music platforms offered only delayed, thread-based comments.",
-      "The challenge was to build a cohesive experience where audio playback and social interaction happen simultaneously, with real-time chat and notifications.",
-    ],
-    solution: [
-      "Developed a full-stack MERN application (MongoDB, Express, React, Node.js) with a custom authentication system using JWT and Axios for secure API communication.",
-      "Implemented real-time chat functionality using WebSockets, allowing users to send direct messages, participate in group conversations, and react to messages while listening to audio.",
-      "Built audio upload and streaming capabilities with support for MP3/WAV files, including waveform visualization using Wavesurfer.js and a custom audio player with play/pause, seek, and volume controls.",
-      "Created social features such as liking, commenting, reposting, saving audio to personal libraries, and following other users – all with real-time updates via WebSocket events.",
-      "Designed an intuitive UI with React and Tailwind CSS, featuring infinite scroll feeds, category-based browsing, and user profiles with stats (uploads, followers, following).",
-      "Engineered the backend with Express and MongoDB, including robust data models for users, audio posts, playlists, messages, and notifications. Used middleware for authentication and error handling.",
-    ],
-    coverImage: "/projects/sharie.png",
-    galleryImages: ["/projects/sharie.png"],
-    techStack: [
-      "MongoDB",
-      "Express.js",
-      "React",
-      "Node.js",
-      "WebSockets",
-      "JWT",
-      "Axios",
-      "Tailwind CSS",
-      "Wavesurfer.js",
-      "React Router",
-      "Context API",
-    ],
-    role: "Full Stack Developer",
-    timeline: "June 2025",
-    liveDemoUrl: "",
-    githubUrl: "https://github.com/MinhTam2773/Sharie",
   },
 ];
